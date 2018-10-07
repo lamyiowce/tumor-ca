@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 project(tumor)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 
-add_executable(tumor main.cpp State.cpp State.h Automaton.cpp Automaton.h Parameters.cpp Parameters.h util.h)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+
+include_directories(include)
+
+add_executable(tumor
+        main.cpp
+        automaton/Automaton.cpp
+        automaton/Parameters.cpp
+        automaton/State.cpp
+        include/Automaton.h
+        include/Parameters.h
+        include/util.h)

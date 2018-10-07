@@ -28,11 +28,11 @@ void Automaton::advance() {
 }
 
 void Automaton::replenishSubstrate() {
-    for (int i = 0; i < state.gridSize; i++)
-        for (int j = 0; j < state.gridSize; j++)
-            if (!state.W[i][j]) {
-                state.CHO[i][j] = params.sCHOex;
-                state.OX[i][j] = params.sOXex;
+    for (ul i = 0; i < state.gridSize; i++)
+        for (ul j = 0; j < state.gridSize; j++)
+            if (!state.getW(i, j)) {
+                state.getCHO(i, j) = params.sCHOex;
+                state.getOX(i, j) = params.sOXex;
             }
 }
 
@@ -43,14 +43,14 @@ void Automaton::diffusion() {
 void Automaton::irradiateTumor() {
     double dose = params.irradiationPerStep[step];
     if (dose > 0) {
-        for (int i = 0; i < state.gridSize; i++) {
-            for (int j = 0; j < state.gridSize; j++) {
-                if (state.W[i][j]) {
-                    auto r0 = state.irradiation[i][j];
-                    auto timeInRepair = state.timeInRepair[i][j];
+        for (ul i = 0; i < state.gridSize; i++) {
+            for (ul j = 0; j < state.gridSize; j++) {
+                if (state.getW(i, j)) {
+                    auto r0 = state.getIrradiation(i, j);
+                    auto timeInRepair = state.getTimeInRepair(i, j);
                     auto effectiveIrradiation = r0 / (1 + timeInRepair / params.tau);
-                    state.irradiation[i][j] = effectiveIrradiation + dose;
-                    state.timeInRepair[i][j] = 0;
+                    state.getIrradiation(i, j) = effectiveIrradiation + dose;
+                    state.getTimeInRepair(i, j) = 0;
                 }
             }
         }
