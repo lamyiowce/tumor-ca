@@ -5,7 +5,8 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _W(gridSize * gridSize),
                              _CHO(gridSize * gridSize),
                              _OX(gridSize * gridSize),
-                             _cellState(gridSize * gridSize) {}
+                             _cellState(gridSize * gridSize),
+                             _proliferationTime(gridSize * gridSize) {}
 
 bool State::getW(ul x, ul y) const {
     return _W[y * gridSize + x];
@@ -53,4 +54,12 @@ const State::CellState &State::cellState(ul x, ul y) const {
 
 State::CellState &State::cellState(ul x, ul y) {
     return _cellState[y * gridSize + x];
+}
+
+const double &State::proliferationTime(ul x, ul y) const {
+    return _proliferationTime[y * gridSize + x];
+}
+
+double &State::proliferationTime(ul x, ul y) {
+    return _proliferationTime[y * gridSize + x];
 }
