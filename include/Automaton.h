@@ -12,7 +12,7 @@ private:
     State state;
 
     Parameters params;
-    int step = 0;
+    ul step = 0;
 private:
 
     // Perform one step of the simulation.
@@ -33,12 +33,19 @@ private:
     //%   as per the [T,R] protocol given from the present compressed protocol
     //%   string.
     //%
-    //% Multi-irradiation Method/Assumptions
+    //% Multi-_irradiation Method/Assumptions
     //%  * we do not add R'' (new) to R' (prev. dose) damage level to the site,
     //%    instead, we assume that some degree of repair has already occured,
     //%    and so, there is an 'effective' R, R* which represents the level of
-    //%    damage present in the site at the time of the new irradiation;
+    //%    damage present in the site at the time of the new _irradiation;
     void irradiateTumor();
+
+    /**
+     * Checks the irradiation dose for current step
+     * @param step
+     * @return irradiation dose
+     */
+    double getIrradiationDose(ul step) const;
 
 
 public:

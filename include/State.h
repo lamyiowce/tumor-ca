@@ -14,31 +14,31 @@ public:
     State(State&) = default;
     ul gridSize;
 
-    grid<bool> W; // 1 - cell alive
-    grid<double> CHO; // CHO level
-    grid<double> OX; // oxygen level
-    grid<double> timeInRepair; // STATE.RepT, time-in-repair clock
-    grid<double> irradiation; // STATE.R, the level of damage present in the site
+    grid<bool> _W; // 1 - cell alive
+    grid<double> _CHO; // CHO level
+    grid<double> _OX; // oxygen level
+    grid<double> _timeInRepair; // STATE.RepT, time-in-repair clock
+    grid<double> _irradiation; // STATE.R, the level of damage present in the site
 public:
     bool getW(ul x, ul y) const;
 
     void setW(ul x, ul y, bool value);
 
-    const double &getCHO(ul x, ul y) const;
+    const double &CHO(ul x, ul y) const;
 
-    double &getCHO(ul x, ul y);
+    double &CHO(ul x, ul y);
 
-    const double &getOX(ul x, ul y) const;
+    const double &OX(ul x, ul y) const;
 
-    double &getOX(ul x, ul y);
+    double &OX(ul x, ul y);
 
-    const double &getTimeInRepair(ul x, ul y) const;
+    const double &timeInRepair(ul x, ul y) const;
 
-    double &getTimeInRepair(ul x, ul y);
+    double &timeInRepair(ul x, ul y);
 
-    const double &getIrradiation(ul x, ul y) const;
+    const double &irradiation(ul x, ul y) const;
 
-    double &getIrradiation(ul x, ul y);
+    double &irradiation(ul x, ul y);
 
 };
 
