@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Automaton.h"
+#include <Automaton.h>
 
 int main() {
     unsigned long gridSize = 51;

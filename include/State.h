@@ -3,7 +3,7 @@
 #define TUMOR_STATE_H
 
 #include <vector>
-#include "util.h"
+#include <util.h>
 
 template <class T>
 using grid = std::vector<T>;

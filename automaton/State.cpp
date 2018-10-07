@@ -1,8 +1,6 @@
 
 #include <State.h>
 
-#include "State.h"
-
 State::State(ul _gridSize) : gridSize(_gridSize),
                              _W(gridSize * gridSize),
                              _CHO(gridSize * gridSize),

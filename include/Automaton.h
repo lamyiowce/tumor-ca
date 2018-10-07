@@ -3,8 +3,8 @@
 #define TUMOR_AUTOMATON_H
 
 
-#include "State.h"
-#include "Parameters.h"
+#include <State.h>
+#include <Parameters.h>
 
 class Automaton {
 private:

@@ -1,8 +1,6 @@
 
 #include <Automaton.h>
 
-#include "Automaton.h"
-
 Automaton::Automaton(State& _state, Parameters& _params) : state(_state), params(_params){
 
 }

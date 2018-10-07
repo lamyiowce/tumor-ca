@@ -2,7 +2,7 @@
 #ifndef TUMOR_PARAMETERS_H
 #define TUMOR_PARAMETERS_H
 #include <vector>
-#include "util.h"
+#include <util.h>
 
 using IrradiationProtocol = std::vector<std::pair<ul, double>>;
 
