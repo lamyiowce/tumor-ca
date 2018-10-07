@@ -33,11 +33,11 @@ private:
     //%   as per the [T,R] protocol given from the present compressed protocol
     //%   string.
     //%
-    //% Multi-_irradiation Method/Assumptions
+    //% Multi-irradiation Method/Assumptions
     //%  * we do not add R'' (new) to R' (prev. dose) damage level to the site,
     //%    instead, we assume that some degree of repair has already occured,
     //%    and so, there is an 'effective' R, R* which represents the level of
-    //%    damage present in the site at the time of the new _irradiation;
+    //%    damage present in the site at the time of the new irradiation;
     void irradiateTumor();
 
     /**

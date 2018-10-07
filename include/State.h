@@ -9,7 +9,7 @@ template <class T>
 using grid = std::vector<T>;
 
 class State {
-
+public:
     enum class CellState {
         DEAD,
         AEROBIC_PROLIFERATION,
@@ -18,11 +18,11 @@ class State {
         ANAREOBIC_QUIESCENCE
     };
 
-public:
     explicit State(unsigned long gridSize);
     State(State&) = default;
     ul gridSize;
 
+private:
     grid<bool> _W; // 1 - cell alive
     grid<double> _CHO; // CHO level
     grid<double> _OX; // oxygen level
