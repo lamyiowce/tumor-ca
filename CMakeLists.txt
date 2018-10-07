@@ -3,13 +3,15 @@ project(tumor)
 
 set(CMAKE_CXX_STANDARD 11)
 
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+
 include_directories(include)
 
 add_executable(tumor
         main.cpp
-        ca/Automaton.cpp
-        ca/Parameters.cpp
-        ca/State.cpp
+        automaton/Automaton.cpp
+        automaton/Parameters.cpp
+        automaton/State.cpp
         include/Automaton.h
         include/Parameters.h
         include/util.h)
