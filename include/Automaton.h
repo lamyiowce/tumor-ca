@@ -93,6 +93,10 @@ public:
 
     void setLocalStates();
 
+    /**
+     * Calculate new nutrients values in all living sites. Progress proliferation clock.
+     * MetaboliseNutrients in matlab
+     */
     void metaboliseNutrients();
 
     void setGlobalStates();
