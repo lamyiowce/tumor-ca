@@ -26,6 +26,7 @@ private:
     grid<bool> _W; // 1 - cell alive
     grid<double> _CHO; // CHO level
     grid<double> _OX; // oxygen level
+    grid<double> _GI; // GI level
     grid<double> _timeInRepair; // STATE.RepT, time-in-repair clock
     grid<double> _irradiation; // STATE.R, the level of damage present in the site
     grid<CellState> _cellState; // biological state of a cell. holds the same information as STATE.lMET
@@ -43,6 +44,10 @@ public:
     const double &OX(ul x, ul y) const;
 
     double &OX(ul x, ul y);
+
+    const double &GI(ul x, ul y) const;
+
+    double &GI(ul x, ul y);
 
     const double &timeInRepair(ul x, ul y) const;
 

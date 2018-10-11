@@ -47,6 +47,42 @@ private:
      */
     double getIrradiationDose(ul step) const;
 
+    /**
+     * Progress proliferation clock.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void progressCellClock(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in aerobic proliferation state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAerobicProliferation(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in anaerobic proliferation state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAnaerobicProliferation(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in aerobic quiescence state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAerobicQuiescence(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in anaerobic quiescence state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAnaerobicQuiescence(ul i, ul j);
+
+
 
 public:
     const State &getState() const;
