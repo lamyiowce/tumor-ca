@@ -1,10 +1,19 @@
 
-#include "Parameters.h"
+#include <Parameters.h>
 #include <utility>
 
-Parameters::Parameters(const double sCHOex, const double sOXex, std::vector<double> irradiationPerStep, const double tau)
+Parameters::Parameters(
+            double sCHOex,
+            double sOXex,
+            IrradiationProtocol irradiationSteps,
+            double tau,
+            double stepTime,
+            const Metabolism &metabolism
+        )
         : sCHOex(sCHOex),
           sOXex(sOXex),
-          irradiationPerStep(std::move(irradiationPerStep)),
-          tau(tau) {}
+          irradiationSteps(std::move(irradiationSteps)),
+          tau(tau),
+          stepTime(stepTime),
+          metabolism(metabolism) {}
 

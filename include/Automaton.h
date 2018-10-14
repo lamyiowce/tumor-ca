@@ -3,8 +3,8 @@
 #define TUMOR_AUTOMATON_H
 
 
-#include "State.h"
-#include "Parameters.h"
+#include <State.h>
+#include <Parameters.h>
 
 class Automaton {
 private:
@@ -12,7 +12,7 @@ private:
     State state;
 
     Parameters params;
-    int step = 0;
+    ul step = 0;
 private:
 
     // Perform one step of the simulation.
@@ -40,6 +40,49 @@ private:
     //%    damage present in the site at the time of the new irradiation;
     void irradiateTumor();
 
+    /**
+     * Checks the irradiation dose for current step
+     * @param step
+     * @return irradiation dose
+     */
+    double getIrradiationDose(ul step) const;
+
+    /**
+     * Progress proliferation clock.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void progressCellClock(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in aerobic proliferation state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAerobicProliferation(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in anaerobic proliferation state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAnaerobicProliferation(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in aerobic quiescence state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAerobicQuiescence(ul i, ul j);
+
+    /**
+     * Metabolise for a cell in anaerobic quiescence state.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void metaboliseAnaerobicQuiescence(ul i, ul j);
+
+
 
 public:
     const State &getState() const;
@@ -50,6 +93,10 @@ public:
 
     void setLocalStates();
 
+    /**
+     * Calculate new nutrients values in all living sites. Progress proliferation clock.
+     * MetaboliseNutrients in matlab
+     */
     void metaboliseNutrients();
 
     void setGlobalStates();
