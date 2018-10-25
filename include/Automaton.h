@@ -5,11 +5,12 @@
 
 #include <State.h>
 #include <Parameters.h>
+#include <Cycles.h>
 
 class Automaton {
 private:
-
     State state;
+	Cycles cycles;
 
     Parameters params;
     ul step = 0;
@@ -82,12 +83,20 @@ private:
      */
     void metaboliseAnaerobicQuiescence(ul i, ul j);
 
+    /**
+     * KILLSITE executes the cell-death program for site indicated
+     *   by the index arguments.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void KillSite(ul i, ul j);
 
+	bool hasVacantNeighbors(ul i, ul j);
 
 public:
     const State &getState() const;
 
-    Automaton(State &_state, Parameters &_params);
+    Automaton(State &_state, Cycles &_cycles, Parameters &_params);
 
     void runNSteps(int nSteps);
 
