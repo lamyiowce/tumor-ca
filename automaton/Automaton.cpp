@@ -1,7 +1,9 @@
 
 #include <Automaton.h>
 
-Automaton::Automaton(State& _state, Parameters& _params) : state(_state), params(_params){
+#include <algorithm>
+
+Automaton::Automaton(State& _state, Parameters& _params) : state(_state), params(_params), randomGenerator(rd()) {
 
 }
 
@@ -133,12 +135,63 @@ void Automaton::repairCells() {
 }
 
 void Automaton::cellDivision() {
-    // TODO
+    std::vector<std::pair<ul, ul>> readyCells;
+    for (ul x = 0; x < state.gridSize; ++x) {
+        for (ul y = 0; y < state.gridSize; ++y) {
+            if (isReadyForDivision(x, y)) {
+                readyCells.emplace_back(x, y);
+            }
+        }
+    }
+    std::shuffle(readyCells.begin(), readyCells.end(), randomGenerator);
+    for (auto const &cell : readyCells) {
+        auto child = randomNeighbour(cell.first, cell.second);
+        if (child != cell) {
+
+        }
+    }
+}
+
+void Automaton::birthCells(const Automaton::coords_t &parent, const Automaton::coords_t &child) {
+    
+}
+
+Automaton::coords_t Automaton::randomNeighbour(ul i, ul j) {
+    ul i_start = i == 0 ? i : i - 1;
+    ul i_end = (i == state.gridSize - 1) ? i : i + 1;
+    ul j_start = j == 0 ? j : j - 1;
+    ul j_end = (j == state.gridSize - 1) ? j : j + 1;
+    std::vector<double> probs;
+    std::vector<coords_t> sites;
+    for (ul x = i_start; i < i_end; ++i) {
+        for (ul y = j_start; j < j_end; ++j) {
+            if (x != i || y != j) {
+                double prob = mapToProb((long)x - i, (long)y - j);
+                probs.push_back(prob);
+                sites.emplace_back(x, y);
+            }
+        }
+    }
+    auto choice = chooseWithProbabilites(probs);
+    if (choice < sites.size()) {
+        return sites[choice];
+    } else {
+        return {i, j};
+    }
 }
 
 void Automaton::updateStats() {
     // TODO
 }
 
+bool Automaton::isReadyForDivision(ul i, ul j) {
+    return state.getW(i, j) && state.radius(i, j) < params.rMax * state.gridSize / 2 && state.gMET(i, j) == 4;
+}
 
+double Automaton::mapToProb(long x, long y) {
+    constexpr double diagonalProb = 1. / (4 + 4 * 1.41421356);
+    constexpr double sideProb = 1.41421356 * diagonalProb;
+    if (x == 0 || y == 0) return sideProb;
+    else return diagonalProb;
+}
 

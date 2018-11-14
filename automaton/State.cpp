@@ -1,5 +1,6 @@
 
 #include <State.h>
+#include <cmath>
 
 State::State(ul _gridSize) : gridSize(_gridSize),
                              _W(gridSize * gridSize),
@@ -7,7 +8,8 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _OX(gridSize * gridSize),
                              _GI(gridSize * gridSize),
                              _cellState(gridSize * gridSize),
-                             _proliferationTime(gridSize * gridSize) {}
+                             _proliferationTime(gridSize * gridSize),
+                             _gMET(gridSize * gridSize) {}
 
 bool State::getW(ul x, ul y) const {
     return _W[y * gridSize + x];
@@ -71,4 +73,16 @@ const double &State::GI(ul x, ul y) const {
 
 double &State::GI(ul x, ul y) {
     return _GI[y * gridSize + x];
+}
+
+const uint8_t &State::gMET(ul x, ul y) const {
+    return _gMET[y * gridSize + x];
+}
+
+uint8_t &State::gMET(ul x, ul y) {
+    return _gMET[y * gridSize + x];
+}
+
+double State::radius(ul x, ul y) {
+    return sqrt((x - gridSize / 2.) * (x - gridSize / 2.) + (y - gridSize / 2.) * (y - gridSize / 2.));
 }

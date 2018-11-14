@@ -8,12 +8,24 @@ Parameters::Parameters(
             IrradiationProtocol irradiationSteps,
             double tau,
             double stepTime,
-            const Metabolism &metabolism
+            const Metabolism &metabolism,
+            double rMax
         )
         : sCHOex(sCHOex),
           sOXex(sOXex),
           irradiationSteps(std::move(irradiationSteps)),
           tau(tau),
           stepTime(stepTime),
-          metabolism(metabolism) {}
+          metabolism(metabolism),
+          rMax(rMax) {}
 
+Parameters::NutrientsParameters::NutrientsParameters(double CHO, double OX, double GI) : CHO(CHO), OX(OX), GI(GI) {}
+
+Parameters::Metabolism::Metabolism(const Parameters::NutrientsParameters &anaerobicProliferation,
+                                   const Parameters::NutrientsParameters &aerobicProliferation,
+                                   const Parameters::NutrientsParameters &anaerobicQuiescence,
+                                   const Parameters::NutrientsParameters &aerobicQuiescence)
+                                   : anaerobicProliferation(anaerobicProliferation),
+                                   aerobicProliferation(aerobicProliferation),
+                                   anaerobicQuiescence(anaerobicQuiescence),
+                                   aerobicQuiescence(aerobicQuiescence) {}

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <util.h>
+#include <cstdint>
 
 template <class T>
 using grid = std::vector<T>;
@@ -31,6 +32,7 @@ private:
     grid<double> _irradiation; // STATE.R, the level of damage present in the site
     grid<CellState> _cellState; // biological state of a cell. holds the same information as STATE.lMET
     grid<double> _proliferationTime; // proliferation timer, same as STATE.HRS
+    grid<uint8_t> _gMET;
 
 public:
     bool getW(ul x, ul y) const;
@@ -64,6 +66,12 @@ public:
     const double &proliferationTime(ul x, ul y) const;
 
     double &proliferationTime(ul x, ul y);
+
+    const uint8_t &gMET(ul x, ul y) const;
+
+    uint8_t &gMET(ul x, ul y);
+
+    double radius(ul x, ul y);
 
 };
 

@@ -15,6 +15,8 @@ public:
         double CHO;
         double OX;
         double GI;
+
+        NutrientsParameters(double CHO, double OX, double GI);
     };
 
     /**
@@ -25,6 +27,9 @@ public:
         NutrientsParameters aerobicProliferation; /// sCHOp, sOXp, sdGIp
         NutrientsParameters anaerobicQuiescence; /// sCHOq_an, sOXq_an, sdGIq_an
         NutrientsParameters aerobicQuiescence; /// sCHOq, sOXq, sdGIq
+
+        Metabolism(const NutrientsParameters &anaerobicProliferation, const NutrientsParameters &aerobicProliferation,
+                   const NutrientsParameters &anaerobicQuiescence, const NutrientsParameters &aerobicQuiescence);
     };
 
     Parameters(double sCHOex,
@@ -32,7 +37,8 @@ public:
             IrradiationProtocol irradiationPerStep,
             double tau,
             double stepTime,
-            const Metabolism &metabolism);
+            const Metabolism &metabolism,
+            double rMax);
 
     Parameters(Parameters&) = default;
 
@@ -41,8 +47,8 @@ public:
     const IrradiationProtocol irradiationSteps; /// vector of pairs (step number, irradiation dose)
     const double tau;
     const double stepTime; // step time in seconds
-
     const Metabolism metabolism; /// nutrients metabolism parameters
+    const double rMax;
 
 };
 
