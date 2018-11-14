@@ -153,7 +153,7 @@ void Automaton::cellDivision() {
 }
 
 void Automaton::birthCells(const Automaton::coords_t &parent, const Automaton::coords_t &child) {
-    
+
 }
 
 Automaton::coords_t Automaton::randomNeighbour(ul i, ul j) {
