@@ -98,5 +98,3 @@ bool State::cycleChanged(ul x, ul y) {
 void State::setCycleChanged(ul x, ul y, bool value) {
 	_cycleChanged[y * gridSize + x] = value;
 }
-
-bool State::

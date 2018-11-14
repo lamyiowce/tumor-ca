@@ -246,7 +246,40 @@ void Automaton::setGlobalStates() {
 void Automaton::repairCells() {
     for (ul i = 0; i < state.gridSize; ++i) {
         for (ul j = 0; j < state.gridSize; ++j) {
-            if ((state.timeInRepair > 0) && (state.irradiation > 0) || state.) {
+            if (((state.CH(i, j) > 0) && (state.irradiation(i, j) > 0)) 
+                || (state.timeInRepair(i, j) > 0)) {
+                // add repair time to these sites
+                // this ensures that any site in 
+                // repair mode has RepT > 0
+                state.timeInRepair(i, j) +=  params.stepTime/3600; // t in hours
+                // DelayTime
+                // provides a delay (in h) to the cell-phase cycle for
+                // EMT6/Ro cells irradiated to level R (Gy) by some protocol.
+                // find any sites which have come to the end of the repair period
+                if (state.timeInRepair(i, j) >= 
+                    3.3414 * exp(0.1492 * state.irradiation(i, j))) {
+                    if (state.irradiation(i, j) > 0) {
+                        // TODO(Aga): 
+                        // b_ix = ProbDeathInRepair(R_FinRep);
+                        // ( ProbDeathInRepair(R) = 1 - exp(-0.4993.*R);)
+    
+                        // ix_die    = ix_FinRep(find(rand(size(b_ix)) <= b_ix));     
+                        // ^ die with prob. b
+                        // ix_repair = setdiff(ix_FinRep,ix_die);                      
+                        // ^ be repaired with prob (1-b)
+                        
+                        // if ix_die
+                        //     % // kill sites
+                        //     KillSites(ix_die);
+                        // end
+                        
+                        // if ix_repair
+                        //     % // Repair others
+                        //     STATE.R(ix_repair) = 0;
+                        //     STATE.RepT(ix_repair) = 0;
+                        // end
+                    }
+                }
 
             }
 

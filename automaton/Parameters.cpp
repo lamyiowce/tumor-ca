@@ -7,7 +7,7 @@ Parameters::Parameters(
             double sOXex,
             IrradiationProtocol irradiationSteps,
             double tau,
-            double stepTime,
+            double stepTime, // tStep
             const Metabolism &metabolism,
 			double GIcritical,
 			double GIdeath,

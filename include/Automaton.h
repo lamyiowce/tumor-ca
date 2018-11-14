@@ -7,6 +7,8 @@
 #include <Parameters.h>
 #include <Cycles.h>
 
+#include <math.h>
+
 class Automaton {
 private:
     State state;
