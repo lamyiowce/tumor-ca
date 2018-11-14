@@ -16,14 +16,14 @@ void Automaton::runNSteps(int nSteps) {
 }
 
 void Automaton::advance() {
-    diffusion();
-    irradiateTumor();
-    setLocalStates();
-    metaboliseNutrients();
-    setGlobalStates();
-    repairCells();
-    cellDivision();
-    updateStats();
+    diffusion(); // Aga
+    irradiateTumor(); // Rafał/Julia
+    setLocalStates(); // Olaf
+    metaboliseNutrients(); // Rafał
+    setGlobalStates(); // Olaf
+    repairCells(); // Aga
+    cellDivision(); // Rafał
+    updateStats(); 
     // TODO: finish check
 }
 
