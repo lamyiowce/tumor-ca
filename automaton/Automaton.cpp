@@ -56,7 +56,8 @@ void Automaton::irradiateTumor() {
                 if (state.getW(i, j)) {
                     auto r0 = state.irradiation(i, j);
                     auto timeInRepair = state.timeInRepair(i, j);
-                    auto effectiveIrradiation = r0 / (1 + timeInRepair / params.tau);
+                    auto effectiveIrradiation = r0 / (
+                        1 + timeInRepair / params.tau);
                     state.irradiation(i, j) = effectiveIrradiation + dose;
                     state.timeInRepair(i, j) = 0;
                 }
@@ -75,7 +76,9 @@ void Automaton::setLocalStates() {
                 // -- completed cell cycle but not divided yet.
                 if (state.GI(i, j) >= params.GIdeath
                     || state.CHO(i, j) < params.metabolism.aerobicQuiescence.CHO
-                    || state.proliferationTime(i, j) > cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j) + cycles.Mtime(i, j) + cycles.Dtime(i, j)) {
+                    || (state.proliferationTime(i, j) > cycles.G1time(i, j) 
+                        + cycles.Stime(i, j) + cycles.G2time(i, j) 
+                        + cycles.Mtime(i, j) + cycles.Dtime(i, j))) {
 
                     KillSite(i, j);
                     continue;
@@ -87,7 +90,8 @@ void Automaton::setLocalStates() {
                     // if it is near an S-phase.
                     && !(
                         state.cellCycle(i, j) == State::CellCycle::G1
-                        && state.proliferationTime(i, j) >= cycles.G1time(i, j) - 2*params.stepTime/3600
+                        && (state.proliferationTime(i, j) 
+                            >= cycles.G1time(i, j) - 2*params.stepTime/3600)
                         && state.proliferationTime(i, j) < cycles.G1time(i, j)
 						&& hasVacantNeighbors(i, j)
                     )) {
@@ -110,7 +114,8 @@ void Automaton::setLocalStates() {
                             }
                             continue;
                         }
-                    } else if (state.CHO(i, j) >= params.metabolism.anaerobicProliferation.CHO) {  // [matlab] ix_p_an
+                    } else if (state.CHO(i, j) 
+                    >= params.metabolism.anaerobicProliferation.CHO) {  // [matlab] ix_p_an
                         state.cellState(i, j) = State::CellState::ANAREOBIC_PROLIFERATION;
                         continue;
                     }
@@ -150,7 +155,8 @@ void Automaton::setLocalStates() {
 
 // Progress clock if repair time is 0.
 void Automaton::progressCellClock(ul i, ul j) {
-    if (state.timeInRepair(i, j) == 0) state.proliferationTime(i, j) += params.stepTime / 3600;
+    if (state.timeInRepair(i, j) == 0) 
+        state.proliferationTime(i, j) += params.stepTime / 3600;
 }
 
 void Automaton::metaboliseAerobicProliferation(ul i, ul j) {
@@ -213,15 +219,19 @@ void Automaton::setGlobalStates() {
 						&& state.cellCycle(i, j) != State::CellCycle::G1) {
 					state.cellCycle(i, j) = State::CellCycle::G1;
 					state.setCycleChanged(i, j, true);
-				} else if (state.proliferationTime(i, j) <= cycles.G1time(i, j) + cycles.Stime(i, j)
+				} else if (state.proliferationTime(i, j) 
+                    <= cycles.G1time(i, j) + cycles.Stime(i, j)
 						&& state.cellCycle(i, j) != State::CellCycle::S) {
 					state.cellCycle(i, j) = State::CellCycle::S;
 					state.setCycleChanged(i, j, true);
-				} else if (state.proliferationTime(i, j) <= cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j)
+				} else if (state.proliferationTime(i, j) 
+                    <= cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j)
 						&& state.cellCycle(i, j) != State::CellCycle::G2) {
 					state.cellCycle(i, j) = State::CellCycle::G2;
 					state.setCycleChanged(i, j, true);
-				} else if (state.proliferationTime(i, j) <= cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j) + cycles.Mtime(i, j)
+				} else if (state.proliferationTime(i, j) 
+                    <= (cycles.G1time(i, j) + cycles.Stime(i, j) 
+                        + cycles.G2time(i, j) + cycles.Mtime(i, j))
 						&& state.cellCycle(i, j) != State::CellCycle::M) {
 					state.cellCycle(i, j) = State::CellCycle::M;
 					state.setCycleChanged(i, j, true);
@@ -234,6 +244,14 @@ void Automaton::setGlobalStates() {
 }
 
 void Automaton::repairCells() {
+    for (ul i = 0; i < state.gridSize; ++i) {
+        for (ul j = 0; j < state.gridSize; ++j) {
+            if ((state.timeInRepair > 0) && (state.irradiation > 0) || state.) {
+
+            }
+
+        }
+    }
     // TODO
 }
 

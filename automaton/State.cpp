@@ -6,6 +6,7 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _CHO(gridSize * gridSize),
                              _OX(gridSize * gridSize),
                              _GI(gridSize * gridSize),
+                             _CH(gridSize * gridSize),
                              _cellState(gridSize * gridSize),
                              _proliferationTime(gridSize * gridSize),
 							 _cycleChanged(gridSize * gridSize) {}
@@ -32,6 +33,22 @@ const double &State::OX(ul x, ul y) const {
 
 double &State::OX(ul x, ul y) {
     return _OX[y * gridSize + x];
+}
+
+const double &State::GI(ul x, ul y) const {
+    return _GI[y * gridSize + x];
+}
+
+double &State::GI(ul x, ul y) {
+    return _GI[y * gridSize + x];
+}
+
+const double &State::CH(ul x, ul y) const {
+    return _CH[y * gridSize + x];
+}
+
+double &State::CH(ul x, ul y) {
+    return _CH[y * gridSize + x];
 }
 
 const double &State::timeInRepair(ul x, ul y) const {
@@ -74,14 +91,6 @@ double &State::proliferationTime(ul x, ul y) {
     return _proliferationTime[y * gridSize + x];
 }
 
-const double &State::GI(ul x, ul y) const {
-    return _GI[y * gridSize + x];
-}
-
-double &State::GI(ul x, ul y) {
-    return _GI[y * gridSize + x];
-}
-
 bool State::cycleChanged(ul x, ul y) {
 	return _cycleChanged[y * gridSize + x];
 }
@@ -89,3 +98,5 @@ bool State::cycleChanged(ul x, ul y) {
 void State::setCycleChanged(ul x, ul y, bool value) {
 	_cycleChanged[y * gridSize + x] = value;
 }
+
+bool State::
