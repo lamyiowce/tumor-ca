@@ -37,6 +37,9 @@ public:
             IrradiationProtocol irradiationPerStep,
             double tau,
             double stepTime,
+            double GIcritical,
+            double GIdeath,
+            int siGI_n,
             const Metabolism &metabolism,
             double rMax);
 
@@ -47,6 +50,12 @@ public:
     const IrradiationProtocol irradiationSteps; /// vector of pairs (step number, irradiation dose)
     const double tau;
     const double stepTime; // step time in seconds
+
+	// Critical pH values -- as concentration of hydrogen ions ("GI" == "growth inhibitor")
+	const double GIcritical; // concentration above this value causes switching to quiescent metabolism; sGIcrit
+	const double GIdeath; // concentration above this value causes death; sGIdeath
+
+	const int siGI_n; // TODO necrotic material produced? Why is it set to zero in tumor-lib?
     const Metabolism metabolism; /// nutrients metabolism parameters
     const double rMax;
 

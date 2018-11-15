@@ -19,7 +19,15 @@ public:
         ANAREOBIC_QUIESCENCE
     };
 
-    explicit State(unsigned long gridSize);
+	enum class CellCycle {
+		G1,  // 0
+		S,   // 1
+		G2,  // 2
+		M,   // 3
+		D    // 4
+	};
+
+    explicit State(ul gridSize);
     State(State&) = default;
     ul gridSize;
 
@@ -31,8 +39,9 @@ private:
     grid<double> _timeInRepair; // STATE.RepT, time-in-repair clock
     grid<double> _irradiation; // STATE.R, the level of damage present in the site
     grid<CellState> _cellState; // biological state of a cell. holds the same information as STATE.lMET
+    grid<CellCycle> _cellCycle; // ; STATE.gMET
     grid<double> _proliferationTime; // proliferation timer, same as STATE.HRS
-    grid<uint8_t> _gMET;
+	grid<bool> _cycleChanged; // whether the site's cell cycle has changed during the last setGlobalStates() call
 
 public:
     bool getW(ul x, ul y) const;
@@ -63,16 +72,19 @@ public:
 
     CellState &cellState(ul x, ul y);
 
+    const CellCycle &cellCycle(ul x, ul y) const;
+
+    CellCycle &cellCycle(ul x, ul y);
+
     const double &proliferationTime(ul x, ul y) const;
 
     double &proliferationTime(ul x, ul y);
 
-    const uint8_t &gMET(ul x, ul y) const;
+	bool cycleChanged(ul x, ul u);
 
-    uint8_t &gMET(ul x, ul y);
+	void setCycleChanged(ul x, ul y, bool value);
 
     double radius(ul x, ul y);
-
 };
 
 

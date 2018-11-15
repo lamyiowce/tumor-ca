@@ -8,8 +8,9 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _OX(gridSize * gridSize),
                              _GI(gridSize * gridSize),
                              _cellState(gridSize * gridSize),
+                             _cellCycle(gridSize * gridSize),
                              _proliferationTime(gridSize * gridSize),
-                             _gMET(gridSize * gridSize) {}
+							 _cycleChanged(gridSize * gridSize) {}
 
 bool State::getW(ul x, ul y) const {
     return _W[y * gridSize + x];
@@ -59,6 +60,14 @@ State::CellState &State::cellState(ul x, ul y) {
     return _cellState[y * gridSize + x];
 }
 
+const State::CellCycle &State::cellCycle(ul x, ul y) const {
+    return _cellCycle[y * gridSize + x];
+}
+
+State::CellCycle &State::cellCycle(ul x, ul y) {
+    return _cellCycle[y * gridSize + x];
+}
+
 const double &State::proliferationTime(ul x, ul y) const {
     return _proliferationTime[y * gridSize + x];
 }
@@ -75,12 +84,12 @@ double &State::GI(ul x, ul y) {
     return _GI[y * gridSize + x];
 }
 
-const uint8_t &State::gMET(ul x, ul y) const {
-    return _gMET[y * gridSize + x];
+bool State::cycleChanged(ul x, ul y) {
+	return _cycleChanged[y * gridSize + x];
 }
 
-uint8_t &State::gMET(ul x, ul y) {
-    return _gMET[y * gridSize + x];
+void State::setCycleChanged(ul x, ul y, bool value) {
+	_cycleChanged[y * gridSize + x] = value;
 }
 
 double State::radius(ul x, ul y) {

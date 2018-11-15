@@ -6,12 +6,13 @@
 #include <State.h>
 #include <Parameters.h>
 #include <random>
+#include <Cycles.h>
 
 class Automaton {
-
 private:
 
     State state;
+	Cycles cycles;
 
     Parameters params;
     ul step = 0;
@@ -91,6 +92,16 @@ private:
     void metaboliseAnaerobicQuiescence(ul i, ul j);
 
     /**
+     * KILLSITE executes the cell-death program for site indicated
+     *   by the index arguments.
+     * @param i first coordinate
+     * @param j second coordinate
+     */
+    void KillSite(ul i, ul j);
+
+	bool hasVacantNeighbors(ul i, ul j);
+
+    /**
      * Checks if division is possible for a cell
      * @param i
      * @param j
@@ -107,9 +118,9 @@ private:
      */
     ul chooseWithProbabilites(const std::vector<double> &probs) {
         std::vector<double> sum;
-        sum.push_back(probs[0].second);
+        sum.push_back(probs[0]);
         for (ul i = 1; i < probs.size(); ++i) {
-            sum.push_back(sum.back() + probs[i].second);
+            sum.push_back(sum.back() + probs[i]);
         }
         if (sum.back() < 1.) {
             sum.push_back(1.);
@@ -137,7 +148,7 @@ private:
 public:
     const State &getState() const;
 
-    Automaton(State &_state, Parameters &_params);
+    Automaton(State &_state, Cycles &_cycles, Parameters &_params);
 
     void runNSteps(int nSteps);
 

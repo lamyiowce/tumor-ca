@@ -8,16 +8,22 @@ Parameters::Parameters(
             IrradiationProtocol irradiationSteps,
             double tau,
             double stepTime,
+            double GIcritical,
+            double GIdeath,
+            int siGI_n,
             const Metabolism &metabolism,
-            double rMax
+            double rmax
         )
         : sCHOex(sCHOex),
           sOXex(sOXex),
           irradiationSteps(std::move(irradiationSteps)),
           tau(tau),
           stepTime(stepTime),
+          GIcritical(GIcritical),
+          GIdeath(GIdeath),
+          siGI_n(siGI_n),
           metabolism(metabolism),
-          rMax(rMax) {}
+          rMax(rmax) {}
 
 Parameters::NutrientsParameters::NutrientsParameters(double CHO, double OX, double GI) : CHO(CHO), OX(OX), GI(GI) {}
 
