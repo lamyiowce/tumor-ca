@@ -7,7 +7,9 @@
 #include <Parameters.h>
 #include <Cycles.h>
 
+#include <random>
 #include <math.h>
+
 
 class Automaton {
 private:

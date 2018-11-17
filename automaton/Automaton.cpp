@@ -259,25 +259,18 @@ void Automaton::repairCells() {
                 if (state.timeInRepair(i, j) >= 
                     3.3414 * exp(0.1492 * state.irradiation(i, j))) {
                     if (state.irradiation(i, j) > 0) {
-                        // TODO(Aga): 
-                        // b_ix = ProbDeathInRepair(R_FinRep);
-                        // ( ProbDeathInRepair(R) = 1 - exp(-0.4993.*R);)
-    
-                        // ix_die    = ix_FinRep(find(rand(size(b_ix)) <= b_ix));     
-                        // ^ die with prob. b
-                        // ix_repair = setdiff(ix_FinRep,ix_die);                      
-                        // ^ be repaired with prob (1-b)
-                        
-                        // if ix_die
-                        //     % // kill sites
-                        //     KillSites(ix_die);
-                        // end
-                        
-                        // if ix_repair
-                        //     % // Repair others
-                        //     STATE.R(ix_repair) = 0;
-                        //     STATE.RepT(ix_repair) = 0;
-                        // end
+                        // TODO: put this in a different class/object
+                        std::random_device rd;  //Will be used to obtain a seed for the random number engine
+                        std::mt19937 rng(rd()); //Standard mersenne_twister_engine seeded with rd()
+                        std::uniform_real_distribution<> dis(0.0, 1.0);
+                        double rand = dis(rng);
+                        if (rand <= 1 - exp(-0.4993 * state.irradiation(i, j))) {
+                            KillSite(i, j);
+                        } else {
+                            // Repair cells that weren't killed
+                            state.irradiation(i, j) = 0;
+                            state.timeInRepair(i, j) = 0;
+                        }
                     }
                 }
 
