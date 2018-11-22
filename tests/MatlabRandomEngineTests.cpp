@@ -38,7 +38,7 @@ TEST_CASE("Random roulette replicates results from matlab.") {
     REQUIRE(mre.roulette(probs) == 3);
     REQUIRE(mre.roulette(probs) == 2);
     REQUIRE(mre.roulette(probs) == 3);
-    REQUIRE(mre.roulette(probs) == 3);
+    REQUIRE(mre.roulette(probs) == 5);
 }
 
 TEST_CASE("Mixed calls replicate results from matlab.") {
