@@ -11,13 +11,24 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(include)
 
-add_executable(tumor
-        main.cpp
+set(SOURCES
         automaton/Automaton.cpp
 		automaton/Cycles.cpp
         automaton/Parameters.cpp
         automaton/State.cpp
+		automaton/RandomEngine.cpp
         include/Automaton.h
 		include/Cycles.h
         include/Parameters.h
-        include/util.h)
+        include/util.h
+		include/RandomEngine.h)
+
+add_executable(tumor
+        main.cpp
+        ${SOURCES})
+
+add_executable(test
+        ${SOURCES}
+        tests/tests_main.cpp
+        tests/MatlabRandomEngineTests.cpp
+        include/catch.h)

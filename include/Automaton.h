@@ -7,6 +7,8 @@
 #include <Parameters.h>
 #include <random>
 #include <Cycles.h>
+#include <bits/unique_ptr.h>
+#include "RandomEngine.h"
 
 class Automaton {
 private:
@@ -16,20 +18,20 @@ private:
 
     Parameters params;
     ul step = 0;
-    std::random_device rd;
-    std::mt19937 randomGenerator;
+    RandomEngine *randomEngine;
 
 public:
     using coords_t = std::pair<ul, ul>;
 
 private:
 
-    // Perform one step of the simulation.
+    /// Performs one step of the simulation.
     void advance();
 
-    // % REPLENISHSUBSTRATE2 simply sets external CHO and Oxygen concentrations
-    // % to their substrate levels.
-    // Sets oxygen and CHO level of dead cells to ones specified in params.
+    /**
+     * Sets external CHO and Oxygen concentrations to their substrate levels.
+     * Sets oxygen and CHO level of dead cells to ones specified in params.
+     */
     void replenishSubstrate();
 
     // % DIFFUSION2
@@ -38,15 +40,9 @@ private:
     // %   of Diffusion (flux prop. to conc. gradient)
     void diffusion();
 
-    // % IRRADIATETUMOR_EVO apply the correct fraction (dose) at the right time
-    //%   as per the [T,R] protocol given from the present compressed protocol
-    //%   string.
-    //%
-    //% Multi-irradiation Method/Assumptions
-    //%  * we do not add R'' (new) to R' (prev. dose) damage level to the site,
-    //%    instead, we assume that some degree of repair has already occured,
-    //%    and so, there is an 'effective' R, R* which represents the level of
-    //%    damage present in the site at the time of the new irradiation;
+    /**
+     * Apply the correct fraction (dose) at the right time
+     */
     void irradiateTumor();
 
     /**
@@ -99,43 +95,28 @@ private:
      */
     void KillSite(ul i, ul j);
 
-	bool hasVacantNeighbors(ul i, ul j);
+	std::vector<std::pair<long, long>> vacantNeighbors(ul i, ul j);
 
     /**
      * Checks if division is possible for a cell
      * @param i
      * @param j
-     * @return
      */
     bool isReadyForDivision(ul i, ul j);
 
     /**
-     * Choose random number from 0 to prob.size() due to given probabilities.
-     * If probs sums to number smaller than 1, empty choice is added.
-     * For empty choice, probs.size() is returned.
-     * @param probs - probabilities
-     * @return
+     * Choose random vacant neighbour of a cell
+     * @param i first coordinate
+     * @param j second coordinate
      */
-    ul chooseWithProbabilites(const std::vector<double> &probs) {
-        std::vector<double> sum;
-        sum.push_back(probs[0]);
-        for (ul i = 1; i < probs.size(); ++i) {
-            sum.push_back(sum.back() + probs[i]);
-        }
-        if (sum.back() < 1.) {
-            sum.push_back(1.);
-        }
-        std::uniform_real_distribution<double> distribution(0., 1.);
-        double rand = distribution(randomGenerator);
-        for (ul i = 0; i < sum.size(); ++i) {
-            if (rand < sum[i]) return i;
-        }
-        return probs.size();
-    }
-
     coords_t randomNeighbour(ul i, ul j);
 
-    void birthCells(const coords_t &parent, const coords_t &child);
+    /**
+     * Setup a new cell
+     * @param parent site of a parent cell
+     * @param child site for the new cell
+     */
+    void birthCell(const coords_t &parent, const coords_t &child);
 
     /**
      * Map relative position to probability of division.
@@ -143,12 +124,12 @@ private:
      * @param y
      * @return
      */
-    double mapToProb(long x, long y);
+    static float mapToProb(std::pair<long, long> &relativeCoords);
 
 public:
     const State &getState() const;
 
-    Automaton(State &_state, Cycles &_cycles, Parameters &_params);
+    Automaton(State &_state, Cycles &_cycles, Parameters &_params, RandomEngine *randomEngine);
 
     void runNSteps(int nSteps);
 

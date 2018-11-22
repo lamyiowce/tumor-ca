@@ -1,9 +1,8 @@
-
 #include <Automaton.h>
 #include <algorithm>
 
-Automaton::Automaton(State& _state, Cycles& _cycles, Parameters& _params)
-	: state(_state), cycles(_cycles), params(_params) {
+Automaton::Automaton(State& _state, Cycles& _cycles, Parameters& _params, RandomEngine *randomEngine)
+	: state(_state), cycles(_cycles), params(_params), randomEngine(randomEngine) {
 
 }
 
@@ -90,7 +89,7 @@ void Automaton::setLocalStates() {
                         state.cellCycle(i, j) == State::CellCycle::G1
                         && state.proliferationTime(i, j) >= cycles.G1time(i, j) - 2*params.stepTime/3600
                         && state.proliferationTime(i, j) < cycles.G1time(i, j)
-						&& hasVacantNeighbors(i, j)
+						&& !vacantNeighbors(i, j).empty()
                     )) {
                     // [matlab] try prolif --> 2B
                     if (state.OX(i, j) >= params.metabolism.aerobicProliferation.OX) {
@@ -222,7 +221,8 @@ void Automaton::setGlobalStates() {
 						&& state.cellCycle(i, j) != State::CellCycle::G2) {
 					state.cellCycle(i, j) = State::CellCycle::G2;
 					state.setCycleChanged(i, j, true);
-				} else if (state.proliferationTime(i, j) <= cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j) + cycles.Mtime(i, j)
+				} else if (state.proliferationTime(i, j) <=
+				                    cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j) + cycles.Mtime(i, j)
 						&& state.cellCycle(i, j) != State::CellCycle::M) {
 					state.cellCycle(i, j) = State::CellCycle::M;
 					state.setCycleChanged(i, j, true);
@@ -247,41 +247,48 @@ void Automaton::cellDivision() {
             }
         }
     }
-    std::shuffle(readyCells.begin(), readyCells.end(), randomGenerator);
-    for (auto const &cell : readyCells) {
+    auto permutation = randomEngine->randomPermutation(readyCells.size());
+    for (auto n : permutation) {
+        auto cell = readyCells[n];
         auto child = randomNeighbour(cell.first, cell.second);
         if (child != cell) {
-
+            birthCell(cell, child);
         }
     }
 }
 
-void Automaton::birthCells(const Automaton::coords_t &parent, const Automaton::coords_t &child) {
+void Automaton::birthCell(const Automaton::coords_t &parent, const Automaton::coords_t &child) {
+    auto ci = child.first;
+    auto cj = child.second;
+    cycles.G1time(ci, cj) = randomEngine->normal(params.birthParams.G1time.mean, params.birthParams.G1time.stddev);
+    cycles.Stime(ci, cj) = randomEngine->normal(params.birthParams.Stime.mean, params.birthParams.Stime.stddev);
+    cycles.G1time(ci, cj) = randomEngine->normal(params.birthParams.G2time.mean, params.birthParams.G2time.stddev);
+    cycles.Mtime(ci, cj) = randomEngine->normal(params.birthParams.Mtime.mean, params.birthParams.Mtime.stddev);
+    cycles.Dtime(ci, cj) = randomEngine->normal(params.birthParams.Dtime.mean, params.birthParams.Dtime.stddev);
 
+    state.setW(ci, cj, true);
+    state.proliferationTime(ci, cj) = 0;
+    state.cellCycle(ci, cj) = State::CellCycle::G1;
+
+    state.proliferationTime(parent.first, parent.second) = 0;
+    state.cellCycle(parent.first, parent.second) = State::CellCycle::G1;
+
+    state.irradiation(ci, cj) = state.irradiation(parent.first, parent.second);
 }
 
 Automaton::coords_t Automaton::randomNeighbour(ul i, ul j) {
-    ul i_start = i == 0 ? i : i - 1;
-    ul i_end = (i == state.gridSize - 1) ? i : i + 1;
-    ul j_start = j == 0 ? j : j - 1;
-    ul j_end = (j == state.gridSize - 1) ? j : j + 1;
-    std::vector<double> probs;
-    std::vector<coords_t> sites;
-    for (ul x = i_start; i < i_end; ++i) {
-        for (ul y = j_start; j < j_end; ++j) {
-            if (x != i || y != j) {
-                double prob = mapToProb((long)x - i, (long)y - j);
-                probs.push_back(prob);
-                sites.emplace_back(x, y);
-            }
-        }
-    }
-    auto choice = chooseWithProbabilites(probs);
-    if (choice < sites.size()) {
-        return sites[choice];
-    } else {
-        return {i, j};
-    }
+   auto vn = vacantNeighbors(i, j);
+   if (vn.empty())
+       return {i, j};
+   std::vector<float> probs(vn.size());
+   std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
+   ul choice = randomEngine->roulette(probs);
+   if (choice == probs.size()) {
+       return {i, j};
+   } else {
+       auto relativeCoords = vn[choice];
+       return {i + relativeCoords.first, j + relativeCoords.second};
+   }
 }
 
 void Automaton::updateStats() {
@@ -307,27 +314,27 @@ bool Automaton::isReadyForDivision(ul i, ul j) {
         state.cellCycle(i, j) == State::CellCycle::D;
 }
 
-double Automaton::mapToProb(long x, long y) {
-    constexpr double diagonalProb = 1. / (4 + 4 * 1.41421356);
-    constexpr double sideProb = 1.41421356 * diagonalProb;
-    if (x == 0 || y == 0) return sideProb;
+float Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
+    static constexpr float diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
+    static constexpr float sideProb = 1.41421356f * diagonalProb;
+    if (relativeCoords.first == 0 || relativeCoords.second == 0) return sideProb;
     else return diagonalProb;
 }
 
-bool Automaton::hasVacantNeighbors(ul i, ul j) {
-    ul i_start = i == 0 ? i : i - 1;
-    ul i_end = (i == state.gridSize - 1) ? i : i + 1;
-    ul j_start = j == 0 ? j : j - 1;
-    ul j_end = (j == state.gridSize - 1) ? j : j + 1;
+std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul i, ul j) {
+    long i_start = i == 0 ? 0 : -1;
+    long i_end = (i == state.gridSize - 1) ? 0 : 1;
+    long j_start = j == 0 ? 0 : -1;
+    long j_end = (j == state.gridSize - 1) ? 0 : 1;
 
-    for (ul ix = i_start; ix < i_end; ++ix) {
-        for (ul jx = j_start; jx < j_end; ++jx) {
-            if (state.getW(ix, jx) == 0) {
-                return true;
+    std::vector<std::pair<long, long>> result;
+    for (long ix = i_start; ix < i_end; ++ix) {
+        for (long jx = j_start; jx < j_end; ++jx) {
+            if (state.getW(i + ix, j + jx) == 0) {
+                result.emplace_back(ix, jx);
             }
         }
     }
-
-    return false;
+    return result;
 }
 

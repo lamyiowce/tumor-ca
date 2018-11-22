@@ -1,4 +1,3 @@
-
 #ifndef TUMOR_PARAMETERS_H
 #define TUMOR_PARAMETERS_H
 #include <vector>
@@ -12,9 +11,9 @@ public:
      * Amounts of nutrients metabolised.
      */
     struct NutrientsParameters {
-        double CHO;
-        double OX;
-        double GI;
+        const double CHO;
+        const double OX;
+        const double GI;
 
         NutrientsParameters(double CHO, double OX, double GI);
     };
@@ -32,6 +31,24 @@ public:
                    const NutrientsParameters &anaerobicQuiescence, const NutrientsParameters &aerobicQuiescence);
     };
 
+    struct NormDistParams {
+        float mean;
+        float stddev;
+
+        NormDistParams(float mean, float stddev);
+    };
+
+    struct BirthParams {
+        NormDistParams G1time;
+        NormDistParams Stime;
+        NormDistParams G2time;
+        NormDistParams Mtime;
+        NormDistParams Dtime;
+
+        BirthParams(const NormDistParams &G1time, const NormDistParams &Stime, const NormDistParams &G2time,
+                    const NormDistParams &Mtime, const NormDistParams &Dtime);
+    };
+
     Parameters(double sCHOex,
             double sOXex,
             IrradiationProtocol irradiationPerStep,
@@ -41,7 +58,8 @@ public:
             double GIdeath,
             int siGI_n,
             const Metabolism &metabolism,
-            double rMax);
+            double rMax,
+            const BirthParams &birthParams);
 
     Parameters(Parameters&) = default;
 
@@ -58,6 +76,7 @@ public:
 	const int siGI_n; // TODO necrotic material produced? Why is it set to zero in tumor-lib?
     const Metabolism metabolism; /// nutrients metabolism parameters
     const double rMax;
+    const BirthParams birthParams;
 
 };
 
