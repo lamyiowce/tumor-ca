@@ -10,6 +10,10 @@
 #include <bits/unique_ptr.h>
 #include "RandomEngine.h"
 
+#include <random>
+#include <math.h>
+
+
 class Automaton {
 private:
 

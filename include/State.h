@@ -36,12 +36,17 @@ private:
     grid<double> _CHO; // CHO level
     grid<double> _OX; // oxygen level
     grid<double> _GI; // GI level
+    grid<double> _CH; // STATE.ch - recorded changes from the 
+                      // SetGlobalStates phase to be repaired in RepairCells
     grid<double> _timeInRepair; // STATE.RepT, time-in-repair clock
-    grid<double> _irradiation; // STATE.R, the level of damage present in the site
-    grid<CellState> _cellState; // biological state of a cell. holds the same information as STATE.lMET
+    grid<double> _irradiation; // STATE.R, the level of damage 
+                               //present in the site
+    grid<CellState> _cellState; // biological state of a cell. 
+                                // holds the same information as STATE.lMET
     grid<CellCycle> _cellCycle; // ; STATE.gMET
     grid<double> _proliferationTime; // proliferation timer, same as STATE.HRS
-	grid<bool> _cycleChanged; // whether the site's cell cycle has changed during the last setGlobalStates() call
+	grid<bool> _cycleChanged; // whether the site's cell cycle has changed 
+                              // during the last setGlobalStates() call
 
 public:
     bool getW(ul x, ul y) const;
@@ -59,6 +64,10 @@ public:
     const double &GI(ul x, ul y) const;
 
     double &GI(ul x, ul y);
+
+    const double &CH(ul x, ul y) const;
+
+    double &CH(ul x, ul y);
 
     const double &timeInRepair(ul x, ul y) const;
 

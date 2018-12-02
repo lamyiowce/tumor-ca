@@ -1,8 +1,8 @@
 #include <Automaton.h>
 #include <algorithm>
 
-Automaton::Automaton(State& _state, Cycles& _cycles, Parameters& _params, RandomEngine *randomEngine)
-	: state(_state), cycles(_cycles), params(_params), randomEngine(randomEngine) {
+Automaton::Automaton(State &_state, Cycles &_cycles, Parameters &_params, RandomEngine *randomEngine)
+        : state(_state), cycles(_cycles), params(_params), randomEngine(randomEngine) {
 
 }
 
@@ -50,16 +50,15 @@ double Automaton::getIrradiationDose(ul step) const {
 
 void Automaton::irradiateTumor() {
     double dose = getIrradiationDose(step);
-    if (dose > 0) {
-        for (ul i = 0; i < state.gridSize; ++i) {
-            for (ul j = 0; j < state.gridSize; ++j) {
-                if (state.getW(i, j)) {
-                    auto r0 = state.irradiation(i, j);
-                    auto timeInRepair = state.timeInRepair(i, j);
-                    auto effectiveIrradiation = r0 / (1 + timeInRepair / params.tau);
-                    state.irradiation(i, j) = effectiveIrradiation + dose;
-                    state.timeInRepair(i, j) = 0;
-                }
+    if (dose <= 0) return;
+    for (ul i = 0; i < state.gridSize; ++i) {
+        for (ul j = 0; j < state.gridSize; ++j) {
+            if (state.getW(i, j)) {
+                auto r0 = state.irradiation(i, j);
+                auto timeInRepair = state.timeInRepair(i, j);
+                auto effectiveIrradiation = r0 / (1 + timeInRepair / params.tau);
+                state.irradiation(i, j) = effectiveIrradiation + dose;
+                state.timeInRepair(i, j) = 0;
             }
         }
     }
@@ -75,7 +74,9 @@ void Automaton::setLocalStates() {
                 // -- completed cell cycle but not divided yet.
                 if (state.GI(i, j) >= params.GIdeath
                     || state.CHO(i, j) < params.metabolism.aerobicQuiescence.CHO
-                    || state.proliferationTime(i, j) > cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j) + cycles.Mtime(i, j) + cycles.Dtime(i, j)) {
+                    || (state.proliferationTime(i, j) > cycles.G1time(i, j)
+                                                        + cycles.Stime(i, j) + cycles.G2time(i, j)
+                                                        + cycles.Mtime(i, j) + cycles.Dtime(i, j))) {
 
                     KillSite(i, j);
                     continue;
@@ -87,10 +88,11 @@ void Automaton::setLocalStates() {
                     // if it is near an S-phase.
                     && !(
                         state.cellCycle(i, j) == State::CellCycle::G1
-                        && state.proliferationTime(i, j) >= cycles.G1time(i, j) - 2*params.stepTime/3600
+                        && (state.proliferationTime(i, j)
+                            >= cycles.G1time(i, j) - 2 * params.stepTime / 3600)
                         && state.proliferationTime(i, j) < cycles.G1time(i, j)
-						&& !vacantNeighbors(i, j).empty()
-                    )) {
+                        && !vacantNeighbors(i, j).empty()
+                )) {
                     // [matlab] try prolif --> 2B
                     if (state.OX(i, j) >= params.metabolism.aerobicProliferation.OX) {
                         if (state.CHO(i, j) >= params.metabolism.aerobicProliferation.CHO) {
@@ -99,7 +101,7 @@ void Automaton::setLocalStates() {
                         } else {  // [matlab] ix_q_a
                             // TODO moze zamiast sprawdzania tylu rzeczy wgl od razu to ustawic
                             // kiedy jest cycle zmieniany, w jakiejs osobnej fladze w state?
-							// (jeszcze pozniej pojawia sie ten warunek)
+                            // (jeszcze pozniej pojawia sie ten warunek)
                             if (state.cellCycle(i, j) == State::CellCycle::S
                                 || state.cellCycle(i, j) == State::CellCycle::M
                                 || state.cellCycle(i, j) == State::CellCycle::D) {
@@ -110,7 +112,8 @@ void Automaton::setLocalStates() {
                             }
                             continue;
                         }
-                    } else if (state.CHO(i, j) >= params.metabolism.anaerobicProliferation.CHO) {  // [matlab] ix_p_an
+                    } else if (state.CHO(i, j)
+                               >= params.metabolism.anaerobicProliferation.CHO) {  // [matlab] ix_p_an
                         state.cellState(i, j) = State::CellState::ANAREOBIC_PROLIFERATION;
                         continue;
                     }
@@ -150,7 +153,8 @@ void Automaton::setLocalStates() {
 
 // Progress clock if repair time is 0.
 void Automaton::progressCellClock(ul i, ul j) {
-    if (state.timeInRepair(i, j) == 0) state.proliferationTime(i, j) += params.stepTime / 3600;
+    if (state.timeInRepair(i, j) == 0)
+        state.proliferationTime(i, j) += params.stepTime / 3600;
 }
 
 void Automaton::metaboliseAerobicProliferation(ul i, ul j) {
@@ -176,7 +180,6 @@ void Automaton::metaboliseAnaerobicQuiescence(ul i, ul j) {
     state.OX(i, j) -= params.metabolism.anaerobicQuiescence.OX;
     state.GI(i, j) += params.metabolism.anaerobicQuiescence.GI;
 }
-
 
 
 void Automaton::metaboliseNutrients() {
@@ -205,36 +208,72 @@ void Automaton::metaboliseNutrients() {
 }
 
 void Automaton::setGlobalStates() {
-	for (ul i = 0; i < state.gridSize; ++i) {
-		for (ul j = 0; j < state.gridSize; ++j) {
-			if (state.getW(i, j)) {
-				state.setCycleChanged(i, j, false);
-				if (state.proliferationTime(i, j) <= cycles.G1time(i, j)
-						&& state.cellCycle(i, j) != State::CellCycle::G1) {
-					state.cellCycle(i, j) = State::CellCycle::G1;
-					state.setCycleChanged(i, j, true);
-				} else if (state.proliferationTime(i, j) <= cycles.G1time(i, j) + cycles.Stime(i, j)
-						&& state.cellCycle(i, j) != State::CellCycle::S) {
-					state.cellCycle(i, j) = State::CellCycle::S;
-					state.setCycleChanged(i, j, true);
-				} else if (state.proliferationTime(i, j) <= cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j)
-						&& state.cellCycle(i, j) != State::CellCycle::G2) {
-					state.cellCycle(i, j) = State::CellCycle::G2;
-					state.setCycleChanged(i, j, true);
-				} else if (state.proliferationTime(i, j) <=
-				                    cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j) + cycles.Mtime(i, j)
-						&& state.cellCycle(i, j) != State::CellCycle::M) {
-					state.cellCycle(i, j) = State::CellCycle::M;
-					state.setCycleChanged(i, j, true);
-				} else {
-					state.cellCycle(i, j) = State::CellCycle::D;
-				}
-			}
-		}
-	}
+    for (ul i = 0; i < state.gridSize; ++i) {
+        for (ul j = 0; j < state.gridSize; ++j) {
+            if (state.getW(i, j)) {
+                state.setCycleChanged(i, j, false);
+                if (state.proliferationTime(i, j) <= cycles.G1time(i, j)
+                    && state.cellCycle(i, j) != State::CellCycle::G1) {
+                    state.cellCycle(i, j) = State::CellCycle::G1;
+                    state.setCycleChanged(i, j, true);
+                } else if (state.proliferationTime(i, j)
+                           <= cycles.G1time(i, j) + cycles.Stime(i, j)
+                           && state.cellCycle(i, j) != State::CellCycle::S) {
+                    state.cellCycle(i, j) = State::CellCycle::S;
+                    state.setCycleChanged(i, j, true);
+                } else if (state.proliferationTime(i, j)
+                           <= cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j)
+                           && state.cellCycle(i, j) != State::CellCycle::G2) {
+                    state.cellCycle(i, j) = State::CellCycle::G2;
+                    state.setCycleChanged(i, j, true);
+                } else if (state.proliferationTime(i, j) <=
+                           cycles.G1time(i, j) + cycles.Stime(i, j) + cycles.G2time(i, j) + cycles.Mtime(i, j)
+                           && state.cellCycle(i, j) != State::CellCycle::M) {
+                    state.cellCycle(i, j) = State::CellCycle::M;
+                    state.setCycleChanged(i, j, true);
+                } else {
+                    state.cellCycle(i, j) = State::CellCycle::D;
+                }
+            }
+        }
+    }
 }
 
 void Automaton::repairCells() {
+    for (ul i = 0; i < state.gridSize; ++i) {
+        for (ul j = 0; j < state.gridSize; ++j) {
+            if (((state.CH(i, j) > 0) && (state.irradiation(i, j) > 0))
+                || (state.timeInRepair(i, j) > 0)) {
+                // add repair time to these sites
+                // this ensures that any site in
+                // repair mode has RepT > 0
+                state.timeInRepair(i, j) += params.stepTime / 3600; // t in hours
+                // DelayTime
+                // provides a delay (in h) to the cell-phase cycle for
+                // EMT6/Ro cells irradiated to level R (Gy) by some protocol.
+                // find any sites which have come to the end of the repair period
+                if (state.timeInRepair(i, j) >=
+                    3.3414 * exp(0.1492 * state.irradiation(i, j))) {
+                    if (state.irradiation(i, j) > 0) {
+                        // TODO: put this in a different class/object
+                        std::random_device rd;  //Will be used to obtain a seed for the random number engine
+                        std::mt19937 rng(rd()); //Standard mersenne_twister_engine seeded with rd()
+                        std::uniform_real_distribution<> dis(0.0, 1.0);
+                        double rand = dis(rng);
+                        if (rand <= 1 - exp(-0.4993 * state.irradiation(i, j))) {
+                            KillSite(i, j);
+                        } else {
+                            // Repair cells that weren't killed
+                            state.irradiation(i, j) = 0;
+                            state.timeInRepair(i, j) = 0;
+                        }
+                    }
+                }
+
+            }
+
+        }
+    }
     // TODO
 }
 
@@ -277,18 +316,18 @@ void Automaton::birthCell(const Automaton::coords_t &parent, const Automaton::co
 }
 
 Automaton::coords_t Automaton::randomNeighbour(ul i, ul j) {
-   auto vn = vacantNeighbors(i, j);
-   if (vn.empty())
-       return {i, j};
-   std::vector<float> probs(vn.size());
-   std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
-   ul choice = randomEngine->roulette(probs);
-   if (choice == probs.size()) {
-       return {i, j};
-   } else {
-       auto relativeCoords = vn[choice];
-       return {i + relativeCoords.first, j + relativeCoords.second};
-   }
+    auto vn = vacantNeighbors(i, j);
+    if (vn.empty())
+        return {i, j};
+    std::vector<float> probs(vn.size());
+    std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
+    ul choice = randomEngine->roulette(probs);
+    if (choice == probs.size()) {
+        return {i, j};
+    } else {
+        auto relativeCoords = vn[choice];
+        return {i + relativeCoords.first, j + relativeCoords.second};
+    }
 }
 
 void Automaton::updateStats() {
@@ -301,8 +340,8 @@ void Automaton::KillSite(ul i, ul j) {
     state.setW(i, j, false);
     // state.Dage(i, j)  = 0;  // TODO unused?
     state.proliferationTime(i, j) = 0;
-    state.irradiation(i, j)       = 0;
-    state.timeInRepair(i, j)      = 0;
+    state.irradiation(i, j) = 0;
+    state.timeInRepair(i, j) = 0;
 
     // Give off waste acids.
     state.GI(i, j) += params.siGI_n;
@@ -310,8 +349,8 @@ void Automaton::KillSite(ul i, ul j) {
 
 bool Automaton::isReadyForDivision(ul i, ul j) {
     return state.getW(i, j) &&
-        state.radius(i, j) < params.rMax * state.gridSize / 2 &&
-        state.cellCycle(i, j) == State::CellCycle::D;
+           state.radius(i, j) < params.rMax * state.gridSize / 2 &&
+           state.cellCycle(i, j) == State::CellCycle::D;
 }
 
 float Automaton::mapToProb(std::pair<long, long> &relativeCoords) {

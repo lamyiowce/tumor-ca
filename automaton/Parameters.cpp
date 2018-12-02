@@ -7,10 +7,14 @@ Parameters::Parameters(
             double sOXex,
             IrradiationProtocol irradiationSteps,
             double tau,
+<<<<<<< HEAD
             double stepTime,
             double GIcritical,
             double GIdeath,
             int siGI_n,
+=======
+            double stepTime, // tStep
+>>>>>>> origin/RepairCells
             const Metabolism &metabolism,
             double rmax,
             const BirthParams &birthParams
