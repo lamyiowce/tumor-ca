@@ -5,6 +5,7 @@
 #include <vector>
 #include <util.h>
 #include <cstdint>
+#include <json.hpp>
 
 template <class T>
 using grid = std::vector<T>;
@@ -28,6 +29,7 @@ public:
 	};
 
     explicit State(ul gridSize);
+    explicit State(nlohmann::json json);
     State(State&) = default;
     ul gridSize;
 

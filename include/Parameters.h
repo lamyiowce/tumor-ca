@@ -2,6 +2,7 @@
 #define TUMOR_PARAMETERS_H
 #include <vector>
 #include <util.h>
+#include <json.hpp>
 
 using IrradiationProtocol = std::vector<std::pair<ul, double>>;
 
@@ -29,6 +30,7 @@ public:
 
         Metabolism(const NutrientsParameters &anaerobicProliferation, const NutrientsParameters &aerobicProliferation,
                    const NutrientsParameters &anaerobicQuiescence, const NutrientsParameters &aerobicQuiescence);
+        explicit Metabolism(nlohmann::json json);
     };
 
     struct NormDistParams {
@@ -61,6 +63,7 @@ public:
             double rMax,
             const BirthParams &birthParams);
 
+    explicit Parameters(nlohmann::json json);
     Parameters(Parameters&) = default;
 
     const double sCHOex; // no idea yet what that is, used in replenishSubstrates, CHO

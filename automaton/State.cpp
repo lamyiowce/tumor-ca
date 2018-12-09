@@ -1,4 +1,3 @@
-
 #include <State.h>
 #include <cmath>
 
@@ -12,7 +11,54 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _cellState(gridSize * gridSize),
                              _cellCycle(gridSize * gridSize),
                              _proliferationTime(gridSize * gridSize),
-							 _cycleChanged(gridSize * gridSize) {}
+                             _cycleChanged(gridSize * gridSize) {}
+
+State::State(nlohmann::json json)
+    : State::State(static_cast<ul>(json["PARAMS"]["L"])) {
+    for (ul i = 0; i < gridSize; ++i) {
+        for (ul j = 0; j < gridSize; ++j) {
+            this->setW(i, j, json["STATE"]["W"][i][j] != 0);
+            this->CHO(i, j) = json["STATE"]["CHO"][i][j];
+            this->OX(i, j) = json["STATE"]["OX"][i][j];
+            this->GI(i, j) = json["STATE"]["GI"][i][j];
+            this->proliferationTime(i, j) = json["STATE"]["HRS"][i][j];
+            this->timeInRepair(i, j) = json["STATE"]["RepT"][i][j];
+            this->irradiation(i, j) = json["STATE"]["R"][i][j];
+            this->cellCycle(i, j)
+                = static_cast<State::CellCycle >(json["STATE"]["gMET"][i][j]);
+        }
+    }
+
+    for (ul matlab_idx : json["STATE"]["lMET"]["prolif"]) {
+        // TODO czy w matlabie indeksy na pewno ida w te strone?
+        // (tzn. chyba idzie po kolei kolumnami, a nie wierszami)
+        this->_cellState[matlab_idx - 1] = State::CellState::AEROBIC_PROLIFERATION;
+    }
+
+    for (ul matlab_idx : json["STATE"]["lMET"]["prolif_an"]) {
+        // TODO czy w matlabie indeksy na pewno ida w te strone?
+        // (tzn. chyba idzie po kolei kolumnami, a nie wierszami)
+        this->_cellState[matlab_idx - 1] = State::CellState::ANAREOBIC_PROLIFERATION;
+    }
+
+    for (ul matlab_idx : json["STATE"]["lMET"]["quiesc"]) {
+        // TODO czy w matlabie indeksy na pewno ida w te strone?
+        // (tzn. chyba idzie po kolei kolumnami, a nie wierszami)
+        this->_cellState[matlab_idx - 1] = State::CellState::AEROBIC_QUIESCENCE;
+    }
+
+    for (ul matlab_idx : json["STATE"]["lMET"]["quiesc_an"]) {
+        // TODO czy w matlabie indeksy na pewno ida w te strone?
+        // (tzn. chyba idzie po kolei kolumnami, a nie wierszami)
+        this->_cellState[matlab_idx - 1] = State::CellState::ANAREOBIC_QUIESCENCE;
+    }
+
+    for (ul matlab_idx : json["STATE"]["lMET"]["dead"]) {
+        // TODO czy w matlabie indeksy na pewno ida w te strone?
+        // (tzn. chyba idzie po kolei kolumnami, a nie wierszami)
+        this->_cellState[matlab_idx - 1] = State::CellState::DEAD;
+    }
+}
 
 bool State::getW(ul x, ul y) const {
     return _W[y * gridSize + x];

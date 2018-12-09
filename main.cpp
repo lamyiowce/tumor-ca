@@ -2,6 +2,7 @@
 #include <Automaton.h>
 #include <RandomEngine.h>
 #include <memory>
+#include <fstream>
 
 int main() {
     unsigned long gridSize = 51;
@@ -27,5 +28,17 @@ int main() {
     StdRandomEngine sre(167);
     Automaton automaton(state, cycles, parameters, &sre);
     automaton.runNSteps(10000);
+
+    /* Uncomment to test input from JSON.
+     * Make sure the filename is correct! */
+//    std::ifstream ifs("../tests/resources/matlab_results/1/out-vnw-tr1-st1-2-IrradiateTumor.json");
+//    nlohmann::json j = nlohmann::json::parse(ifs);
+//
+//    State state2(j);
+//    Cycles cycles2(j);
+//    Parameters parameters2(j);
+//    Automaton ca3(state2, cycles2, parameters2, &mre);
+//    ca3.setLocalStates();
+
     return 0;
 }

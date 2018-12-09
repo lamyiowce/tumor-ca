@@ -21,7 +21,8 @@ set(SOURCES
 		include/Cycles.h
         include/Parameters.h
         include/util.h
-		include/RandomEngine.h)
+		include/RandomEngine.h
+		include/json.hpp)
 
 add_executable(tumor
         main.cpp

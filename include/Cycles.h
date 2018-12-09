@@ -2,6 +2,7 @@
 #define TUMOR_CYCLES_H
 
 #include <vector>
+#include <json.hpp>
 
 class Cycles {
 private:
@@ -14,11 +15,7 @@ private:
 
 public:
 	explicit Cycles(unsigned long gridSize);
-	Cycles(std::vector<double> G1time,
-		   std::vector<double> Stime,
-		   std::vector<double> G2time,
-		   std::vector<double> Mtime,
-		   std::vector<double> Dtime);
+	explicit Cycles(nlohmann::json json);
 	Cycles(Cycles&) = default;
 
 	double& G1time(unsigned long x, unsigned long y);
