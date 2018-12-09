@@ -8,6 +8,8 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _OX(gridSize * gridSize),
                              _GI(gridSize * gridSize),
                              _CH(gridSize * gridSize),
+                             _timeInRepair(gridSize * gridSize),
+                             _irradiation(gridSize * gridSize),
                              _cellState(gridSize * gridSize),
                              _cellCycle(gridSize * gridSize),
                              _proliferationTime(gridSize * gridSize),
@@ -99,12 +101,8 @@ bool State::cycleChanged(ul x, ul y) {
 
 void State::setCycleChanged(ul x, ul y, bool value) {
 	_cycleChanged[y * gridSize + x] = value;
-<<<<<<< HEAD
 }
 
 double State::radius(ul x, ul y) {
     return sqrt((x - gridSize / 2.) * (x - gridSize / 2.) + (y - gridSize / 2.) * (y - gridSize / 2.));
 }
-=======
-}
->>>>>>> origin/RepairCells
