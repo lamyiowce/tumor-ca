@@ -52,5 +52,21 @@ public:
 
 };
 
+class StdRandomEngine: public RandomEngine {
+
+    std::mt19937 mt;
+    std::uniform_real_distribution<float> uniformGen;
+    std::normal_distribution<float> normalGen;
+
+public:
+    explicit StdRandomEngine(unsigned int seed);
+
+    float uniform() override;
+
+    float normal(float mean, float stddev) override;
+
+    std::vector<ul> randomPermutation(ul n) override;
+};
+
 
 #endif
