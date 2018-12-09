@@ -242,7 +242,7 @@ void Automaton::setGlobalStates() {
 void Automaton::repairCells() {
     for (ul i = 0; i < state.gridSize; ++i) {
         for (ul j = 0; j < state.gridSize; ++j) {
-            if (((state.CH(i, j) > 0) && (state.irradiation(i, j) > 0))
+            if ((state.cycleChanged(i, j) && (state.irradiation(i, j) > 0))
                 || (state.timeInRepair(i, j) > 0)) {
                 // add repair time to these sites
                 // this ensures that any site in

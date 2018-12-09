@@ -7,7 +7,6 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _CHO(gridSize * gridSize),
                              _OX(gridSize * gridSize),
                              _GI(gridSize * gridSize),
-                             _CH(gridSize * gridSize),
                              _timeInRepair(gridSize * gridSize),
                              _irradiation(gridSize * gridSize),
                              _cellState(gridSize * gridSize),
@@ -45,14 +44,6 @@ const double &State::GI(ul x, ul y) const {
 
 double &State::GI(ul x, ul y) {
     return _GI[y * gridSize + x];
-}
-
-const double &State::CH(ul x, ul y) const {
-    return _CH[y * gridSize + x];
-}
-
-double &State::CH(ul x, ul y) {
-    return _CH[y * gridSize + x];
 }
 
 const double &State::timeInRepair(ul x, ul y) const {
