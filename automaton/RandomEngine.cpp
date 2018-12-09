@@ -1,5 +1,6 @@
-#include <cmath>
 #include <RandomEngine.h>
+#include <cmath>
+#include <algorithm>
 
 MatlabRandomEngine::MatlabRandomEngine(unsigned int seed): mt(), uniformGen(0.f, 1.f) {
     mt.seed(seed);
@@ -91,4 +92,23 @@ ul RandomEngine::roulette(const std::vector<float> &probs) {
         if (random < sums[i]) return i;
     }
     return probs.size();
+}
+
+StdRandomEngine::StdRandomEngine(unsigned int seed): uniformGen(0.0f, 1.0f), normalGen{} {
+    mt.seed(seed);
+}
+
+float StdRandomEngine::uniform() {
+    return uniformGen(mt);
+}
+
+float StdRandomEngine::normal(float mean, float stddev) {
+    return normalGen(mt) * stddev + mean;
+}
+
+std::vector<ul> StdRandomEngine::randomPermutation(ul n) {
+    std::vector<ul> result(n);
+    std::iota(result.begin(), result.end(), 0);
+    std::shuffle(result.begin(), result.end(), mt);
+    return result;
 }

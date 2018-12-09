@@ -24,8 +24,8 @@ int main() {
                           0, metParameters, 0.95, birthParams);
     State state(gridSize);
     Cycles cycles(gridSize);
-    MatlabRandomEngine mre(167);
-    Automaton automaton(state, cycles, parameters, &mre);
-    automaton.runNSteps(10);
+    StdRandomEngine sre(167);
+    Automaton automaton(state, cycles, parameters, &sre);
+    automaton.runNSteps(10000);
     return 0;
 }
