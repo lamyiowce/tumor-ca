@@ -33,3 +33,5 @@
 
 # IDE
 .vs
+.idea
+cmake-build-debug
