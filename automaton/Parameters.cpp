@@ -27,25 +27,24 @@ Parameters::Parameters(
           rMax(rmax),
           birthParams(birthParams) {}
 
-Parameters::Parameters(nlohmann::json json)
+Parameters::Parameters(const nlohmann::json &json)
     : Parameters::Parameters(
-        json["PARAMS"]["sCHOex"],
-        json["PARAMS"]["sOXex"],
-        {{0, 1}, {2, 3.0}, {3, 0.3}, {4, 0.5}},  // TODO irradiationSteps
-        json["PARAMS"]["tau"],
-        json["PARAMS"]["tstep"],
-        json["PARAMS"]["sGIcrit"],
-        json["PARAMS"]["sGIdeath"],
-        json["PARAMS"]["siGI_n"],
+        json["PARAMS"]["sCHOex"].get<double>(),
+        json["PARAMS"]["sOXex"].get<double>(),
+        Parameters::IrradiationProtocol(json),
+        json["PARAMS"]["tau"].get<double>(),
+        json["PARAMS"]["tstep"].get<double>(),
+        json["PARAMS"]["sGIcrit"].get<double>(),
+        json["PARAMS"]["sGIdeath"].get<double>(),
+        json["PARAMS"]["siGI_n"].get<int>(),
         Parameters::Metabolism(json),
-        json["PARAMS"]["Rmax"],
+        json["PARAMS"]["Rmax"].get<double>(),
         {
-            // TODO? skad te wartosci sie biora?
-            Parameters::NormDistParams(0.1, 0.1),
-            Parameters::NormDistParams(0.1, 0.1),
-            Parameters::NormDistParams(0.1, 0.1),
-            Parameters::NormDistParams(0.1, 0.1),
-            Parameters::NormDistParams(0.1, 0.1)
+            Parameters::NormDistParams(json["PARAMS"]["mCyc_G1"], json["PARAMS"]["sCyc_G1"]),
+            Parameters::NormDistParams(json["PARAMS"]["mCyc_S"], json["PARAMS"]["sCyc_S"]),
+            Parameters::NormDistParams(json["PARAMS"]["mCyc_G2"], json["PARAMS"]["sCyc_G2"]),
+            Parameters::NormDistParams(json["PARAMS"]["mCyc_M"], json["PARAMS"]["sCyc_M"]),
+            Parameters::NormDistParams(json["PARAMS"]["mCyc_D"], json["PARAMS"]["sCyc_D"])
         }
     ) {}
 
@@ -80,3 +79,32 @@ Parameters::BirthParams::BirthParams(const Parameters::NormDistParams &G1time,
                                      G2time(G2time),
                                      Mtime(Mtime),
                                      Dtime(Dtime) {}
+
+Parameters::IrradiationProtocol::IrradiationProtocol(const nlohmann::json &json) {
+    bool numbers = false;
+    try {
+        json["PARAMS"]["irr_f_times"].get<std::vector<ul>>();
+    } catch (const nlohmann::detail::type_error &_) {
+        numbers = true;
+    }
+    if (numbers) {
+        times = std::vector<ul>(1, json["PARAMS"]["irr_f_times"].get<ul>());
+        doses = std::vector<double>(1, json["PARAMS"]["irr_f_doses"].get<double>());
+    } else {
+        times = json["PARAMS"]["irr_f_times"].get<std::vector<ul>>();
+        doses = json["PARAMS"]["irr_f_doses"].get<std::vector<double>>();
+    }
+}
+
+Parameters::IrradiationProtocol::IrradiationProtocol(const std::vector<std::pair<ul, double>> &t_d_pairs) {
+    for (auto d: t_d_pairs) {
+        times.push_back(d.first);
+        doses.push_back(d.second);
+    }
+}
+
+double Parameters::IrradiationProtocol::getIrradiationDose(ul step) const {
+    auto find = std::lower_bound(times.begin(), times.end(), step + 1);
+    if (find == times.end()) return 0.0;
+    return doses[find - times.begin()];
+}

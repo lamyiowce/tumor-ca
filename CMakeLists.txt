@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 11)
 # Set default compile flags for GCC  # TODO do wywalenia, na Windowsie tego potrzebowalem
 if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+    set(FLAGS "-Wall -Wextra -pedantic -g")
+    set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
+    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(include)
@@ -16,13 +18,7 @@ set(SOURCES
 		automaton/Cycles.cpp
         automaton/Parameters.cpp
         automaton/State.cpp
-		automaton/RandomEngine.cpp
-        include/Automaton.h
-		include/Cycles.h
-        include/Parameters.h
-        include/util.h
-		include/RandomEngine.h
-		include/json.hpp)
+		automaton/RandomEngine.cpp)
 
 add_executable(tumor
         main.cpp
@@ -32,4 +28,4 @@ add_executable(test
         ${SOURCES}
         tests/tests_main.cpp
         tests/MatlabRandomEngineTests.cpp
-        include/catch.h)
+        tests/ReplenishSubstrateTests.cpp tests/StateHelper.cpp tests/StateHelper.h tests/IrradiateTumorTests.cc)

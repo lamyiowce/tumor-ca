@@ -1,7 +1,7 @@
 #include <Automaton.h>
 #include <algorithm>
 
-Automaton::Automaton(State &_state, Cycles &_cycles, Parameters &_params, RandomEngine *randomEngine)
+Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params, RandomEngine *randomEngine)
         : state(_state), cycles(_cycles), params(_params), randomEngine(randomEngine) {
 
 }
@@ -41,15 +41,8 @@ void Automaton::diffusion() {
     // TODO
 }
 
-double Automaton::getIrradiationDose(ul step) const {
-    for (auto &irradiation : params.irradiationSteps) {
-        if (irradiation.first == step) return irradiation.second;
-    }
-    return 0.0;
-}
-
 void Automaton::irradiateTumor() {
-    double dose = getIrradiationDose(step);
+    double dose = params.irradiationSteps.getIrradiationDose(step);
     if (dose <= 0) return;
     for (ul i = 0; i < state.gridSize; ++i) {
         for (ul j = 0; j < state.gridSize; ++j) {
@@ -377,3 +370,15 @@ std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul i, ul j) {
     return result;
 }
 
+void Automaton::setStep(ul step) {
+    this->step = step;
+}
+
+Automaton loadAutomaton(const std::string &filename, RandomEngine *re) {
+    std::ifstream ifs(filename);
+    nlohmann::json j = nlohmann::json::parse(ifs);
+    State state(j);
+    Cycles cycles(j);
+    Parameters parameters(j);
+    return Automaton(state, cycles, parameters, re);
+}

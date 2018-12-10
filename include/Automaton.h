@@ -12,6 +12,7 @@
 
 #include <random>
 #include <math.h>
+#include <fstream>
 
 
 class Automaton {
@@ -31,30 +32,6 @@ private:
 
     /// Performs one step of the simulation.
     void advance();
-
-    /**
-     * Sets external CHO and Oxygen concentrations to their substrate levels.
-     * Sets oxygen and CHO level of dead cells to ones specified in params.
-     */
-    void replenishSubstrate();
-
-    // % DIFFUSION2
-    // %   Operates on array N to diffuse elements of
-    // %   N in a Moore Neighbourhood, following Fick's 1st Law
-    // %   of Diffusion (flux prop. to conc. gradient)
-    void diffusion();
-
-    /**
-     * Apply the correct fraction (dose) at the right time
-     */
-    void irradiateTumor();
-
-    /**
-     * Checks the irradiation dose for current step
-     * @param step
-     * @return irradiation dose
-     */
-    double getIrradiationDose(ul step) const;
 
     /**
      * Progress proliferation clock.
@@ -133,9 +110,28 @@ private:
 public:
     const State &getState() const;
 
-    Automaton(State &_state, Cycles &_cycles, Parameters &_params, RandomEngine *randomEngine);
+    Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params, RandomEngine *randomEngine);
+
+    void setStep(ul step);
+
+    /**
+     * Sets external CHO and Oxygen concentrations to their substrate levels.
+     * Sets oxygen and CHO level of dead cells to ones specified in params.
+     */
+    void replenishSubstrate();
 
     void runNSteps(int nSteps);
+
+    // % DIFFUSION2
+    // %   Operates on array N to diffuse elements of
+    // %   N in a Moore Neighbourhood, following Fick's 1st Law
+    // %   of Diffusion (flux prop. to conc. gradient)
+    void diffusion();
+
+    /**
+     * Apply the correct fraction (dose) at the right time
+     */
+    void irradiateTumor();
 
     void setLocalStates();
 
@@ -153,5 +149,7 @@ public:
 
     void updateStats();
 };
+
+Automaton loadAutomaton(const std::string &filename, RandomEngine * re);
 
 #endif //TUMOR_AUTOMATON_H
