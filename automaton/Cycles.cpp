@@ -26,17 +26,17 @@ double& Cycles::G1time(unsigned long x, unsigned long y) {
 }
 
 double& Cycles::Stime(unsigned long x, unsigned long y) {
-	return _G1time[y * _gridSize + x];
+	return _Stime[y * _gridSize + x];
 }
 
 double& Cycles::G2time(unsigned long x, unsigned long y) {
-	return _G1time[y * _gridSize + x];
+	return _G2time[y * _gridSize + x];
 }
 
 double& Cycles::Mtime(unsigned long x, unsigned long y) {
-	return _G1time[y * _gridSize + x];
+	return _Mtime[y * _gridSize + x];
 }
 
 double& Cycles::Dtime(unsigned long x, unsigned long y) {
-	return _G1time[y * _gridSize + x];
+	return _Dtime[y * _gridSize + x];
 }

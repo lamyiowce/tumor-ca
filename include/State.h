@@ -45,8 +45,8 @@ private:
                                 // holds the same information as STATE.lMET
     grid<CellCycle> _cellCycle; // ; STATE.gMET
     grid<double> _proliferationTime; // proliferation timer, same as STATE.HRS
-	grid<bool> _cycleChanged; // whether the site's cell cycle has changed
-                              // during the last setGlobalStates() call
+	grid<bool> _cycleChanged; // STATE.ch; whether the site's cell cycle has
+                              // changed during the last setGlobalStates() call
 
 public:
     bool getW(ul x, ul y) const;
