@@ -4,9 +4,11 @@
 
 TEST_CASE("ReplenishSubstrate - basic test") {
     MatlabRandomEngine mre(1);
-    auto ca1 = loadAutomaton("../tests/resources/matlab_results/out-vnw-tr1-st0-0a-initial.json", &mre);
+    auto ca1 = Automaton::loadFromFile("../tests/resources/matlab_results/out-vnw-tr1-st0-0a-initial.json", &mre);
     ca1.replenishSubstrate();
-    auto ca2 = loadAutomaton("../tests/resources/matlab_results/out-vnw-tr1-st0-0b-ReplenishSubstrate.json", nullptr);
+    auto ca2 = Automaton::loadFromFile(
+            "../tests/resources/matlab_results/out-vnw-tr1-st0-0b-ReplenishSubstrate.json",
+            nullptr);
     REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
     REQUIRE(maxError(ca1.getState(), ca2.getState()) < 0.00005);
 }

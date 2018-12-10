@@ -148,8 +148,8 @@ public:
     void cellDivision();
 
     void updateStats();
-};
 
-Automaton loadAutomaton(const std::string &filename, RandomEngine * re);
+    static Automaton loadFromFile(const std::string &filename, RandomEngine * re);
+};
 
 #endif //TUMOR_AUTOMATON_H

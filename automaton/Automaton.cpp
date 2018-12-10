@@ -374,7 +374,7 @@ void Automaton::setStep(ul step) {
     this->step = step;
 }
 
-Automaton loadAutomaton(const std::string &filename, RandomEngine *re) {
+Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re) {
     std::ifstream ifs(filename);
     nlohmann::json j = nlohmann::json::parse(ifs);
     State state(j);
