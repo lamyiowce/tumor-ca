@@ -85,7 +85,7 @@ void Automaton::setLocalStates() {
                         && (state.proliferationTime(i, j)
                             >= cycles.G1time(i, j) - 2 * params.stepTime / 3600)
                         && state.proliferationTime(i, j) < cycles.G1time(i, j)
-                        && !vacantNeighbors(i, j).empty()
+                        && vacantNeighbors(i, j).size() <= 1
                 )) {
                     // [matlab] try prolif --> 2B
                     if (state.OX(i, j) >= params.metabolism.aerobicProliferation.OX) {
