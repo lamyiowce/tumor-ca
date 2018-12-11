@@ -2,6 +2,8 @@
 #include <cmath>
 #include <algorithm>
 
+#define M_PI_2f32        (1.570796326794896619231321691639751442) /* pi/2 */
+
 MatlabRandomEngine::MatlabRandomEngine(unsigned int seed): mt(), uniformGen(0.f, 1.f) {
     mt.seed(seed);
 }

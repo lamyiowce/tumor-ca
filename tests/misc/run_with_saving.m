@@ -30,6 +30,7 @@ global PARAMS STATE CYCLES
 ImportTumorState(sl,tr,P_EVO,POP);
 
 global FINISH PARAMS PrC PrP STATE
+global st
 
 FINISH = 0;
 st = 0;
