@@ -21,20 +21,20 @@ State::State(nlohmann::json json)
     : State::State(static_cast<ul>(json["PARAMS"]["L"])) {
     for (ul i = 0; i < gridSize; ++i) {
         for (ul j = 0; j < gridSize; ++j) {
-            this->setW(i, j, json["STATE"]["W"][i][j] != 0);
-            this->CHO(i, j) = json["STATE"]["CHO"][i][j];
-            this->OX(i, j) = json["STATE"]["OX"][i][j];
-            this->GI(i, j) = json["STATE"]["GI"][i][j];
-            this->proliferationTime(i, j) = json["STATE"]["HRS"][i][j];
-            this->timeInRepair(i, j) = json["STATE"]["RepT"][i][j];
-            this->irradiation(i, j) = json["STATE"]["R"][i][j];
+            this->setW(i, j, json["STATE"]["W"][j][i] != 0);
+            this->CHO(i, j) = json["STATE"]["CHO"][j][i];
+            this->OX(i, j) = json["STATE"]["OX"][j][i];
+            this->GI(i, j) = json["STATE"]["GI"][j][i];
+            this->proliferationTime(i, j) = json["STATE"]["HRS"][j][i];
+            this->timeInRepair(i, j) = json["STATE"]["RepT"][j][i];
+            this->irradiation(i, j) = json["STATE"]["R"][j][i];
             this->cellCycle(i, j)
-                = static_cast<State::CellCycle >(json["STATE"]["gMET"][i][j]);
+                = static_cast<State::CellCycle >(json["STATE"]["gMET"][j][i]);
         }
     }
 
     for (ul matlab_idx : json["STATE"]["lMET"]["prolif"]) {
-        this->_cellState[indexFromMatlab(matlab_idx, gridSize)] = State::CellState::AEROBIC_PROLIFERATION;
+        this->_cellState[indexFromMatlab(matlab_idx - 1, gridSize)] = State::CellState::AEROBIC_PROLIFERATION;
     }
 
     for (ul matlab_idx : json["STATE"]["lMET"]["prolif_an"]) {
