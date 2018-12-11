@@ -16,7 +16,7 @@ private:
 public:
 	explicit Cycles(unsigned long gridSize);
 	explicit Cycles(nlohmann::json json);
-	Cycles(Cycles&) = default;
+	Cycles(const Cycles&) = default;
 
 	double& G1time(unsigned long x, unsigned long y);
 	double& Stime(unsigned long x, unsigned long y);

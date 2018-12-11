@@ -30,7 +30,7 @@ public:
 
     explicit State(ul gridSize);
     explicit State(nlohmann::json json);
-    State(State&) = default;
+    State(const State&) = default;
     ul gridSize;
 
 private:
@@ -90,6 +90,7 @@ public:
 	void setCycleChanged(ul x, ul y, bool value);
 
     double radius(ul x, ul y);
+
 };
 
 

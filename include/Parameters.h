@@ -4,8 +4,6 @@
 #include <util.h>
 #include <json.hpp>
 
-using IrradiationProtocol = std::vector<std::pair<ul, double>>;
-
 class Parameters {
 public:
     /**
@@ -41,14 +39,27 @@ public:
     };
 
     struct BirthParams {
-        NormDistParams G1time;
-        NormDistParams Stime;
-        NormDistParams G2time;
-        NormDistParams Mtime;
-        NormDistParams Dtime;
+        NormDistParams G1time; // mCyc_G1, sCyc_G1
+        NormDistParams Stime; // mCyc_S, sCyc_S
+        NormDistParams G2time; // mCyc_G2, sCyc_G2
+        NormDistParams Mtime; // mCyc_M, sCyc_M
+        NormDistParams Dtime; // mCyc_D, sCyc_D
 
         BirthParams(const NormDistParams &G1time, const NormDistParams &Stime, const NormDistParams &G2time,
                     const NormDistParams &Mtime, const NormDistParams &Dtime);
+    };
+
+    class IrradiationProtocol {
+        std::vector<ul> times;
+        std::vector<double> doses;
+
+    public:
+        explicit IrradiationProtocol(const nlohmann::json &json);
+
+        explicit IrradiationProtocol(const std::vector<std::pair<ul, double>> &t_d_pairs);
+
+        double getIrradiationDose(ul step) const;
+
     };
 
     Parameters(double sCHOex,
@@ -63,8 +74,8 @@ public:
             double rMax,
             const BirthParams &birthParams);
 
-    explicit Parameters(nlohmann::json json);
-    Parameters(Parameters&) = default;
+    explicit Parameters(const nlohmann::json &json);
+    Parameters(const Parameters&) = default;
 
     const double sCHOex; // no idea yet what that is, used in replenishSubstrates, CHO
     const double sOXex; // same as above, oxygen
