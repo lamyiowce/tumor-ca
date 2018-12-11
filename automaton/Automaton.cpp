@@ -1,8 +1,9 @@
 #include <Automaton.h>
 #include <algorithm>
 
-Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params, RandomEngine *randomEngine)
-        : state(_state), cycles(_cycles), params(_params), randomEngine(randomEngine) {
+Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
+                     RandomEngine *randomEngine, ul _step)
+        : state(_state), cycles(_cycles), params(_params), randomEngine(randomEngine), step(_step) {
 
 }
 
@@ -380,5 +381,6 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
     State state(j);
     Cycles cycles(j);
     Parameters parameters(j);
-    return Automaton(state, cycles, parameters, re);
+    ul step = j["st"];
+    return Automaton(state, cycles, parameters, re, step);
 }

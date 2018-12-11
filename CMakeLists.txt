@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(tumor)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # Set default compile flags for GCC  # TODO do wywalenia, na Windowsie tego potrzebowalem
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -24,8 +24,12 @@ add_executable(tumor
         main.cpp
         ${SOURCES})
 
-add_executable(test
+add_executable(tests
         ${SOURCES}
         tests/tests_main.cpp
         tests/MatlabRandomEngineTests.cpp
-        tests/ReplenishSubstrateTests.cpp tests/StateHelper.cpp tests/StateHelper.h tests/IrradiateTumorTests.cc)
+        tests/ReplenishSubstrateTests.cpp
+        tests/StateHelper.cpp
+        tests/StateHelper.h
+        tests/IrradiateTumorTests.cpp
+        )

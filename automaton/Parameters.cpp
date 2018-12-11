@@ -104,7 +104,7 @@ Parameters::IrradiationProtocol::IrradiationProtocol(const std::vector<std::pair
 }
 
 double Parameters::IrradiationProtocol::getIrradiationDose(ul step) const {
-    auto find = std::lower_bound(times.begin(), times.end(), step + 1);
+    auto find = std::lower_bound(times.begin(), times.end(), step);
     if (find == times.end()) return 0.0;
     return doses[find - times.begin()];
 }

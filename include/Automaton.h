@@ -7,7 +7,7 @@
 #include <Parameters.h>
 #include <random>
 #include <Cycles.h>
-#include <bits/unique_ptr.h>
+#include <memory>
 #include "RandomEngine.h"
 
 #include <random>
@@ -22,7 +22,7 @@ private:
 	Cycles cycles;
 
     Parameters params;
-    ul step = 0;
+    ul step = 1; // To be consistent with MATLAB simulation.
     RandomEngine *randomEngine;
 
 public:
@@ -110,7 +110,8 @@ private:
 public:
     const State &getState() const;
 
-    Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params, RandomEngine *randomEngine);
+    Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
+                  RandomEngine *randomEngine, ul _step = 1);
 
     void setStep(ul step);
 
