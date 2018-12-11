@@ -34,4 +34,5 @@ add_executable(tests
         tests/IrradiateTumorTests.cpp
         tests/CellDivisionTests.cpp
         tests/MetaboliseNutrientsTests.cpp
+        tests/SetLocalStatesTests.cpp
         )
