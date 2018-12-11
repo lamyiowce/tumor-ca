@@ -1,4 +1,3 @@
-
 #ifndef TUMOR_UTIL_H
 #define TUMOR_UTIL_H
 
