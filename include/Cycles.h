@@ -18,11 +18,11 @@ public:
 	explicit Cycles(nlohmann::json json);
 	Cycles(const Cycles&) = default;
 
-	double& G1time(unsigned long x, unsigned long y);
-	double& Stime(unsigned long x, unsigned long y);
-	double& G2time(unsigned long x, unsigned long y);
-	double& Mtime(unsigned long x, unsigned long y);
-	double& Dtime(unsigned long x, unsigned long y);
+	double& G1time(unsigned long r, unsigned long c);
+	double& Stime(unsigned long r, unsigned long c);
+	double& G2time(unsigned long r, unsigned long c);
+	double& Mtime(unsigned long r, unsigned long c);
+	double& Dtime(unsigned long r, unsigned long c);
 };
 
 #endif  // TUMOR_CYCLES_H

@@ -16,10 +16,10 @@ TEST_CASE("Uniform random replicates results from matlab.") {
 
 TEST_CASE("Normal distributed random replicates results from matlab.") {
     MatlabRandomEngine mre(7);
-    REQUIRE(FLOAT_EQUAL(mre.normal(0, 1), -1.44f));
-    REQUIRE(FLOAT_EQUAL(mre.normal(0, 1), 0.72f));
+    REQUIRE(mre.normal(0, 1) == Approx(-1.44f));
+    REQUIRE(mre.normal(0, 1) == Approx(0.72f));
     REQUIRE(FLOAT_EQUAL(mre.normal(0, 1), -0.12f));
-    REQUIRE(FLOAT_EQUAL(mre.normal(0, 1), 0.6f));
+    REQUIRE(mre.normal(0, 1) == Approx(0.6f));
 }
 
 TEST_CASE("Random permutation gives the same order as original algorithm.") {

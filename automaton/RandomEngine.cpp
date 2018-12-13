@@ -2,11 +2,7 @@
 #include <cmath>
 #include <algorithm>
 
-#define M_PI_2f32        (1.570796326794896619231321691639751442) /* pi/2 */
-
-MatlabRandomEngine::MatlabRandomEngine(unsigned int seed): mt(), uniformGen(0.f, 1.f) {
-    mt.seed(seed);
-}
+MatlabRandomEngine::MatlabRandomEngine(unsigned int seed): mt(seed), uniformGen(0.f, 1.f) {}
 
 float MatlabRandomEngine::uniform() {
     auto result = uniformGen(mt);
@@ -15,7 +11,7 @@ float MatlabRandomEngine::uniform() {
 }
 
 static float normalDistributionValue(float mean, float stddev, float x) {
-    auto coeff = (1 / std::sqrt(2 * M_PI_2f32 * stddev*stddev));
+    float coeff = (1.f / std::sqrt(2.f * (float)M_PI * stddev*stddev));
     float exponent = -((x - mean) * (x - mean) / 2 * stddev * stddev);
     return coeff * std::exp(exponent);
 }
@@ -96,9 +92,7 @@ ul RandomEngine::roulette(const std::vector<float> &probs) {
     return probs.size();
 }
 
-StdRandomEngine::StdRandomEngine(unsigned int seed): uniformGen(0.0f, 1.0f), normalGen{} {
-    mt.seed(seed);
-}
+StdRandomEngine::StdRandomEngine(unsigned int seed): mt(seed), uniformGen(0.0f, 1.0f), normalGen{} {}
 
 float StdRandomEngine::uniform() {
     return uniformGen(mt);

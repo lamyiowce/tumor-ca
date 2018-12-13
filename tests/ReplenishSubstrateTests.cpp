@@ -10,5 +10,5 @@ TEST_CASE("ReplenishSubstrate - basic test") {
             "../tests/resources/matlab_results/out-vnw-tr1-st0-0b-ReplenishSubstrate.json",
             nullptr);
     REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
-    REQUIRE(maxError(ca1.getState(), ca2.getState()) < 0.00005);
+    REQUIRE(maxError(ca1.getState(), ca2.getState()) < 0.00000000001);
 }
