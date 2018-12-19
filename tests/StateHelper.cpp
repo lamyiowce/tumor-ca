@@ -19,7 +19,7 @@ bool discreteEquality(const State &lhs, const State &rhs) {
     if (lhs.gridSize != rhs.gridSize) return false;
     for (ul i = 0; i < lhs.gridSize; ++i) {
         for (ul j = 0; j < lhs.gridSize; ++j) {
-            if (lhs.getW(i, j) != rhs.getW(i, j) ||
+            if (lhs.W(i, j) != rhs.W(i, j) ||
                 lhs.cellCycle(i, j) != rhs.cellCycle(i, j) ||
                 lhs.cellState(i, j) != rhs.cellState(i, j))
                 return false;

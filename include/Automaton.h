@@ -35,62 +35,62 @@ private:
 
     /**
      * Progress proliferation clock.
-     * @param i first coordinate
-     * @param j second coordinate
+     * @param r first coordinate
+     * @param c second coordinate
      */
-    void progressCellClock(ul i, ul j);
+    void progressCellClock(ul r, ul c);
 
     /**
      * Metabolise for a cell in aerobic proliferation state.
-     * @param i first coordinate
-     * @param j second coordinate
+     * @param r first coordinate
+     * @param c second coordinate
      */
-    void metaboliseAerobicProliferation(ul i, ul j);
+    void metaboliseAerobicProliferation(ul r, ul c);
 
     /**
      * Metabolise for a cell in anaerobic proliferation state.
-     * @param i first coordinate
-     * @param j second coordinate
+     * @param r first coordinate
+     * @param c second coordinate
      */
-    void metaboliseAnaerobicProliferation(ul i, ul j);
+    void metaboliseAnaerobicProliferation(ul r, ul c);
 
     /**
      * Metabolise for a cell in aerobic quiescence state.
-     * @param i first coordinate
-     * @param j second coordinate
+     * @param r first coordinate
+     * @param c second coordinate
      */
-    void metaboliseAerobicQuiescence(ul i, ul j);
+    void metaboliseAerobicQuiescence(ul r, ul c);
 
     /**
      * Metabolise for a cell in anaerobic quiescence state.
-     * @param i first coordinate
-     * @param j second coordinate
+     * @param r first coordinate
+     * @param c second coordinate
      */
-    void metaboliseAnaerobicQuiescence(ul i, ul j);
+    void metaboliseAnaerobicQuiescence(ul r, ul c);
 
     /**
      * KILLSITE executes the cell-death program for site indicated
      *   by the index arguments.
-     * @param i first coordinate
-     * @param j second coordinate
+     * @param r first coordinate
+     * @param c second coordinate
      */
-    void KillSite(ul i, ul j);
+    void KillSite(ul r, ul c);
 
-	std::vector<std::pair<long, long>> vacantNeighbors(ul i, ul j);
+	std::vector<std::pair<long, long>> vacantNeighbors(ul r, ul c);
 
     /**
      * Checks if division is possible for a cell
-     * @param i
-     * @param j
+     * @param r
+     * @param c
      */
-    bool isReadyForDivision(ul i, ul j);
+    bool isReadyForDivision(ul r, ul c);
 
     /**
      * Choose random vacant neighbour of a cell
-     * @param i first coordinate
-     * @param j second coordinate
+     * @param r first coordinate
+     * @param c second coordinate
      */
-    coords_t randomNeighbour(ul i, ul j);
+    coords_t randomNeighbour(ul r, ul c);
 
     /**
      * Setup a new cell
@@ -113,7 +113,6 @@ public:
     Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                   RandomEngine *randomEngine, ul _step = 1);
 
-    void setStep(ul step);
 
     /**
      * Sets external CHO and Oxygen concentrations to their substrate levels.

@@ -14,126 +14,126 @@ State::State(ul _gridSize) : gridSize(_gridSize),
                              _cycleChanged(gridSize * gridSize) {}
 
 static ul indexFromMatlab(ul matlabIndex, ul gridSize) {
-    return (matlabIndex % gridSize) * gridSize + matlabIndex / gridSize;
+    return ((matlabIndex - 1) % gridSize) * gridSize + (matlabIndex - 1) / gridSize;
 }
 
 State::State(nlohmann::json json)
     : State::State(static_cast<ul>(json["PARAMS"]["L"])) {
-    for (ul i = 0; i < gridSize; ++i) {
-        for (ul j = 0; j < gridSize; ++j) {
-            this->setW(i, j, json["STATE"]["W"][j][i] != 0);
-            this->CHO(i, j) = json["STATE"]["CHO"][j][i];
-            this->OX(i, j) = json["STATE"]["OX"][j][i];
-            this->GI(i, j) = json["STATE"]["GI"][j][i];
-            this->proliferationTime(i, j) = json["STATE"]["HRS"][j][i];
-            this->timeInRepair(i, j) = json["STATE"]["RepT"][j][i];
-            this->irradiation(i, j) = json["STATE"]["R"][j][i];
-            this->cellCycle(i, j)
-                = static_cast<State::CellCycle >(json["STATE"]["gMET"][j][i]);
+    for (ul r = 0; r < gridSize; ++r) {
+        for (ul c = 0; c < gridSize; ++c) {
+            this->W(r, c) = json["STATE"]["W"][r][c];
+            this->CHO(r, c) = json["STATE"]["CHO"][r][c];
+            this->OX(r, c) = json["STATE"]["OX"][r][c];
+            this->GI(r, c) = json["STATE"]["GI"][r][c];
+            this->proliferationTime(r, c) = json["STATE"]["HRS"][r][c];
+            this->timeInRepair(r, c) = json["STATE"]["RepT"][r][c];
+            this->irradiation(r, c) = json["STATE"]["R"][r][c];
+            this->cellCycle(r, c)
+                = static_cast<State::CellCycle >(json["STATE"]["gMET"][r][c]);
         }
     }
 
     for (ul matlab_idx : json["STATE"]["lMET"]["prolif"]) {
-        this->_cellState[indexFromMatlab(matlab_idx - 1, gridSize)] = State::CellState::AEROBIC_PROLIFERATION;
+        this->_cellState[indexFromMatlab(matlab_idx, gridSize)] = State::CellState::AEROBIC_PROLIFERATION;
     }
 
     for (ul matlab_idx : json["STATE"]["lMET"]["prolif_an"]) {
-        this->_cellState[indexFromMatlab(matlab_idx - 1, gridSize)] = State::CellState::ANAREOBIC_PROLIFERATION;
+        this->_cellState[indexFromMatlab(matlab_idx, gridSize)] = State::CellState::ANAREOBIC_PROLIFERATION;
     }
 
     for (ul matlab_idx : json["STATE"]["lMET"]["quiesc"]) {
-        this->_cellState[indexFromMatlab(matlab_idx - 1, gridSize)] = State::CellState::AEROBIC_QUIESCENCE;
+        this->_cellState[indexFromMatlab(matlab_idx, gridSize)] = State::CellState::AEROBIC_QUIESCENCE;
     }
 
     for (ul matlab_idx : json["STATE"]["lMET"]["quiesc_an"]) {
-        this->_cellState[indexFromMatlab(matlab_idx - 1, gridSize)] = State::CellState::ANAREOBIC_QUIESCENCE;
+        this->_cellState[indexFromMatlab(matlab_idx, gridSize)] = State::CellState::ANAREOBIC_QUIESCENCE;
     }
 
     for (ul matlab_idx : json["STATE"]["lMET"]["dead"]) {
-        this->_cellState[indexFromMatlab(matlab_idx - 1, gridSize)] = State::CellState::DEAD;
+        this->_cellState[indexFromMatlab(matlab_idx, gridSize)] = State::CellState::DEAD;
     }
 }
 
-bool State::getW(ul x, ul y) const {
-    return _W[y * gridSize + x];
+const uint8_t &State::W(ul r, ul c) const {
+    return _W[r * gridSize + c];
 }
 
-void State::setW(ul x, ul y, bool value) {
-    _W[y * gridSize + x] = value;
+uint8_t &State::W(ul r, ul c) {
+    return _W[r * gridSize + c];
 }
 
-const double &State::CHO(ul x, ul y) const {
-    return _CHO[y * gridSize + x];
+const double &State::CHO(ul r, ul c) const {
+    return _CHO[c * gridSize + r];
 }
 
-double &State::CHO(ul x, ul y) {
-    return _CHO[y * gridSize + x];
+double &State::CHO(ul r, ul c) {
+    return _CHO[c * gridSize + r];
 }
 
-const double &State::OX(ul x, ul y) const {
-    return _OX[y * gridSize + x];
+const double &State::OX(ul r, ul c) const {
+    return _OX[c * gridSize + r];
 }
 
-double &State::OX(ul x, ul y) {
-    return _OX[y * gridSize + x];
+double &State::OX(ul r, ul c) {
+    return _OX[c * gridSize + r];
 }
 
-const double &State::GI(ul x, ul y) const {
-    return _GI[y * gridSize + x];
+const double &State::GI(ul r, ul c) const {
+    return _GI[c * gridSize + r];
 }
 
-double &State::GI(ul x, ul y) {
-    return _GI[y * gridSize + x];
+double &State::GI(ul r, ul c) {
+    return _GI[c * gridSize + r];
 }
 
-const double &State::timeInRepair(ul x, ul y) const {
-    return _timeInRepair[y * gridSize + x];
+const double &State::timeInRepair(ul r, ul c) const {
+    return _timeInRepair[c * gridSize + r];
 }
 
-double &State::timeInRepair(ul x, ul y) {
-    return _timeInRepair[y * gridSize + x];
+double &State::timeInRepair(ul r, ul c) {
+    return _timeInRepair[c * gridSize + r];
 }
 
-const double &State::irradiation(ul x, ul y) const {
-    return _irradiation[y * gridSize + x];
+const double &State::irradiation(ul r, ul c) const {
+    return _irradiation[c * gridSize + r];
 }
 
-double &State::irradiation(ul x, ul y) {
-    return _irradiation[y * gridSize + x];
+double &State::irradiation(ul r, ul c) {
+    return _irradiation[c * gridSize + r];
 }
 
-const State::CellState &State::cellState(ul x, ul y) const {
-    return _cellState[y * gridSize + x];
+const State::CellState &State::cellState(ul r, ul c) const {
+    return _cellState[c * gridSize + r];
 }
 
-State::CellState &State::cellState(ul x, ul y) {
-    return _cellState[y * gridSize + x];
+State::CellState &State::cellState(ul r, ul c) {
+    return _cellState[c * gridSize + r];
 }
 
-const State::CellCycle &State::cellCycle(ul x, ul y) const {
-    return _cellCycle[y * gridSize + x];
+const State::CellCycle &State::cellCycle(ul r, ul c) const {
+    return _cellCycle[c * gridSize + r];
 }
 
-State::CellCycle &State::cellCycle(ul x, ul y) {
-    return _cellCycle[y * gridSize + x];
+State::CellCycle &State::cellCycle(ul r, ul c) {
+    return _cellCycle[c * gridSize + r];
 }
 
-const double &State::proliferationTime(ul x, ul y) const {
-    return _proliferationTime[y * gridSize + x];
+const double &State::proliferationTime(ul r, ul c) const {
+    return _proliferationTime[c * gridSize + r];
 }
 
-double &State::proliferationTime(ul x, ul y) {
-    return _proliferationTime[y * gridSize + x];
+double &State::proliferationTime(ul r, ul c) {
+    return _proliferationTime[c * gridSize + r];
 }
 
-bool State::cycleChanged(ul x, ul y) {
-	return _cycleChanged[y * gridSize + x];
+bool State::cycleChanged(ul r, ul c) {
+	return _cycleChanged[c * gridSize + r];
 }
 
-void State::setCycleChanged(ul x, ul y, bool value) {
-	_cycleChanged[y * gridSize + x] = value;
+void State::setCycleChanged(ul r, ul c, bool value) {
+	_cycleChanged[c * gridSize + r] = value;
 }
 
-double State::radius(ul x, ul y) {
-    return sqrt((x - gridSize / 2.) * (x - gridSize / 2.) + (y - gridSize / 2.) * (y - gridSize / 2.));
+double State::radius(ul r, ul c) {
+    return sqrt((r - gridSize / 2.) * (r - gridSize / 2.) + (c - gridSize / 2.) * (c - gridSize / 2.));
 }

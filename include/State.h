@@ -34,7 +34,7 @@ public:
     ul gridSize;
 
 private:
-    grid<bool> _W; // 1 - cell alive
+    grid<uint8_t> _W; // 1 - cell alive
     grid<double> _CHO; // CHO level
     grid<double> _OX; // oxygen level
     grid<double> _GI; // GI level
@@ -49,47 +49,47 @@ private:
                               // changed during the last setGlobalStates() call
 
 public:
-    bool getW(ul x, ul y) const;
+    const uint8_t &W(ul r, ul c) const;
 
-    void setW(ul x, ul y, bool value);
+    uint8_t &W(ul r, ul c);
 
-    const double &CHO(ul x, ul y) const;
+    const double &CHO(ul r, ul c) const;
 
-    double &CHO(ul x, ul y);
+    double &CHO(ul r, ul c);
 
-    const double &OX(ul x, ul y) const;
+    const double &OX(ul r, ul c) const;
 
-    double &OX(ul x, ul y);
+    double &OX(ul r, ul c);
 
-    const double &GI(ul x, ul y) const;
+    const double &GI(ul r, ul c) const;
 
-    double &GI(ul x, ul y);
+    double &GI(ul r, ul c);
 
-    const double &timeInRepair(ul x, ul y) const;
+    const double &timeInRepair(ul r, ul c) const;
 
-    double &timeInRepair(ul x, ul y);
+    double &timeInRepair(ul r, ul c);
 
-    const double &irradiation(ul x, ul y) const;
+    const double &irradiation(ul r, ul c) const;
 
-    double &irradiation(ul x, ul y);
+    double &irradiation(ul r, ul c);
 
-    const CellState &cellState(ul x, ul y) const;
+    const CellState &cellState(ul r, ul c) const;
 
-    CellState &cellState(ul x, ul y);
+    CellState &cellState(ul r, ul c);
 
-    const CellCycle &cellCycle(ul x, ul y) const;
+    const CellCycle &cellCycle(ul r, ul c) const;
 
-    CellCycle &cellCycle(ul x, ul y);
+    CellCycle &cellCycle(ul r, ul c);
 
-    const double &proliferationTime(ul x, ul y) const;
+    const double &proliferationTime(ul r, ul c) const;
 
-    double &proliferationTime(ul x, ul y);
+    double &proliferationTime(ul r, ul c);
 
 	bool cycleChanged(ul x, ul u);
 
-	void setCycleChanged(ul x, ul y, bool value);
+	void setCycleChanged(ul r, ul c, bool value);
 
-    double radius(ul x, ul y);
+    double radius(ul r, ul c);
 
 };
 
