@@ -2,14 +2,14 @@
 
 double maxError(const State &lhs, const State &rhs) {
     double maxErr = 0.0;
-    for (ul i = 0; i < lhs.gridSize; ++i) {
-        for (ul j = 0; j < lhs.gridSize; ++j) {
-            maxErr = std::max(maxErr, std::abs(lhs.CHO(i, j) - rhs.CHO(i, j)));
-            maxErr = std::max(maxErr, std::abs(lhs.OX(i, j) - rhs.OX(i, j)));
-            maxErr = std::max(maxErr, std::abs(lhs.GI(i, j) - rhs.GI(i, j)));
-            maxErr = std::max(maxErr, std::abs(lhs.timeInRepair(i, j) - rhs.timeInRepair(i, j)));
-            maxErr = std::max(maxErr, std::abs(lhs.irradiation(i, j) - rhs.irradiation(i, j)));
-            maxErr = std::max(maxErr, std::abs(lhs.proliferationTime(i, j) - rhs.proliferationTime(i, j)));
+    for (ul r = 0; r < lhs.gridSize; ++r) {
+        for (ul c = 0; c < lhs.gridSize; ++c) {
+            maxErr = std::max(maxErr, std::abs(lhs.CHO(r, c) - rhs.CHO(r, c)));
+            maxErr = std::max(maxErr, std::abs(lhs.OX(r, c) - rhs.OX(r, c)));
+            maxErr = std::max(maxErr, std::abs(lhs.GI(r, c) - rhs.GI(r, c)));
+            maxErr = std::max(maxErr, std::abs(lhs.timeInRepair(r, c) - rhs.timeInRepair(r, c)));
+            maxErr = std::max(maxErr, std::abs(lhs.irradiation(r, c) - rhs.irradiation(r, c)));
+            maxErr = std::max(maxErr, std::abs(lhs.proliferationTime(r, c) - rhs.proliferationTime(r, c)));
         }
     }
     return maxErr;
@@ -17,11 +17,11 @@ double maxError(const State &lhs, const State &rhs) {
 
 bool discreteEquality(const State &lhs, const State &rhs) {
     if (lhs.gridSize != rhs.gridSize) return false;
-    for (ul i = 0; i < lhs.gridSize; ++i) {
-        for (ul j = 0; j < lhs.gridSize; ++j) {
-            if (lhs.W(i, j) != rhs.W(i, j) ||
-                lhs.cellCycle(i, j) != rhs.cellCycle(i, j) ||
-                lhs.cellState(i, j) != rhs.cellState(i, j))
+    for (ul r = 0; r < lhs.gridSize; ++r) {
+        for (ul c = 0; c < lhs.gridSize; ++c) {
+            if (lhs.W(r, c) != rhs.W(r, c) ||
+                lhs.cellCycle(r, c) != rhs.cellCycle(r, c) ||
+                lhs.cellState(r, c) != rhs.cellState(r, c))
                 return false;
         }
     }

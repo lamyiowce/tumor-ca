@@ -63,75 +63,75 @@ uint8_t &State::W(ul r, ul c) {
 }
 
 const double &State::CHO(ul r, ul c) const {
-    return _CHO[c * gridSize + r];
+    return _CHO[r * gridSize + c];
 }
 
 double &State::CHO(ul r, ul c) {
-    return _CHO[c * gridSize + r];
+    return _CHO[r * gridSize + c];
 }
 
 const double &State::OX(ul r, ul c) const {
-    return _OX[c * gridSize + r];
+    return _OX[r * gridSize + c];
 }
 
 double &State::OX(ul r, ul c) {
-    return _OX[c * gridSize + r];
+    return _OX[r * gridSize + c];
 }
 
 const double &State::GI(ul r, ul c) const {
-    return _GI[c * gridSize + r];
+    return _GI[r * gridSize + c];
 }
 
 double &State::GI(ul r, ul c) {
-    return _GI[c * gridSize + r];
+    return _GI[r * gridSize + c];
 }
 
 const double &State::timeInRepair(ul r, ul c) const {
-    return _timeInRepair[c * gridSize + r];
+    return _timeInRepair[r * gridSize + c];
 }
 
 double &State::timeInRepair(ul r, ul c) {
-    return _timeInRepair[c * gridSize + r];
+    return _timeInRepair[r * gridSize + c];
 }
 
 const double &State::irradiation(ul r, ul c) const {
-    return _irradiation[c * gridSize + r];
+    return _irradiation[r * gridSize + c];
 }
 
 double &State::irradiation(ul r, ul c) {
-    return _irradiation[c * gridSize + r];
+    return _irradiation[r * gridSize + c];
 }
 
 const State::CellState &State::cellState(ul r, ul c) const {
-    return _cellState[c * gridSize + r];
+    return _cellState[r * gridSize + c];
 }
 
 State::CellState &State::cellState(ul r, ul c) {
-    return _cellState[c * gridSize + r];
+    return _cellState[r * gridSize + c];
 }
 
 const State::CellCycle &State::cellCycle(ul r, ul c) const {
-    return _cellCycle[c * gridSize + r];
+    return _cellCycle[r * gridSize + c];
 }
 
 State::CellCycle &State::cellCycle(ul r, ul c) {
-    return _cellCycle[c * gridSize + r];
+    return _cellCycle[r * gridSize + c];
 }
 
 const double &State::proliferationTime(ul r, ul c) const {
-    return _proliferationTime[c * gridSize + r];
+    return _proliferationTime[r * gridSize + c];
 }
 
 double &State::proliferationTime(ul r, ul c) {
-    return _proliferationTime[c * gridSize + r];
+    return _proliferationTime[r * gridSize + c];
 }
 
 bool State::cycleChanged(ul r, ul c) {
-	return _cycleChanged[c * gridSize + r];
+	return _cycleChanged[r * gridSize + c];
 }
 
 void State::setCycleChanged(ul r, ul c, bool value) {
-	_cycleChanged[c * gridSize + r] = value;
+	_cycleChanged[r * gridSize + c] = value;
 }
 
 double State::radius(ul r, ul c) {
