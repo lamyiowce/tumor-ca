@@ -1,6 +1,5 @@
 #include <Automaton.h>
 #include <algorithm>
-#include <iostream>
 
 Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                      RandomEngine *randomEngine, ul _step)
