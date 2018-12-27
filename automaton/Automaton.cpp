@@ -1,5 +1,6 @@
 #include <Automaton.h>
 #include <algorithm>
+#include <iostream>
 
 Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                      RandomEngine *randomEngine, ul _step)
@@ -145,10 +146,14 @@ void Automaton::setLocalStates() {
     }
 }
 
+static std::vector<ul> ids;
+
 // Progress clock if repair time is 0.
 void Automaton::progressCellClock(ul r, ul c) {
-    if (state.timeInRepair(r, c) == 0)
+    if (state.timeInRepair(r, c) == 0) {
+        ids.push_back(r + c * state.gridSize);
         state.proliferationTime(r, c) += params.stepTime / 3600;
+    }
 }
 
 void Automaton::metaboliseAerobicProliferation(ul r, ul c) {
@@ -177,6 +182,7 @@ void Automaton::metaboliseAnaerobicQuiescence(ul r, ul c) {
 
 
 void Automaton::metaboliseNutrients() {
+    std::cout << params.stepTime / 3600 << std::endl;
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
             switch (state.cellState(r, c)) {
@@ -198,6 +204,10 @@ void Automaton::metaboliseNutrients() {
                     break;
             }
         }
+    }
+    std::sort(ids.begin(), ids.end());
+    for (auto i: ids) {
+        std::cout << i << std::endl;
     }
 }
 
@@ -249,11 +259,7 @@ void Automaton::repairCells() {
                 if (state.timeInRepair(r, c) >=
                     3.3414 * exp(0.1492 * state.irradiation(r, c))) {
                     if (state.irradiation(r, c) > 0) {
-                        // TODO: put this in a different class/object
-                        std::random_device rd;  //Will be used to obtain a seed for the random number engine
-                        std::mt19937 rng(rd()); //Standard mersenne_twister_engine seeded with rd()
-                        std::uniform_real_distribution<> dis(0.0, 1.0);
-                        double rand = dis(rng);
+                        double rand = randomEngine->uniform();
                         if (rand <= 1 - exp(-0.4993 * state.irradiation(r, c))) {
                             KillSite(r, c);
                         } else {
@@ -311,8 +317,9 @@ void Automaton::birthCell(const Automaton::coords_t &parent, const Automaton::co
 
 Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
     auto vn = vacantNeighbors(r, c);
-    if (vn.empty())
+    if (vn.empty()) {
         return {r, c};
+    }
     std::vector<float> probs(vn.size());
     std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
     ul choice = randomEngine->roulette(probs);
@@ -361,8 +368,8 @@ std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul r, ul c) {
     long c_end = (c == state.gridSize - 1) ? 0 : 1;
 
     std::vector<std::pair<long, long>> result;
-    for (long rx = r_start; rx < r_end; ++rx) {
-        for (long cx = c_start; cx < c_end; ++cx) {
+    for (long rx = r_start; rx <= r_end; ++rx) {
+        for (long cx = c_start; cx <= c_end; ++cx) {
             if (state.W(r + rx, c + cx) == 0) {
                 result.emplace_back(rx, cx);
             }
