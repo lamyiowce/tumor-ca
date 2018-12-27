@@ -146,12 +146,9 @@ void Automaton::setLocalStates() {
     }
 }
 
-static std::vector<ul> ids;
-
 // Progress clock if repair time is 0.
 void Automaton::progressCellClock(ul r, ul c) {
     if (state.timeInRepair(r, c) == 0) {
-        ids.push_back(r + c * state.gridSize);
         state.proliferationTime(r, c) += params.stepTime / 3600;
     }
 }
@@ -182,7 +179,6 @@ void Automaton::metaboliseAnaerobicQuiescence(ul r, ul c) {
 
 
 void Automaton::metaboliseNutrients() {
-    std::cout << params.stepTime / 3600 << std::endl;
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
             switch (state.cellState(r, c)) {
@@ -204,10 +200,6 @@ void Automaton::metaboliseNutrients() {
                     break;
             }
         }
-    }
-    std::sort(ids.begin(), ids.end());
-    for (auto i: ids) {
-        std::cout << i << std::endl;
     }
 }
 

@@ -6,14 +6,7 @@
 
 int main() {
     MatlabRandomEngine mre(1);
-    auto ca = Automaton::loadFromFile("../tests/resources/matlab_results/1/out-vnw-tr1-st1-3-SetLocalStates.json", &mre);
-    auto ca2 = Automaton::loadFromFile("../tests/resources/matlab_results/1/out-vnw-tr1-st1-4-MetaboliseNutrients.json", nullptr);
-    ca.metaboliseNutrients();
-    for (ul r = 0; r < 51; ++r) {
-        for (ul c = 0; c < 51; ++c) {
-            std::cout << ca.getState().proliferationTime(r, c) - ca2.getState().proliferationTime(r, c) << " ";
-        }
-        std::cout << std::endl;
-    }
+    auto ca = Automaton::loadFromFile("../tests/resources/matlab_results/out-vnw-tr1-st0-0a-initial.json", &mre);
+    ca.runNSteps(4800);
     return 0;
 }
