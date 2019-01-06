@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
     set(FLAGS "-Wall -Wextra -pedantic -g")
-    set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS} -O0")
     set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 

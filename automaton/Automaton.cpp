@@ -115,14 +115,10 @@ void Automaton::diffusion() {
 
     auto borderedW = subLatticeW + 2;
     auto borderedH = subLatticeH + 2;
-    std::vector<grid<double>> choCopy(2);
-    std::vector<grid<double>> oxCopy(2);
-    std::vector<grid<double>> giCopy(2);
-    for (ul i = 0; i < 2; ++i) {
-        choCopy[i].resize(borderedH * borderedW);
-        oxCopy[i].resize(borderedH * borderedW);
-        giCopy[i].resize(borderedH * borderedW);
-    }
+    grid<double> choCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
+    grid<double> oxCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
+    grid<double> giCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
+    
     std::vector<coords_t> borderSites;
     for (ul r = 0; r < borderedH; ++r) {
          for (ul c = 0; c < borderedW; ++c) {
@@ -139,6 +135,7 @@ void Automaton::diffusion() {
             giCopy[0][(r + 1) * borderedW + (c + 1)] = state.GI(subLatticeR + r, subLatticeC + c);
         }
     }
+
     ul rounds = ul(std::round(params.stepTime / params.tau));
     for (ul i = 0; i < rounds; ++i) {
         for (auto rc: borderSites) {
@@ -148,8 +145,8 @@ void Automaton::diffusion() {
             oxCopy[i % 2][r*borderedW + c] = params.sOXex;
             giCopy[i % 2][r*borderedW + c] = params.sGIex;
         }
-        for (ul r = 0; r <= borderedH; ++r) {
-            for (ul c = 0; c <= borderedH; ++c) {
+        for (ul r = 0; r < borderedH; ++r) {
+            for (ul c = 0; c < borderedH; ++c) {
                 numericalDiffusion(r, c, choCopy[i % 2], oxCopy[i % 2], giCopy[i % 2],
                                    choCopy[(i + 1) % 2], oxCopy[(i + 1) % 2],
                                    giCopy[(i + 1) % 2], borderedW);
