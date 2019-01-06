@@ -41,10 +41,12 @@ void Automaton::replenishSubstrate() {
             }
 }
 
-static double paramDiffiusion(double val, double d, double tau, double orthoSum, double diagSum) {
+static double paramDiffusion(double val, double d, double tau, double orthoSum, double diagSum) {
     static const double HS = 2.0 * std::sqrt(2);
     static const double f = HS + 4.;
     return d*tau*HS/f * (orthoSum + HS*diagSum/4 - f*val) + val;
+//      return 1 * (orthoSum + 2 - 2*val) + val;
+//    return 1;
 }
 
 std::pair<double, double> Automaton::sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW) {
@@ -70,11 +72,14 @@ void Automaton::numericalDiffusion(ul r, ul c, const grid<double> &choCopy, cons
                                    grid<double> &giResult, ul gridW) {
     auto index = r * gridW + c;
     auto paramSums = sumNeighbours(r, c, choCopy, gridW);
-    choResult[index] = paramDiffiusion(choCopy[index], params.sDCHO, params.tau, paramSums.first, paramSums.second);
+    choResult[index] = paramDiffusion(choCopy[index], params.sDCHO, params.tau, paramSums.first, paramSums.second);
+//    if (r == c)
+//        std::cout << r << " " << choCopy[index] << " " << paramSums.first << " " << paramSums.second << "\n";
+    std::cout << r << " cho " << c << " " << choCopy[index] << "\n";
     paramSums = sumNeighbours(r, c, oxCopy, gridW);
-    oxResult[index] = paramDiffiusion(oxCopy[index], params.sDOX, params.tau, paramSums.first, paramSums.second);
+    oxResult[index] = paramDiffusion(oxCopy[index], params.sDOX, params.tau, paramSums.first, paramSums.second);
     paramSums = sumNeighbours(r, c, giCopy, gridW);
-    giResult[index] = paramDiffiusion(giCopy[index], params.sDGI, params.tau, paramSums.first, paramSums.second);
+    giResult[index] = paramDiffusion(giCopy[index], params.sDGI, params.tau, paramSums.first, paramSums.second);
 }
 
 static double distance(std::pair<double, double> p1, std::pair<double, double> p2) {
@@ -82,6 +87,7 @@ static double distance(std::pair<double, double> p1, std::pair<double, double> p
 }
 
 void Automaton::diffusion() {
+    std::cout << "schoex " << params.sCHOex << std::endl;
     ul minC = state.gridSize;
     ul minR = state.gridSize;
     ul maxC = 0;
@@ -100,7 +106,7 @@ void Automaton::diffusion() {
     ul midR = minR + (ul) std::round(0.5 * (maxR - minR));
     ul maxDist = 0;
     for (ul r = minR; r <= maxR; ++r) {
-        for (ul c = minC; c < maxC; ++c) {
+        for (ul c = minC; c <= maxC; ++c) {
             if (state.W(r, c)) {
                 maxDist = std::max(ul(std::ceil(distance({r, c}, {midR, midC}))), maxDist);
             }
@@ -118,7 +124,7 @@ void Automaton::diffusion() {
     grid<double> choCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
     grid<double> oxCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
     grid<double> giCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
-    
+
     std::vector<coords_t> borderSites;
     for (ul r = 0; r < borderedH; ++r) {
          for (ul c = 0; c < borderedW; ++c) {
@@ -136,7 +142,9 @@ void Automaton::diffusion() {
         }
     }
 
-    ul rounds = ul(std::round(params.stepTime / params.tau));
+    ul rounds = 1;
+//    ul rounds = ul(std::round(params.stepTime / params.tau));
+
     for (ul i = 0; i < rounds; ++i) {
         for (auto rc: borderSites) {
             auto r = rc.first;
@@ -146,7 +154,7 @@ void Automaton::diffusion() {
             giCopy[i % 2][r*borderedW + c] = params.sGIex;
         }
         for (ul r = 0; r < borderedH; ++r) {
-            for (ul c = 0; c < borderedH; ++c) {
+            for (ul c = 0; c < borderedW; ++c) {
                 numericalDiffusion(r, c, choCopy[i % 2], oxCopy[i % 2], giCopy[i % 2],
                                    choCopy[(i + 1) % 2], oxCopy[(i + 1) % 2],
                                    giCopy[(i + 1) % 2], borderedW);

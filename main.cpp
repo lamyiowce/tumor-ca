@@ -13,8 +13,10 @@ int main() {
 
     for (ul r = 0; r < 51; ++r) {
         for (ul c = 0; c < 51; ++c) {
-            std::cout << ((ca.getState().CHO(r, c) - ca2.getState().CHO(r, c))) << " ";
-//            std::cout << ((ca.getState().GI(r, c) - ca2.getState().GI(r, c)) / ca2.getState().GI(r, c)) << " ";
+//            std::cout << ((ca.getState().CHO(r, c) - ca2.getState().CHO(r, c))) << " ";
+            std::cout << ((ca.getState().GI(r, c) - ca2.getState().GI(r, c)) / ca2.getState().GI(r, c)) << " ";
+//            std::cout << ((ca.getState().OX(r, c) - ca2.getState().OX(r, c)) / ca2.getState().OX(r, c)) << " ";
+//            std::cout << ((ca.getState().CHO(r, c) - ca2.getState().CHO(r, c)) / ca2.getState().CHO(r, c)) << " ";
 //            std::cout << (ca2.getState().CHO(r, c) - ca1.getState().CHO(r, c)) << " ";
         }
         std::cout << std::endl;
