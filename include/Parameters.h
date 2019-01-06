@@ -64,6 +64,7 @@ public:
 
     Parameters(double sCHOex,
             double sOXex,
+            double sGIex,
             IrradiationProtocol irradiationPerStep,
             double tau,
             double stepTime,
@@ -72,13 +73,17 @@ public:
             int siGI_n,
             const Metabolism &metabolism,
             double rMax,
-            const BirthParams &birthParams);
+            const BirthParams &birthParams,
+            double sDCHO,
+            double sDOX,
+            double sDGI);
 
     explicit Parameters(const nlohmann::json &json);
     Parameters(const Parameters&) = default;
 
     const double sCHOex; // no idea yet what that is, used in replenishSubstrates, CHO
     const double sOXex; // same as above, oxygen
+    const double sGIex;
     const IrradiationProtocol irradiationSteps; /// vector of pairs (step number, irradiation dose)
     const double tau;
     const double stepTime; // step time in seconds
@@ -91,6 +96,10 @@ public:
     const Metabolism metabolism; /// nutrients metabolism parameters
     const double rMax;
     const BirthParams birthParams;
+
+    const double sDCHO;
+    const double sDOX;
+    const double sDGI;
 
 };
 

@@ -13,6 +13,7 @@
 #include <random>
 #include <math.h>
 #include <fstream>
+#include <utility>
 
 
 class Automaton {
@@ -106,6 +107,12 @@ private:
      * @return
      */
     static float mapToProb(std::pair<long, long> &relativeCoords);
+
+    void numericalDiffusion(ul r, ul c, const grid<double> &choCopy, const grid<double> &oxCopy,
+                                const grid<double> &giCopy, grid<double> &choResult, grid<double> &oxResult,
+                                grid<double> &giResult, ul gridW);
+
+    std::pair<double, double> sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW);
 
 public:
     const State &getState() const;
