@@ -45,8 +45,6 @@ static double paramDiffusion(double val, double d, double tau, double orthoSum, 
     static const double HS = 2.0 * std::sqrt(2);
     static const double f = HS + 4.;
     return d*tau*HS/f * (orthoSum + HS*diagSum/4 - f*val) + val;
-//      return 1 * (orthoSum + 2 - 2*val) + val;
-//    return 1;
 }
 
 std::pair<double, double> Automaton::sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW) {
@@ -73,9 +71,6 @@ void Automaton::numericalDiffusion(ul r, ul c, const grid<double> &choCopy, cons
     auto index = r * gridW + c;
     auto paramSums = sumNeighbours(r, c, choCopy, gridW);
     choResult[index] = paramDiffusion(choCopy[index], params.sDCHO, params.tau, paramSums.first, paramSums.second);
-//    if (r == c)
-//        std::cout << r << " " << choCopy[index] << " " << paramSums.first << " " << paramSums.second << "\n";
-    std::cout << r << " cho " << c << " " << choCopy[index] << "\n";
     paramSums = sumNeighbours(r, c, oxCopy, gridW);
     oxResult[index] = paramDiffusion(oxCopy[index], params.sDOX, params.tau, paramSums.first, paramSums.second);
     paramSums = sumNeighbours(r, c, giCopy, gridW);
@@ -87,7 +82,6 @@ static double distance(std::pair<double, double> p1, std::pair<double, double> p
 }
 
 void Automaton::diffusion() {
-    std::cout << "schoex " << params.sCHOex << std::endl;
     ul minC = state.gridSize;
     ul minR = state.gridSize;
     ul maxC = 0;
@@ -119,6 +113,7 @@ void Automaton::diffusion() {
     ul subLatticeH =                                         // sub-lattice height
             (midR + maxDist >= state.gridSize) ? state.gridSize - subLatticeR : midR + maxDist - subLatticeR + 1;
 
+
     auto borderedW = subLatticeW + 2;
     auto borderedH = subLatticeH + 2;
     grid<double> choCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
@@ -127,8 +122,8 @@ void Automaton::diffusion() {
 
     std::vector<coords_t> borderSites;
     for (ul r = 0; r < borderedH; ++r) {
-         for (ul c = 0; c < borderedW; ++c) {
-            if (distance({r, c}, {double(borderedH) / 2., double(borderedW) / 2.}) >= maxDist) {
+        for (ul c = 0; c < borderedW; ++c) {
+            if (distance({r+1, c+1}, {double(borderedH) / 2., double(borderedW) / 2.}) >= maxDist) {
                 borderSites.emplace_back(r, c);
             }
         }
@@ -142,8 +137,7 @@ void Automaton::diffusion() {
         }
     }
 
-    ul rounds = 1;
-//    ul rounds = ul(std::round(params.stepTime / params.tau));
+    ul rounds = ul(std::round(params.stepTime / params.tau));
 
     for (ul i = 0; i < rounds; ++i) {
         for (auto rc: borderSites) {
