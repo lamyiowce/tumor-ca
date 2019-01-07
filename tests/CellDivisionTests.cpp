@@ -15,7 +15,7 @@ TEST_CASE("RepairCells & CellDivision - basic test") {
             ca1.cellDivision();
 
             REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
-            REQUIRE(maxError(ca1.getState(), ca2.getState()) < 0.0000000000000001);
+            REQUIRE(maxError(ca1.getState(), ca2.getState()) < MAX_RELATIVE_ERROR);
         }
     }
 }
