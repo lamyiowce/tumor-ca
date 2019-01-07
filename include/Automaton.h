@@ -1,24 +1,13 @@
-
 #ifndef TUMOR_AUTOMATON_H
 #define TUMOR_AUTOMATON_H
 
-
 #include <State.h>
 #include <Parameters.h>
-#include <random>
 #include <Cycles.h>
-#include <memory>
-#include "RandomEngine.h"
-
-#include <random>
-#include <math.h>
-#include <fstream>
-#include <utility>
-
+#include <RandomEngine.h>
 
 class Automaton {
 private:
-
     State state;
 	Cycles cycles;
 

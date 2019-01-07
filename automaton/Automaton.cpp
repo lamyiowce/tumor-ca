@@ -1,8 +1,8 @@
 #include <Automaton.h>
 #include <algorithm>
-
 #include <iostream>
-#include <utility>
+#include <math.h>
+#include <fstream>
 
 Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                      RandomEngine *randomEngine, ul _step)
@@ -42,9 +42,9 @@ void Automaton::replenishSubstrate() {
 }
 
 static double paramDiffusion(double val, double d, double tau, double orthoSum, double diagSum) {
-    static const double HS = 2.0 * std::sqrt(2);
-    static const double f = HS + 4.;
-    return d*tau*HS/f * (orthoSum + HS*diagSum/4 - f*val) + val;
+    constexpr double HS = 2.0 * M_SQRT2f64;
+    constexpr double f = HS + 4.;
+    return d*tau*HS/f * (orthoSum + diagSum*M_SQRT1_2f64 - f*val) + val;
 }
 
 std::pair<double, double> Automaton::sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW) {
@@ -138,7 +138,6 @@ void Automaton::diffusion() {
     }
 
     ul rounds = ul(std::round(params.stepTime / params.tau));
-
     for (ul i = 0; i < rounds; ++i) {
         for (auto rc: borderSites) {
             auto r = rc.first;

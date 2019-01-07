@@ -1,8 +1,6 @@
 #include <iostream>
 #include <Automaton.h>
 #include <RandomEngine.h>
-#include <memory>
-#include <fstream>
 
 int main() {
     MatlabRandomEngine mre(10009);
