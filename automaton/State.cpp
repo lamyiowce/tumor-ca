@@ -137,15 +137,3 @@ void State::setCycleChanged(ul r, ul c, bool value) {
 double State::radius(ul r, ul c) {
     return sqrt((r - gridSize / 2.) * (r - gridSize / 2.) + (c - gridSize / 2.) * (c - gridSize / 2.));
 }
-
-grid<double> State::copyCHO() {
-    return _CHO;
-}
-
-grid<double> State::copyOX() {
-    return _OX;
-}
-
-grid<double> State::copyGI() {
-    return _GI;
-}

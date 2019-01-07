@@ -91,12 +91,6 @@ public:
 
     double radius(ul r, ul c);
 
-    grid<double> copyCHO();
-
-    grid<double> copyOX();
-
-    grid<double> copyGI();
-
 };
 
 
