@@ -15,7 +15,7 @@ TEST_CASE("SetLocalStates - basic test") {
             ca1.setLocalStates();
 
             REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
-            REQUIRE(maxError(ca1.getState(), ca2.getState()) < 0.00005);
+            REQUIRE(maxError(ca1.getState(), ca2.getState()) < MAX_RELATIVE_ERROR);
         }
     }
 }

@@ -1,10 +1,8 @@
-
 #ifndef TUMOR_STATE_H
 #define TUMOR_STATE_H
 
 #include <vector>
 #include <util.h>
-#include <cstdint>
 #include <json.hpp>
 
 template <class T>
