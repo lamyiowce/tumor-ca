@@ -32,7 +32,7 @@ void Automaton::advance() {
 void Automaton::replenishSubstrate() {
     for (ul r = 0; r < state.gridSize; r++)
         for (ul c = 0; c < state.gridSize; c++)
-            if (!state.W(r, c)) {
+            if (!state.getW(r, c)) {
                 state.CHO(r, c) = params.sCHOex;
                 state.OX(r, c) = params.sOXex;
             }
@@ -47,7 +47,7 @@ void Automaton::irradiateTumor() {
     if (dose <= 0) return;
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
-            if (state.W(r, c)) {
+            if (state.getW(r, c)) {
                 const auto r0 = state.irradiation(r, c);
                 const auto timeInRepair = state.timeInRepair(r, c);
                 const auto effectiveIrradiation = r0 / (1 + timeInRepair / params.tau);
@@ -61,7 +61,7 @@ void Automaton::irradiateTumor() {
 void Automaton::setLocalStates() {
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
-            if (state.W(r, c)) {
+            if (state.getW(r, c)) {
                 // Check if site should die:
                 // -- too acidic, or
                 // -- not enough nutrients for minimal metabolism,
@@ -204,7 +204,7 @@ void Automaton::metaboliseNutrients() {
 void Automaton::setGlobalStates() {
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
-            if (state.W(r, c)) {
+            if (state.getW(r, c)) {
                 state.setCycleChanged(r, c, false);
                 if (state.proliferationTime(r, c) <= cycles.G1time(r, c)
                     && state.cellCycle(r, c) != State::CellCycle::G1) {
@@ -299,7 +299,7 @@ void Automaton::birthCell(const Automaton::coords_t &parent, const Automaton::co
     cycles.Mtime(c_r, c_c) = randomEngine->normal(params.birthParams.Mtime.mean, params.birthParams.Mtime.stddev);
     cycles.Dtime(c_r, c_c) = randomEngine->normal(params.birthParams.Dtime.mean, params.birthParams.Dtime.stddev);
 
-    state.W(c_r, c_c) = 1;
+    state.setW(c_r, c_c, true);
     state.proliferationTime(c_r, c_c) = 0;
     state.cellCycle(c_r, c_c) = State::CellCycle::G1;
 
@@ -331,7 +331,7 @@ void Automaton::updateStats() {
 void Automaton::KillSite(ul r, ul c) {
     state.cellState(r, c) = State::CellState::DEAD;
 
-    state.W(r, c) = 0;
+    state.setW(r, c, 0);
     // state.Dage(r, c)  = 0;  // TODO unused?
     state.proliferationTime(r, c) = 0;
     state.irradiation(r, c) = 0;
@@ -342,7 +342,7 @@ void Automaton::KillSite(ul r, ul c) {
 }
 
 bool Automaton::isReadyForDivision(ul r, ul c) {
-    return state.W(r, c) &&
+    return state.getW(r, c) &&
            state.radius(r, c) < params.rMax * state.gridSize / 2 &&
            state.cellCycle(r, c) == State::CellCycle::D;
 }
@@ -363,7 +363,7 @@ std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul r, ul c) {
     std::vector<std::pair<long, long>> result;
     for (long rx = r_start; rx < r_end; ++rx) {
         for (long cx = c_start; cx < c_end; ++cx) {
-            if (state.W(r + rx, c + cx) == 0) {
+            if (state.getW(r + rx, c + cx) == 0) {
                 result.emplace_back(rx, cx);
             }
         }
@@ -379,4 +379,11 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
     Parameters parameters(j);
     ul step = j["st"];
     return Automaton(state, cycles, parameters, re, step);
+}
+
+void Automaton::saveStateToFile(const std::string &filename) {
+    std::ofstream ofs(filename);
+    ofs << step << std::endl;
+    ofs << state;
+    ofs << cycles;
 }

@@ -3,14 +3,15 @@
 
 #include <vector>
 #include <json.hpp>
+#include <util.h>
 
 class Cycles {
 private:
-	std::vector<double> _G1time;
-	std::vector<double> _Stime;
-	std::vector<double> _G2time;
-	std::vector<double> _Mtime;
-	std::vector<double> _Dtime;
+	grid<double> _G1time;
+	grid<double> _Stime;
+	grid<double> _G2time;
+	grid<double> _Mtime;
+	grid<double> _Dtime;
 	unsigned long _gridSize;
 
 public:
@@ -23,6 +24,8 @@ public:
 	double& G2time(unsigned long r, unsigned long c);
 	double& Mtime(unsigned long r, unsigned long c);
 	double& Dtime(unsigned long r, unsigned long c);
+
+	friend std::ofstream& operator<<(std::ofstream& stream, const Cycles& cycles);
 };
 
 #endif  // TUMOR_CYCLES_H

@@ -6,9 +6,7 @@
 #include <util.h>
 #include <cstdint>
 #include <json.hpp>
-
-template <class T>
-using grid = std::vector<T>;
+#include <fstream>
 
 class State {
 public:
@@ -34,7 +32,7 @@ public:
     ul gridSize;
 
 private:
-    grid<uint8_t> _W; // 1 - cell alive
+    grid<bool> _W; // 1 - cell alive
     grid<double> _CHO; // CHO level
     grid<double> _OX; // oxygen level
     grid<double> _GI; // GI level
@@ -49,9 +47,9 @@ private:
                               // changed during the last setGlobalStates() call
 
 public:
-    const uint8_t &W(ul r, ul c) const;
+    bool getW(ul r, ul c) const;
 
-    uint8_t &W(ul r, ul c);
+    void setW(ul r, ul c, bool v);
 
     const double &CHO(ul r, ul c) const;
 
@@ -91,6 +89,7 @@ public:
 
     double radius(ul r, ul c);
 
+	friend std::ofstream& operator<<(std::ofstream& stream, const State& state);
 };
 
 

@@ -1,5 +1,7 @@
 #include <State.h>
 #include <cmath>
+#include <fstream>
+#include <vector>
 
 State::State(ul _gridSize) : gridSize(_gridSize),
                              _W(gridSize * gridSize),
@@ -21,7 +23,7 @@ State::State(nlohmann::json json)
     : State::State(static_cast<ul>(json["PARAMS"]["L"])) {
     for (ul r = 0; r < gridSize; ++r) {
         for (ul c = 0; c < gridSize; ++c) {
-            this->W(r, c) = json["STATE"]["W"][r][c];
+            this->setW(r, c, json["STATE"]["W"][r][c].get<int>());
             this->CHO(r, c) = json["STATE"]["CHO"][r][c];
             this->OX(r, c) = json["STATE"]["OX"][r][c];
             this->GI(r, c) = json["STATE"]["GI"][r][c];
@@ -54,12 +56,12 @@ State::State(nlohmann::json json)
     }
 }
 
-const uint8_t &State::W(ul r, ul c) const {
+bool State::getW(ul r, ul c) const {
     return _W[r * gridSize + c];
 }
 
-uint8_t &State::W(ul r, ul c) {
-    return _W[r * gridSize + c];
+void State::setW(ul r, ul c, bool v) {
+    _W[r * gridSize + c] = v;
 }
 
 const double &State::CHO(ul r, ul c) const {
@@ -136,4 +138,11 @@ void State::setCycleChanged(ul r, ul c, bool value) {
 
 double State::radius(ul r, ul c) {
     return sqrt((r - gridSize / 2.) * (r - gridSize / 2.) + (c - gridSize / 2.) * (c - gridSize / 2.));
+}
+
+std::ofstream& operator<<(std::ofstream& stream, const State& state)
+{
+    stream << state._W << state._CHO << state._OX << state._GI << state._timeInRepair << state._irradiation
+           << state._cellState << state._cellCycle << state._proliferationTime << state._cycleChanged;
+    return stream;
 }
