@@ -5,6 +5,7 @@
 Parameters::Parameters(
             double sCHOex,
             double sOXex,
+            double sGIex,
             IrradiationProtocol irradiationSteps,
             double tau,
             double stepTime,
@@ -13,10 +14,14 @@ Parameters::Parameters(
             int siGI_n,
             const Metabolism &metabolism,
             double rmax,
-            const BirthParams &birthParams
+            const BirthParams &birthParams,
+            double sDCHO,
+            double sDOX,
+            double sDGI
         )
         : sCHOex(sCHOex),
           sOXex(sOXex),
+          sGIex(sGIex),
           irradiationSteps(std::move(irradiationSteps)),
           tau(tau),
           stepTime(stepTime),
@@ -25,12 +30,16 @@ Parameters::Parameters(
           siGI_n(siGI_n),
           metabolism(metabolism),
           rMax(rmax),
-          birthParams(birthParams) {}
+          birthParams(birthParams),
+          sDCHO(sDCHO),
+          sDOX(sDOX),
+          sDGI(sDGI) {}
 
 Parameters::Parameters(const nlohmann::json &json)
     : Parameters::Parameters(
         json["PARAMS"]["sCHOex"].get<double>(),
         json["PARAMS"]["sOXex"].get<double>(),
+        json["PARAMS"]["sGIex"].get<double>(),
         Parameters::IrradiationProtocol(json),
         json["PARAMS"]["tau"].get<double>(),
         json["PARAMS"]["tstep"].get<double>(),
@@ -45,7 +54,10 @@ Parameters::Parameters(const nlohmann::json &json)
             Parameters::NormDistParams(json["PARAMS"]["mCyc_G2"], json["PARAMS"]["sCyc_G2"]),
             Parameters::NormDistParams(json["PARAMS"]["mCyc_M"], json["PARAMS"]["sCyc_M"]),
             Parameters::NormDistParams(json["PARAMS"]["mCyc_D"], json["PARAMS"]["sCyc_D"])
-        }
+        },
+        json["PARAMS"]["sDcho"].get<double>(),
+        json["PARAMS"]["sDox"].get<double>(),
+        json["PARAMS"]["sDgi"].get<double>()
     ) {}
 
 Parameters::NutrientsParameters::NutrientsParameters(double CHO, double OX, double GI) : CHO(CHO), OX(OX), GI(GI) {}

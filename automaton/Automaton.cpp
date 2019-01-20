@@ -1,5 +1,8 @@
 #include <Automaton.h>
 #include <algorithm>
+#include <iostream>
+#include <math.h>
+#include <fstream>
 
 Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                      RandomEngine *randomEngine, ul _step)
@@ -38,8 +41,126 @@ void Automaton::replenishSubstrate() {
             }
 }
 
+static double paramDiffusion(double val, double d, double tau, double orthoSum, double diagSum) {
+    constexpr double HS = 2.0 * M_SQRT2f64;
+    constexpr double f = HS + 4.;
+    return d*tau*HS/f * (orthoSum + diagSum*M_SQRT1_2f64 - f*val) + val;
+}
+
+std::pair<double, double> Automaton::sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW) {
+    auto gridH = values.size() / gridW;
+    long r_start = r == 0 ? 0 : -1;
+    long r_end = (r == gridH - 1) ? 0 : 1;
+    long c_start = c == 0 ? 0 : -1;
+    long c_end = (c == gridW - 1) ? 0 : 1;
+
+    double orthogonalResult = 0.0, diagonalResult = 0.0;
+    for (long ri = r_start; ri <= r_end; ++ri) {
+        for (long ci = c_start; ci <= c_end; ++ci) {
+            if (ri == 0 && ci == 0) continue;
+            if (ri == 0 || ci == 0) orthogonalResult += values[(r + ri) * gridW + c + ci];
+            else diagonalResult += values[(r + ri) * gridW + c + ci];
+        }
+    }
+    return {orthogonalResult, diagonalResult};
+}
+
+void Automaton::numericalDiffusion(ul r, ul c, const grid<double> &choCopy, const grid<double> &oxCopy,
+                                   const grid<double> &giCopy, grid<double> &choResult, grid<double> &oxResult,
+                                   grid<double> &giResult, ul gridW) {
+    auto index = r * gridW + c;
+    auto paramSums = sumNeighbours(r, c, choCopy, gridW);
+    choResult[index] = paramDiffusion(choCopy[index], params.sDCHO, params.tau, paramSums.first, paramSums.second);
+    paramSums = sumNeighbours(r, c, oxCopy, gridW);
+    oxResult[index] = paramDiffusion(oxCopy[index], params.sDOX, params.tau, paramSums.first, paramSums.second);
+    paramSums = sumNeighbours(r, c, giCopy, gridW);
+    giResult[index] = paramDiffusion(giCopy[index], params.sDGI, params.tau, paramSums.first, paramSums.second);
+}
+
+static double distance(std::pair<double, double> p1, std::pair<double, double> p2) {
+    return std::sqrt((p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second));
+}
+
 void Automaton::diffusion() {
-    // TODO
+    ul minC = state.gridSize;
+    ul minR = state.gridSize;
+    ul maxC = 0;
+    ul maxR = 0;
+    for (ul r = 0; r < state.gridSize; ++r) {
+        for (ul c = 0; c < state.gridSize; ++c) {
+            if (state.W(r, c)) {
+                minC = std::min(c, minC);
+                minR = std::min(r, minR);
+                maxC = std::max(c, maxC);
+                maxR = std::max(r, maxR);
+            }
+        }
+    }
+    ul midC = minC + (ul) std::round(0.5 * (maxC - minC));
+    ul midR = minR + (ul) std::round(0.5 * (maxR - minR));
+    ul maxDist = 0;
+    for (ul r = minR; r <= maxR; ++r) {
+        for (ul c = minC; c <= maxC; ++c) {
+            if (state.W(r, c)) {
+                maxDist = std::max(ul(std::ceil(distance({r, c}, {midR, midC}))), maxDist);
+            }
+        }
+    }
+    ul subLatticeR = (midR <= maxDist) ? 0 : midR - maxDist; // sub-lattice upper row
+    ul subLatticeC = (midC <= maxDist) ? 0 : midC - maxDist; // sub-lattice left column
+    ul subLatticeW =                                         // sub-lattice width
+            (midC + maxDist >= state.gridSize) ? state.gridSize - subLatticeC : midC + maxDist - subLatticeC + 1;
+    ul subLatticeH =                                         // sub-lattice height
+            (midR + maxDist >= state.gridSize) ? state.gridSize - subLatticeR : midR + maxDist - subLatticeR + 1;
+
+
+    auto borderedW = subLatticeW + 2;
+    auto borderedH = subLatticeH + 2;
+    grid<double> choCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
+    grid<double> oxCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
+    grid<double> giCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
+
+    std::vector<coords_t> borderSites;
+    for (ul r = 0; r < borderedH; ++r) {
+        for (ul c = 0; c < borderedW; ++c) {
+            if (distance({r+1, c+1}, {double(borderedH) / 2., double(borderedW) / 2.}) >= maxDist) {
+                borderSites.emplace_back(r, c);
+            }
+        }
+    }
+
+    for (ul r = 0; r < subLatticeH; ++r) {
+        for (ul c = 0; c < subLatticeW; ++c) {
+            choCopy[0][(r + 1) * borderedW + (c + 1)] = state.CHO(subLatticeR + r, subLatticeC + c);
+            oxCopy[0][(r + 1) * borderedW + (c + 1)] = state.OX(subLatticeR + r, subLatticeC + c);
+            giCopy[0][(r + 1) * borderedW + (c + 1)] = state.GI(subLatticeR + r, subLatticeC + c);
+        }
+    }
+
+    ul rounds = ul(std::round(params.stepTime / params.tau));
+    for (ul i = 0; i < rounds; ++i) {
+        for (auto rc: borderSites) {
+            auto r = rc.first;
+            auto c = rc.second;
+            choCopy[i % 2][r*borderedW + c] = params.sCHOex;
+            oxCopy[i % 2][r*borderedW + c] = params.sOXex;
+            giCopy[i % 2][r*borderedW + c] = params.sGIex;
+        }
+        for (ul r = 0; r < borderedH; ++r) {
+            for (ul c = 0; c < borderedW; ++c) {
+                numericalDiffusion(r, c, choCopy[i % 2], oxCopy[i % 2], giCopy[i % 2],
+                                   choCopy[(i + 1) % 2], oxCopy[(i + 1) % 2],
+                                   giCopy[(i + 1) % 2], borderedW);
+            }
+        }
+    }
+    for (ul r = 0; r < subLatticeH; ++r) {
+        for (ul c = 0; c < subLatticeW; ++c) {
+            state.CHO(subLatticeR + r, subLatticeC + c) = choCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
+            state.OX(subLatticeR + r, subLatticeC + c) = oxCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
+            state.GI(subLatticeR + r, subLatticeC + c) = giCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
+        }
+    }
 }
 
 void Automaton::irradiateTumor() {
@@ -147,8 +268,9 @@ void Automaton::setLocalStates() {
 
 // Progress clock if repair time is 0.
 void Automaton::progressCellClock(ul r, ul c) {
-    if (state.timeInRepair(r, c) == 0)
+    if (state.timeInRepair(r, c) == 0) {
         state.proliferationTime(r, c) += params.stepTime / 3600;
+    }
 }
 
 void Automaton::metaboliseAerobicProliferation(ul r, ul c) {
@@ -249,11 +371,7 @@ void Automaton::repairCells() {
                 if (state.timeInRepair(r, c) >=
                     3.3414 * exp(0.1492 * state.irradiation(r, c))) {
                     if (state.irradiation(r, c) > 0) {
-                        // TODO: put this in a different class/object
-                        std::random_device rd;  //Will be used to obtain a seed for the random number engine
-                        std::mt19937 rng(rd()); //Standard mersenne_twister_engine seeded with rd()
-                        std::uniform_real_distribution<> dis(0.0, 1.0);
-                        double rand = dis(rng);
+                        double rand = randomEngine->uniform();
                         if (rand <= 1 - exp(-0.4993 * state.irradiation(r, c))) {
                             KillSite(r, c);
                         } else {
@@ -311,8 +429,9 @@ void Automaton::birthCell(const Automaton::coords_t &parent, const Automaton::co
 
 Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
     auto vn = vacantNeighbors(r, c);
-    if (vn.empty())
+    if (vn.empty()) {
         return {r, c};
+    }
     std::vector<float> probs(vn.size());
     std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
     ul choice = randomEngine->roulette(probs);
@@ -361,8 +480,8 @@ std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul r, ul c) {
     long c_end = (c == state.gridSize - 1) ? 0 : 1;
 
     std::vector<std::pair<long, long>> result;
-    for (long rx = r_start; rx < r_end; ++rx) {
-        for (long cx = c_start; cx < c_end; ++cx) {
+    for (long rx = r_start; rx <= r_end; ++rx) {
+        for (long cx = c_start; cx <= c_end; ++cx) {
             if (state.getW(r + rx, c + cx) == 0) {
                 result.emplace_back(rx, cx);
             }

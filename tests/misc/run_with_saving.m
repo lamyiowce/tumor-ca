@@ -7,13 +7,6 @@ global P_EVO POP GEN LIB
 % // load runfile
 evalfile('example/runfile_example_static.txt')      % provides P_EVO
 
-% // Define the random seed, and control for replication
-%    .. we use MATLAB's 'mt19937ar' stream ("Mersenne
-%    Twister with Mersenne prime 2^19937-1")
-s = RandStream('mt19937ar','Seed',seed);
-RandStream.setGlobalStream(s);
-P_EVO.randstreamseed = s;
-
 % // load Benchmark performance for fitness comparison
 BM = GetBenchmarks(P_EVO);
 
@@ -38,6 +31,13 @@ tumor_name = sprintf('out-%s-tr%.0f-st%.0f-%s.json',P_EVO.tum_lib_s, tr, st);
 save_workspace(sprintf('out-%s-tr%.0f-st%.0f-0a-%s.json',P_EVO.tum_lib_s, tr, st,  'initial'));
 ReplenishSubstrate2
 save_workspace(sprintf('out-%s-tr%.0f-st%.0f-0b-%s.json',P_EVO.tum_lib_s, tr, st,  'ReplenishSubstrate'));
+
+% // Define the random seed, and control for replication
+%    .. we use MATLAB's 'mt19937ar' stream ("Mersenne
+%    Twister with Mersenne prime 2^19937-1")
+s = RandStream('mt19937ar','Seed',seed);
+RandStream.setGlobalStream(s);
+P_EVO.randstreamseed = s;
 
 for st = 1:10
    Diffusion2
