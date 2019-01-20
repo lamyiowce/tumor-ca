@@ -88,7 +88,7 @@ void Automaton::diffusion() {
     ul maxR = 0;
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
-            if (state.W(r, c)) {
+            if (state.getW(r, c)) {
                 minC = std::min(c, minC);
                 minR = std::min(r, minR);
                 maxC = std::max(c, maxC);
@@ -101,7 +101,7 @@ void Automaton::diffusion() {
     ul maxDist = 0;
     for (ul r = minR; r <= maxR; ++r) {
         for (ul c = minC; c <= maxC; ++c) {
-            if (state.W(r, c)) {
+            if (state.getW(r, c)) {
                 maxDist = std::max(ul(std::ceil(distance({r, c}, {midR, midC}))), maxDist);
             }
         }
