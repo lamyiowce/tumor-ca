@@ -328,25 +328,29 @@ void Automaton::setGlobalStates() {
         for (ul c = 0; c < state.gridSize; ++c) {
             if (state.W(r, c)) {
                 state.setCycleChanged(r, c, false);
-                if (state.proliferationTime(r, c) <= cycles.G1time(r, c)
-                    && state.cellCycle(r, c) != State::CellCycle::G1) {
-                    state.cellCycle(r, c) = State::CellCycle::G1;
-                    state.setCycleChanged(r, c, true);
+                if (state.proliferationTime(r, c) <= cycles.G1time(r, c)) {
+                    if (state.cellCycle(r, c) != State::CellCycle::G1) {
+                        state.cellCycle(r, c) = State::CellCycle::G1;
+                        state.setCycleChanged(r, c, true);
+                    }
                 } else if (state.proliferationTime(r, c)
-                           <= cycles.G1time(r, c) + cycles.Stime(r, c)
-                           && state.cellCycle(r, c) != State::CellCycle::S) {
-                    state.cellCycle(r, c) = State::CellCycle::S;
-                    state.setCycleChanged(r, c, true);
+                           <= cycles.G1time(r, c) + cycles.Stime(r, c)) {
+                    if (state.cellCycle(r, c) != State::CellCycle::S) {
+                        state.cellCycle(r, c) = State::CellCycle::S;
+                        state.setCycleChanged(r, c, true);
+                    }
                 } else if (state.proliferationTime(r, c)
-                           <= cycles.G1time(r, c) + cycles.Stime(r, c) + cycles.G2time(r, c)
-                           && state.cellCycle(r, c) != State::CellCycle::G2) {
-                    state.cellCycle(r, c) = State::CellCycle::G2;
-                    state.setCycleChanged(r, c, true);
+                           <= cycles.G1time(r, c) + cycles.Stime(r, c) + cycles.G2time(r, c)) {
+                    if (state.cellCycle(r, c) != State::CellCycle::G2) {
+                        state.cellCycle(r, c) = State::CellCycle::G2;
+                        state.setCycleChanged(r, c, true);
+                    }
                 } else if (state.proliferationTime(r, c) <=
-                           cycles.G1time(r, c) + cycles.Stime(r, c) + cycles.G2time(r, c) + cycles.Mtime(r, c)
-                           && state.cellCycle(r, c) != State::CellCycle::M) {
-                    state.cellCycle(r, c) = State::CellCycle::M;
-                    state.setCycleChanged(r, c, true);
+                           cycles.G1time(r, c) + cycles.Stime(r, c) + cycles.G2time(r, c) + cycles.Mtime(r, c)) {
+                    if (state.cellCycle(r, c) != State::CellCycle::M) {
+                        state.cellCycle(r, c) = State::CellCycle::M;
+                        state.setCycleChanged(r, c, true);
+                    }
                 } else {
                     state.cellCycle(r, c) = State::CellCycle::D;
                 }
