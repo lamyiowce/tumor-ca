@@ -15,7 +15,7 @@ TEST_CASE("SetGlobalStates - basic test") {
             ca1.setGlobalStates();
 
             REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
-            REQUIRE(maxError(ca1.getState(), ca2.getState()) < MAX_RELATIVE_ERROR);
+            REQUIRE(maxError(ca1.getState(), ca2.getState()) == 0);
         }
     }
 }

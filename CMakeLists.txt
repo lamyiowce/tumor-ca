@@ -35,7 +35,8 @@ add_executable(tests
         tests/CellDivisionTests.cpp
         tests/MetaboliseNutrientsTests.cpp
         tests/SetLocalStatesTests.cpp
-        tests/DiffusionTests.cpp tests/SetGlobalStatesTests.cpp)
+        tests/SetGlobalStatesTests.cpp
+        tests/DiffusionTests.cpp)
 
 add_executable(integration-test
         ${SOURCES}
