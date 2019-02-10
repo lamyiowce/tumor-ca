@@ -3,8 +3,20 @@
 #include <RandomEngine.h>
 
 int main() {
-    StdRandomEngine sre(10009);
-    auto ca = Automaton::loadFromFile("../tests/resources/matlab_results/out-vnw-tr1-st0-0a-initial.json", &sre);
-    ca.runNSteps(4800);
+    MatlabRandomEngine sre(1);
+    auto ca = Automaton::loadFromFile("../tests/resources/matlab_results/1/out-vnw-tr1-st1-5-SetGlobalStates.json", &sre);
+    ca.repairCells();
+    ca.cellDivision();
+    auto lhs = ca.getCycles();
+    auto ca2 = Automaton::loadFromFile("../tests/resources/matlab_results/1/out-vnw-tr1-st1-7-CellDivision.json", &sre);
+
+    auto rhs = ca2.getCycles();
+    for (ul r = 0; r < lhs.gridSize; ++r) {
+        for (ul c = 0; c < lhs.gridSize; ++c) {
+            double err = std::abs((lhs.G1time(r, c) - rhs.G1time(r, c))/rhs.G1time(r, c));
+            if (err > 0.0000006)
+                std::cout << r << ", " << c << " err " << err << std::endl;
+        }
+    }
     return 0;
 }

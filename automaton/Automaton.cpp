@@ -413,7 +413,7 @@ void Automaton::birthCell(const Automaton::coords_t &parent, const Automaton::co
     auto c_c = child.second;
     cycles.G1time(c_r, c_c) = randomEngine->normal(params.birthParams.G1time.mean, params.birthParams.G1time.stddev);
     cycles.Stime(c_r, c_c) = randomEngine->normal(params.birthParams.Stime.mean, params.birthParams.Stime.stddev);
-    cycles.G1time(c_r, c_c) = randomEngine->normal(params.birthParams.G2time.mean, params.birthParams.G2time.stddev);
+    cycles.G2time(c_r, c_c) = randomEngine->normal(params.birthParams.G2time.mean, params.birthParams.G2time.stddev);
     cycles.Mtime(c_r, c_c) = randomEngine->normal(params.birthParams.Mtime.mean, params.birthParams.Mtime.stddev);
     cycles.Dtime(c_r, c_c) = randomEngine->normal(params.birthParams.Dtime.mean, params.birthParams.Dtime.stddev);
 
@@ -498,4 +498,8 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
     Parameters parameters(j);
     ul step = j["st"];
     return Automaton(state, cycles, parameters, re, step);
+}
+
+Cycles Automaton::getCycles() {
+    return cycles;
 }

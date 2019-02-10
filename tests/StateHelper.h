@@ -12,4 +12,6 @@ double maxError(const State &lhs, const State &rhs);
 
 bool discreteEquality(const State &lhs, const State &rhs);
 
+double maxErrorCycles(const Cycles &lhs, const Cycles &rhs);
+
 #endif //TUMOR_STATEHELPER_H
