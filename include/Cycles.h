@@ -6,28 +6,28 @@
 
 class Cycles {
 private:
-	std::vector<double> _G1time;
-	std::vector<double> _Stime;
-	std::vector<double> _G2time;
-	std::vector<double> _Mtime;
-	std::vector<double> _Dtime;
+	std::vector<float> _G1time;
+	std::vector<float> _Stime;
+	std::vector<float> _G2time;
+	std::vector<float> _Mtime;
+	std::vector<float> _Dtime;
 
 public:
 	explicit Cycles(unsigned long gridSize);
 	explicit Cycles(nlohmann::json json);
 	Cycles(const Cycles&) = default;
 
-	double& G1time(unsigned long r, unsigned long c);
-	double& Stime(unsigned long r, unsigned long c);
-	double& G2time(unsigned long r, unsigned long c);
-	double& Mtime(unsigned long r, unsigned long c);
-	double& Dtime(unsigned long r, unsigned long c);
+	float& G1time(unsigned long r, unsigned long c);
+	float& Stime(unsigned long r, unsigned long c);
+	float& G2time(unsigned long r, unsigned long c);
+	float& Mtime(unsigned long r, unsigned long c);
+	float& Dtime(unsigned long r, unsigned long c);
 
-	const double& G1time(unsigned long r, unsigned long c) const;
-	const double& Stime(unsigned long r, unsigned long c) const;
-	const double& G2time(unsigned long r, unsigned long c) const;
-	const double& Mtime(unsigned long r, unsigned long c) const;
-	const double& Dtime(unsigned long r, unsigned long c) const;
+	const float& G1time(unsigned long r, unsigned long c) const;
+	const float& Stime(unsigned long r, unsigned long c) const;
+	const float& G2time(unsigned long r, unsigned long c) const;
+	const float& Mtime(unsigned long r, unsigned long c) const;
+	const float& Dtime(unsigned long r, unsigned long c) const;
 
 	unsigned long gridSize;
 };

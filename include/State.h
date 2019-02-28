@@ -33,16 +33,16 @@ public:
 
 private:
     grid<uint8_t> _W; // 1 - cell alive
-    grid<double> _CHO; // CHO level
-    grid<double> _OX; // oxygen level
-    grid<double> _GI; // GI level
-    grid<double> _timeInRepair; // STATE.RepT, time-in-repair clock
-    grid<double> _irradiation; // STATE.R, the level of damage
+    grid<float> _CHO; // CHO level
+    grid<float> _OX; // oxygen level
+    grid<float> _GI; // GI level
+    grid<float> _timeInRepair; // STATE.RepT, time-in-repair clock
+    grid<float> _irradiation; // STATE.R, the level of damage
                                //present in the site
     grid<CellState> _cellState; // biological state of a cell.
                                 // holds the same information as STATE.lMET
     grid<CellCycle> _cellCycle; // ; STATE.gMET
-    grid<double> _proliferationTime; // proliferation timer, same as STATE.HRS
+    grid<float> _proliferationTime; // proliferation timer, same as STATE.HRS
 	grid<bool> _cycleChanged; // STATE.ch; whether the site's cell cycle has
                               // changed during the last setGlobalStates() call
 
@@ -51,25 +51,25 @@ public:
 
     uint8_t &W(ul r, ul c);
 
-    const double &CHO(ul r, ul c) const;
+    const float &CHO(ul r, ul c) const;
 
-    double &CHO(ul r, ul c);
+    float &CHO(ul r, ul c);
 
-    const double &OX(ul r, ul c) const;
+    const float &OX(ul r, ul c) const;
 
-    double &OX(ul r, ul c);
+    float &OX(ul r, ul c);
 
-    const double &GI(ul r, ul c) const;
+    const float &GI(ul r, ul c) const;
 
-    double &GI(ul r, ul c);
+    float &GI(ul r, ul c);
 
-    const double &timeInRepair(ul r, ul c) const;
+    const float &timeInRepair(ul r, ul c) const;
 
-    double &timeInRepair(ul r, ul c);
+    float &timeInRepair(ul r, ul c);
 
-    const double &irradiation(ul r, ul c) const;
+    const float &irradiation(ul r, ul c) const;
 
-    double &irradiation(ul r, ul c);
+    float &irradiation(ul r, ul c);
 
     const CellState &cellState(ul r, ul c) const;
 
@@ -79,15 +79,15 @@ public:
 
     CellCycle &cellCycle(ul r, ul c);
 
-    const double &proliferationTime(ul r, ul c) const;
+    const float &proliferationTime(ul r, ul c) const;
 
-    double &proliferationTime(ul r, ul c);
+    float &proliferationTime(ul r, ul c);
 
 	bool cycleChanged(ul x, ul u);
 
 	void setCycleChanged(ul r, ul c, bool value);
 
-    double radius(ul r, ul c);
+    float radius(ul r, ul c);
 
 };
 
