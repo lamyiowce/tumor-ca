@@ -62,43 +62,43 @@ uint8_t &State::W(ul r, ul c) {
     return _W[r * gridSize + c];
 }
 
-const double &State::CHO(ul r, ul c) const {
+const single_p &State::CHO(ul r, ul c) const {
     return _CHO[r * gridSize + c];
 }
 
-double &State::CHO(ul r, ul c) {
+single_p &State::CHO(ul r, ul c) {
     return _CHO[r * gridSize + c];
 }
 
-const double &State::OX(ul r, ul c) const {
+const single_p &State::OX(ul r, ul c) const {
     return _OX[r * gridSize + c];
 }
 
-double &State::OX(ul r, ul c) {
+single_p &State::OX(ul r, ul c) {
     return _OX[r * gridSize + c];
 }
 
-const double &State::GI(ul r, ul c) const {
+const single_p &State::GI(ul r, ul c) const {
     return _GI[r * gridSize + c];
 }
 
-double &State::GI(ul r, ul c) {
+single_p &State::GI(ul r, ul c) {
     return _GI[r * gridSize + c];
 }
 
-const double &State::timeInRepair(ul r, ul c) const {
+const single_p &State::timeInRepair(ul r, ul c) const {
     return _timeInRepair[r * gridSize + c];
 }
 
-double &State::timeInRepair(ul r, ul c) {
+single_p &State::timeInRepair(ul r, ul c) {
     return _timeInRepair[r * gridSize + c];
 }
 
-const double &State::irradiation(ul r, ul c) const {
+const single_p &State::irradiation(ul r, ul c) const {
     return _irradiation[r * gridSize + c];
 }
 
-double &State::irradiation(ul r, ul c) {
+single_p &State::irradiation(ul r, ul c) {
     return _irradiation[r * gridSize + c];
 }
 
@@ -118,11 +118,11 @@ State::CellCycle &State::cellCycle(ul r, ul c) {
     return _cellCycle[r * gridSize + c];
 }
 
-const double &State::proliferationTime(ul r, ul c) const {
+const single_p &State::proliferationTime(ul r, ul c) const {
     return _proliferationTime[r * gridSize + c];
 }
 
-double &State::proliferationTime(ul r, ul c) {
+single_p &State::proliferationTime(ul r, ul c) {
     return _proliferationTime[r * gridSize + c];
 }
 
@@ -134,6 +134,6 @@ void State::setCycleChanged(ul r, ul c, bool value) {
 	_cycleChanged[r * gridSize + c] = value;
 }
 
-double State::radius(ul r, ul c) {
+single_p State::radius(ul r, ul c) {
     return sqrt((r - gridSize / 2.) * (r - gridSize / 2.) + (c - gridSize / 2.) * (c - gridSize / 2.));
 }

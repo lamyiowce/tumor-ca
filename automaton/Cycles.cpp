@@ -1,11 +1,11 @@
 #include <Cycles.h>
 
 Cycles::Cycles(unsigned long gridSize) :_gridSize(gridSize) {
-	this->_G1time = std::vector<double>(_gridSize * _gridSize);
-	this->_Stime = std::vector<double>(_gridSize * _gridSize);
-	this->_G2time = std::vector<double>(_gridSize * _gridSize);
-	this->_Mtime = std::vector<double>(_gridSize * _gridSize);
-	this->_Dtime = std::vector<double>(_gridSize * _gridSize);
+	this->_G1time = std::vector<single_p>(_gridSize * _gridSize);
+	this->_Stime = std::vector<single_p>(_gridSize * _gridSize);
+	this->_G2time = std::vector<single_p>(_gridSize * _gridSize);
+	this->_Mtime = std::vector<single_p>(_gridSize * _gridSize);
+	this->_Dtime = std::vector<single_p>(_gridSize * _gridSize);
 }
 
 Cycles::Cycles(nlohmann::json json)
@@ -21,22 +21,22 @@ Cycles::Cycles(nlohmann::json json)
     }
 }
 
-double& Cycles::G1time(unsigned long r, unsigned long c) {
+single_p& Cycles::G1time(unsigned long r, unsigned long c) {
 	return _G1time[r * _gridSize + c];
 }
 
-double& Cycles::Stime(unsigned long r, unsigned long c) {
+single_p& Cycles::Stime(unsigned long r, unsigned long c) {
 	return _Stime[r * _gridSize + c];
 }
 
-double& Cycles::G2time(unsigned long r, unsigned long c) {
+single_p& Cycles::G2time(unsigned long r, unsigned long c) {
 	return _G2time[r * _gridSize + c];
 }
 
-double& Cycles::Mtime(unsigned long r, unsigned long c) {
+single_p& Cycles::Mtime(unsigned long r, unsigned long c) {
 	return _Mtime[r * _gridSize + c];
 }
 
-double& Cycles::Dtime(unsigned long r, unsigned long c) {
+single_p& Cycles::Dtime(unsigned long r, unsigned long c) {
 	return _Dtime[r * _gridSize + c];
 }

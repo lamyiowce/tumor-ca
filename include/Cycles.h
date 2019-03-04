@@ -3,14 +3,15 @@
 
 #include <vector>
 #include <json.hpp>
+#include "util.h"
 
 class Cycles {
 private:
-	std::vector<double> _G1time;
-	std::vector<double> _Stime;
-	std::vector<double> _G2time;
-	std::vector<double> _Mtime;
-	std::vector<double> _Dtime;
+	std::vector<single_p> _G1time;
+	std::vector<single_p> _Stime;
+	std::vector<single_p> _G2time;
+	std::vector<single_p> _Mtime;
+	std::vector<single_p> _Dtime;
 	unsigned long _gridSize;
 
 public:
@@ -18,11 +19,11 @@ public:
 	explicit Cycles(nlohmann::json json);
 	Cycles(const Cycles&) = default;
 
-	double& G1time(unsigned long r, unsigned long c);
-	double& Stime(unsigned long r, unsigned long c);
-	double& G2time(unsigned long r, unsigned long c);
-	double& Mtime(unsigned long r, unsigned long c);
-	double& Dtime(unsigned long r, unsigned long c);
+	single_p& G1time(unsigned long r, unsigned long c);
+	single_p& Stime(unsigned long r, unsigned long c);
+	single_p& G2time(unsigned long r, unsigned long c);
+	single_p& Mtime(unsigned long r, unsigned long c);
+	single_p& Dtime(unsigned long r, unsigned long c);
 };
 
 #endif  // TUMOR_CYCLES_H
