@@ -41,8 +41,6 @@ void save_protocol_map(protocol_sum protocol_map) {
 
 int main() {
 
-	calculate_factorials();
-
   	protocol_sum protocol_map;
 	int ways = 0;
 	for (int target = 1000; target > 50; target -= 25) {
