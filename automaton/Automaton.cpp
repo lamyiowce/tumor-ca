@@ -49,19 +49,26 @@ static double paramDiffusion(double_p val, double_p d, double_p tau, double_p or
 
 std::pair<double_p, double_p> Automaton::sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW) {
     auto gridH = values.size() / gridW;
-    long r_start = r == 0 ? 0 : -1;
-    long r_end = (r == gridH - 1) ? 0 : 1;
-    long c_start = c == 0 ? 0 : -1;
-    long c_end = (c == gridW - 1) ? 0 : 1;
 
     double_p orthogonalResult = 0.0, diagonalResult = 0.0;
-    for (long ri = r_start; ri <= r_end; ++ri) {
-        for (long ci = c_start; ci <= c_end; ++ci) {
-            if (ri == 0 && ci == 0) continue;
-            if (ri == 0 || ci == 0) orthogonalResult += values[(r + ri) * gridW + c + ci];
-            else diagonalResult += values[(r + ri) * gridW + c + ci];
-        }
-    }
+    if (r != 0)
+        orthogonalResult += values[(r-1) * gridW + c];
+    if (r != gridH-1)
+        orthogonalResult += values[(r+1) * gridW + c];
+    if (c != 0)
+        orthogonalResult += values[r * gridW + c-1];
+    if (c != gridW-1)
+        orthogonalResult += values[r * gridW + c+1];
+
+    if (r != 0 && c != 0)
+        diagonalResult += values[(r-1) * gridW + c-1];
+    if (r != gridH-1 && c != 0)
+        diagonalResult += values[(r+1) * gridW + c-1];
+    if (c != gridW-1 && r != gridH-1)
+        diagonalResult += values[(r+1) * gridW + c+1];
+    if (c != gridW-1 && r != 0)
+        diagonalResult += values[(r-1) * gridW + c+1];
+
     return {orthogonalResult, diagonalResult};
 }
 
@@ -139,6 +146,7 @@ void Automaton::diffusion() {
 
     ul rounds = ul(std::round(params.stepTime / params.tau));
     for (ul i = 0; i < rounds; ++i) {
+        auto iParity = i%2;
         for (auto rc: borderSites) {
             auto r = rc.first;
             auto c = rc.second;
@@ -154,11 +162,13 @@ void Automaton::diffusion() {
             }
         }
     }
+
+    auto roundParity = rounds%2;
     for (ul r = 0; r < subLatticeH; ++r) {
         for (ul c = 0; c < subLatticeW; ++c) {
-            state.CHO(subLatticeR + r, subLatticeC + c) = choCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
-            state.OX(subLatticeR + r, subLatticeC + c) = oxCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
-            state.GI(subLatticeR + r, subLatticeC + c) = giCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
+            state.CHO(subLatticeR + r, subLatticeC + c) = choCopy[roundParity][(r + 1) * borderedW + (c + 1)];
+            state.OX(subLatticeR + r, subLatticeC + c) = oxCopy[roundParity][(r + 1) * borderedW + (c + 1)];
+            state.GI(subLatticeR + r, subLatticeC + c) = giCopy[roundParity][(r + 1) * borderedW + (c + 1)];
         }
     }
 }
@@ -206,7 +216,7 @@ void Automaton::setLocalStates() {
                         && (state.proliferationTime(r, c)
                             >= cycles.G1time(r, c) - 2 * params.stepTime / 3600)
                         && state.proliferationTime(r, c) < cycles.G1time(r, c)
-                        && vacantNeighbors(r, c).size() <= 1
+                        && !hasMoreThanOneVacantNeighbor(r, c)
                 )) {
                     // [matlab] try prolif --> 2B
                     if (state.OX(r, c) >= params.metabolism.aerobicProliferation.OX) {
@@ -478,20 +488,66 @@ single_p Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
 }
 
 std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul r, ul c) {
-    long r_start = r == 0 ? 0 : -1;
-    long r_end = (r == state.gridSize - 1) ? 0 : 1;
-    long c_start = c == 0 ? 0 : -1;
-    long c_end = (c == state.gridSize - 1) ? 0 : 1;
-
+    auto gridSizeMinOne = state.gridSize - 1;
     std::vector<std::pair<long, long>> result;
-    for (long rx = r_start; rx <= r_end; ++rx) {
-        for (long cx = c_start; cx <= c_end; ++cx) {
-            if (state.W(r + rx, c + cx) == 0) {
-                result.emplace_back(rx, cx);
-            }
-        }
+
+    if (r != 0 && c != 0 && state.W(r-1, c-1) == 0) {
+        result.emplace_back(-1, -1);
+    }
+    if (r != 0 && state.W(r-1, c) == 0) {
+        result.emplace_back(-1, 0);
+    }
+    if (r != 0 && c != gridSizeMinOne && state.W(r-1, c+1) == 0) {
+        result.emplace_back(-1, 1);
+    }
+    if (c != 0 && state.W(r, c-1) == 0) {
+        result.emplace_back(0, -1);
+    }
+    // Not sure whether a cell should be able to have itself in vacant neighbors.
+    if (state.W(r, c) == 0) {
+        result.emplace_back(0, 0);
+    }
+    if (c != gridSizeMinOne && state.W(r, c+1) == 0) {
+        result.emplace_back(0, 1);
+    }
+    if (r != gridSizeMinOne && c != 0 && state.W(r+1, c-1) == 0) {
+        result.emplace_back(1, -1);
+    }
+    if (r != gridSizeMinOne && state.W(r+1, c) == 0) {
+        result.emplace_back(1, 0);
+    }
+    if (r != gridSizeMinOne && c != gridSizeMinOne && state.W(r+1, c+1) == 0) {
+        result.emplace_back(1, 1);
     }
     return result;
+}
+
+bool Automaton::hasMoreThanOneVacantNeighbor(ul r, ul c) {
+    auto gridSizeMinOne = state.gridSize - 1;
+    unsigned short count = 0;
+
+    if (r != 0 && state.W(r-1, c) == 0)
+        ++count;
+    if (r != gridSizeMinOne && state.W(r+1, c) == 0)
+        ++count;
+    if (c != 0 && state.W(r, c-1) == 0)
+        ++count;
+    if (c != gridSizeMinOne && state.W(r, c+1) == 0)
+        ++count;
+
+    if (count > 1)
+        return true;
+
+    if (r != 0 && c != 0 && state.W(r-1, c-1) == 0)
+        ++count;
+    if (r != gridSizeMinOne && c != 0 && state.W(r+1, c-1) == 0)
+        ++count;
+    if (c != gridSizeMinOne && r != gridSizeMinOne && state.W(r+1, c+1) == 0)
+        ++count;
+    if (c != gridSizeMinOne && r != 0 && state.W(r-1, c+1) == 0)
+        ++count;
+
+    return count > 1;
 }
 
 Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re) {

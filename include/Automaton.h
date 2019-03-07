@@ -68,6 +68,15 @@ private:
 
 	std::vector<std::pair<long, long>> vacantNeighbors(ul r, ul c);
 
+	/**
+	 * Check if site (r, c) has more than one vacant neighbor.
+	 * @param r first coordinate
+	 * @param c second coordinate
+	 * @return true if site has more than one vacant neighbor.
+	 */
+    bool hasMoreThanOneVacantNeighbor(ul r, ul c);
+
+
     /**
      * Checks if division is possible for a cell
      * @param r

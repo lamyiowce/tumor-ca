@@ -8,7 +8,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
     set(FLAGS "-Wall -Wextra -pedantic -g")
     set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
-    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3")
+    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3 -flto -funroll-all-loops")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(include)
