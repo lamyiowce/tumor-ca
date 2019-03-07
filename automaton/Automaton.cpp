@@ -146,7 +146,6 @@ void Automaton::diffusion() {
 
     ul rounds = ul(std::round(params.stepTime / params.tau));
     for (ul i = 0; i < rounds; ++i) {
-        auto iParity = i%2;
         for (auto rc: borderSites) {
             auto r = rc.first;
             auto c = rc.second;
