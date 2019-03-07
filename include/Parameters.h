@@ -10,11 +10,11 @@ public:
      * Amounts of nutrients metabolised.
      */
     struct NutrientsParameters {
-        const double CHO;
-        const double OX;
-        const double GI;
+        const double_p CHO;
+        const double_p OX;
+        const double_p GI;
 
-        NutrientsParameters(double CHO, double OX, double GI);
+        NutrientsParameters(double_p CHO, double_p OX, double_p GI);
     };
 
     /**
@@ -51,55 +51,55 @@ public:
 
     class IrradiationProtocol {
         std::vector<ul> times;
-        std::vector<double> doses;
+        std::vector<double_p> doses;
 
     public:
         explicit IrradiationProtocol(const nlohmann::json &json);
 
-        explicit IrradiationProtocol(const std::vector<std::pair<ul, double>> &t_d_pairs);
+        explicit IrradiationProtocol(const std::vector<std::pair<ul, double_p>> &t_d_pairs);
 
-        double getIrradiationDose(ul step) const;
+        double_p getIrradiationDose(ul step) const;
 
     };
 
-    Parameters(double sCHOex,
-            double sOXex,
-            double sGIex,
+    Parameters(double_p sCHOex,
+            double_p sOXex,
+            double_p sGIex,
             IrradiationProtocol irradiationPerStep,
-            double tau,
-            double stepTime,
-            double GIcritical,
-            double GIdeath,
+            double_p tau,
+            double_p stepTime,
+            double_p GIcritical,
+            double_p GIdeath,
             int siGI_n,
             const Metabolism &metabolism,
-            double rMax,
+            double_p rMax,
             const BirthParams &birthParams,
-            double sDCHO,
-            double sDOX,
-            double sDGI);
+            double_p sDCHO,
+            double_p sDOX,
+            double_p sDGI);
 
     explicit Parameters(const nlohmann::json &json);
     Parameters(const Parameters&) = default;
 
-    const double sCHOex; // no idea yet what that is, used in replenishSubstrates, CHO
-    const double sOXex; // same as above, oxygen
-    const double sGIex;
+    const double_p sCHOex; // no idea yet what that is, used in replenishSubstrates, CHO
+    const double_p sOXex; // same as above, oxygen
+    const double_p sGIex;
     const IrradiationProtocol irradiationSteps; /// vector of pairs (step number, irradiation dose)
-    const double tau;
-    const double stepTime; // step time in seconds
+    const double_p tau;
+    const double_p stepTime; // step time in seconds
 
 	// Critical pH values -- as concentration of hydrogen ions ("GI" == "growth inhibitor")
-	const double GIcritical; // concentration above this value causes switching to quiescent metabolism; sGIcrit
-	const double GIdeath; // concentration above this value causes death; sGIdeath
+	const double_p GIcritical; // concentration above this value causes switching to quiescent metabolism; sGIcrit
+	const double_p GIdeath; // concentration above this value causes death; sGIdeath
 
 	const int siGI_n; // TODO necrotic material produced? Why is it set to zero in tumor-lib?
     const Metabolism metabolism; /// nutrients metabolism parameters
-    const double rMax;
+    const double_p rMax;
     const BirthParams birthParams;
 
-    const double sDCHO;
-    const double sDOX;
-    const double sDGI;
+    const double_p sDCHO;
+    const double_p sDOX;
+    const double_p sDGI;
 
 };
 

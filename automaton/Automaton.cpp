@@ -43,20 +43,20 @@ void Automaton::replenishSubstrate() {
             }
 }
 
-static double paramDiffusion(double val, double d, double tau, double orthoSum, double diagSum) {
-    constexpr double HS = 2.0 * M_SQRT2f64;
-    constexpr double f = HS + 4.;
+static double paramDiffusion(single_p val, double_p d, double_p tau, single_p orthoSum, single_p diagSum) {
+    constexpr double_p HS = 2.0 * M_SQRT2f64;
+    constexpr double_p f = HS + 4.;
     return d*tau*HS/f * (orthoSum + diagSum*M_SQRT1_2f64 - f*val) + val;
 }
 
-std::pair<double, double> Automaton::sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW) {
+std::pair<single_p, single_p> Automaton::sumNeighbours(ul r, ul c, const grid<single_p> &values, ul gridW) {
     auto gridH = values.size() / gridW;
     long r_start = r == 0 ? 0 : -1;
     long r_end = (r == gridH - 1) ? 0 : 1;
     long c_start = c == 0 ? 0 : -1;
     long c_end = (c == gridW - 1) ? 0 : 1;
 
-    double orthogonalResult = 0.0, diagonalResult = 0.0;
+    single_p orthogonalResult = 0.0, diagonalResult = 0.0;
     for (long ri = r_start; ri <= r_end; ++ri) {
         for (long ci = c_start; ci <= c_end; ++ci) {
             if (ri == 0 && ci == 0) continue;
@@ -67,9 +67,9 @@ std::pair<double, double> Automaton::sumNeighbours(ul r, ul c, const grid<double
     return {orthogonalResult, diagonalResult};
 }
 
-void Automaton::numericalDiffusion(ul r, ul c, const grid<double> &choCopy, const grid<double> &oxCopy,
-                                   const grid<double> &giCopy, grid<double> &choResult, grid<double> &oxResult,
-                                   grid<double> &giResult, ul gridW) {
+void Automaton::numericalDiffusion(ul r, ul c, const grid<single_p> &choCopy, const grid<single_p> &oxCopy,
+                                   const grid<single_p> &giCopy, grid<single_p> &choResult, grid<single_p> &oxResult,
+                                   grid<single_p> &giResult, ul gridW) {
     auto index = r * gridW + c;
     auto paramSums = sumNeighbours(r, c, choCopy, gridW);
     choResult[index] = paramDiffusion(choCopy[index], params.sDCHO, params.tau, paramSums.first, paramSums.second);
@@ -79,7 +79,7 @@ void Automaton::numericalDiffusion(ul r, ul c, const grid<double> &choCopy, cons
     giResult[index] = paramDiffusion(giCopy[index], params.sDGI, params.tau, paramSums.first, paramSums.second);
 }
 
-static double distance(std::pair<double, double> p1, std::pair<double, double> p2) {
+static double_p distance(std::pair<double_p, double_p> p1, std::pair<double_p, double_p> p2) {
     return std::sqrt((p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second));
 }
 
@@ -118,14 +118,14 @@ void Automaton::diffusion() {
 
     auto borderedW = subLatticeW + 2;
     auto borderedH = subLatticeH + 2;
-    grid<double> choCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
-    grid<double> oxCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
-    grid<double> giCopy[]{grid<double>(borderedH * borderedW), grid<double>(borderedH * borderedW)};
+    grid<single_p> choCopy[]{grid<single_p>(borderedH * borderedW), grid<single_p>(borderedH * borderedW)};
+    grid<single_p> oxCopy[]{grid<single_p>(borderedH * borderedW), grid<single_p>(borderedH * borderedW)};
+    grid<single_p> giCopy[]{grid<single_p>(borderedH * borderedW), grid<single_p>(borderedH * borderedW)};
 
     std::vector<coords_t> borderSites;
     for (ul r = 0; r < borderedH; ++r) {
         for (ul c = 0; c < borderedW; ++c) {
-            if (distance({r+1, c+1}, {double(borderedH) / 2., double(borderedW) / 2.}) >= maxDist) {
+            if (distance({r+1, c+1}, {double_p(borderedH) / 2., double_p(borderedW) / 2.}) >= maxDist) {
                 borderSites.emplace_back(r, c);
             }
         }
@@ -166,7 +166,7 @@ void Automaton::diffusion() {
 }
 
 void Automaton::irradiateTumor() {
-    double dose = params.irradiationSteps.getIrradiationDose(step);
+    double_p dose = params.irradiationSteps.getIrradiationDose(step);
     if (dose <= 0) return;
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
@@ -377,7 +377,7 @@ void Automaton::repairCells() {
                 if (state.timeInRepair(r, c) >=
                     3.3414 * exp(0.1492 * state.irradiation(r, c))) {
                     if (state.irradiation(r, c) > 0) {
-                        double rand = randomEngine->uniform();
+                        single_p rand = randomEngine->uniform();
                         if (rand <= 1 - exp(-0.4993 * state.irradiation(r, c))) {
                             KillSite(r, c);
                         } else {
@@ -438,7 +438,7 @@ Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
     if (vn.empty()) {
         return {r, c};
     }
-    std::vector<float> probs(vn.size());
+    std::vector<single_p> probs(vn.size());
     std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
     ul choice = randomEngine->roulette(probs);
     if (choice == probs.size()) {
@@ -472,9 +472,9 @@ bool Automaton::isReadyForDivision(ul r, ul c) {
            state.cellCycle(r, c) == State::CellCycle::D;
 }
 
-float Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
-    constexpr float diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
-    constexpr float sideProb = 1.41421356f * diagonalProb;
+single_p Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
+    constexpr single_p diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
+    constexpr single_p sideProb = 1.41421356f * diagonalProb;
     if (relativeCoords.first == 0 || relativeCoords.second == 0) return sideProb;
     else return diagonalProb;
 }

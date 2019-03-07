@@ -3,21 +3,21 @@
 #include <utility>
 
 Parameters::Parameters(
-            double sCHOex,
-            double sOXex,
-            double sGIex,
+            double_p sCHOex,
+            double_p sOXex,
+            double_p sGIex,
             IrradiationProtocol irradiationSteps,
-            double tau,
-            double stepTime,
-            double GIcritical,
-            double GIdeath,
+            double_p tau,
+            double_p stepTime,
+            double_p GIcritical,
+            double_p GIdeath,
             int siGI_n,
             const Metabolism &metabolism,
-            double rmax,
+            double_p rmax,
             const BirthParams &birthParams,
-            double sDCHO,
-            double sDOX,
-            double sDGI
+            double_p sDCHO,
+            double_p sDOX,
+            double_p sDGI
         )
         : sCHOex(sCHOex),
           sOXex(sOXex),
@@ -37,17 +37,17 @@ Parameters::Parameters(
 
 Parameters::Parameters(const nlohmann::json &json)
     : Parameters::Parameters(
-        json["PARAMS"]["sCHOex"].get<double>(),
-        json["PARAMS"]["sOXex"].get<double>() * OX_S,
-        json["PARAMS"]["sGIex"].get<double>(),
+        json["PARAMS"]["sCHOex"].get<double_p>(),
+        json["PARAMS"]["sOXex"].get<double_p>(),
+        json["PARAMS"]["sGIex"].get<double_p>(),
         Parameters::IrradiationProtocol(json),
-        json["PARAMS"]["tau"].get<double>(),
-        json["PARAMS"]["tstep"].get<double>(),
-        json["PARAMS"]["sGIcrit"].get<double>(),
-        json["PARAMS"]["sGIdeath"].get<double>(),
+        json["PARAMS"]["tau"].get<double_p>(),
+        json["PARAMS"]["tstep"].get<double_p>(),
+        json["PARAMS"]["sGIcrit"].get<double_p>(),
+        json["PARAMS"]["sGIdeath"].get<double_p>(),
         json["PARAMS"]["siGI_n"].get<int>(),
         Parameters::Metabolism(json),
-        json["PARAMS"]["Rmax"].get<double>(),
+        json["PARAMS"]["Rmax"].get<double_p>(),
         {
             Parameters::NormDistParams(json["PARAMS"]["mCyc_G1"], json["PARAMS"]["sCyc_G1"]),
             Parameters::NormDistParams(json["PARAMS"]["mCyc_S"], json["PARAMS"]["sCyc_S"]),
@@ -55,12 +55,12 @@ Parameters::Parameters(const nlohmann::json &json)
             Parameters::NormDistParams(json["PARAMS"]["mCyc_M"], json["PARAMS"]["sCyc_M"]),
             Parameters::NormDistParams(json["PARAMS"]["mCyc_D"], json["PARAMS"]["sCyc_D"])
         },
-        json["PARAMS"]["sDcho"].get<double>(),
-        json["PARAMS"]["sDox"].get<double>() * OX_S,
-        json["PARAMS"]["sDgi"].get<double>()
+        json["PARAMS"]["sDcho"].get<double_p>(),
+        json["PARAMS"]["sDox"].get<double_p>(),
+        json["PARAMS"]["sDgi"].get<double_p>()
     ) {}
 
-Parameters::NutrientsParameters::NutrientsParameters(double CHO, double OX, double GI) : CHO(CHO), OX(OX), GI(GI) {}
+Parameters::NutrientsParameters::NutrientsParameters(double_p CHO, double_p OX, double_p GI) : CHO(CHO), OX(OX), GI(GI) {}
 
 Parameters::Metabolism::Metabolism(const Parameters::NutrientsParameters &anaerobicProliferation,
                                    const Parameters::NutrientsParameters &aerobicProliferation,
@@ -73,10 +73,10 @@ Parameters::Metabolism::Metabolism(const Parameters::NutrientsParameters &anaero
 
 Parameters::Metabolism::Metabolism(nlohmann::json json)
     : Parameters::Metabolism::Metabolism(
-        {json["PARAMS"]["sCHOp_an"], double(json["PARAMS"]["sOXp_an"]) * OX_S, json["PARAMS"]["sdGIp_an"]},
-        {json["PARAMS"]["sCHOp"], double(json["PARAMS"]["sOXp"]) * OX_S, json["PARAMS"]["sdGIp"]},
-        {json["PARAMS"]["sCHOq_an"], double(json["PARAMS"]["sOXq_an"]) * OX_S, json["PARAMS"]["sdGIq_an"]},
-        {json["PARAMS"]["sCHOq"], double(json["PARAMS"]["sOXq"]) * OX_S, json["PARAMS"]["sdGIq"]}
+        {json["PARAMS"]["sCHOp_an"], json["PARAMS"]["sOXp_an"], json["PARAMS"]["sdGIp_an"]},
+        {json["PARAMS"]["sCHOp"], json["PARAMS"]["sOXp"], json["PARAMS"]["sdGIp"]},
+        {json["PARAMS"]["sCHOq_an"], json["PARAMS"]["sOXq_an"], json["PARAMS"]["sdGIq_an"]},
+        {json["PARAMS"]["sCHOq"], json["PARAMS"]["sOXq"], json["PARAMS"]["sdGIq"]}
     ) {}
 
 Parameters::NormDistParams::NormDistParams(float mean, float stddev) : mean(mean), stddev(stddev) {}
@@ -101,21 +101,21 @@ Parameters::IrradiationProtocol::IrradiationProtocol(const nlohmann::json &json)
     }
     if (numbers) {
         times = std::vector<ul>(1, json["PARAMS"]["irr_f_times"].get<ul>());
-        doses = std::vector<double>(1, json["PARAMS"]["irr_f_doses"].get<double>());
+        doses = std::vector<double_p>(1, json["PARAMS"]["irr_f_doses"].get<double_p>());
     } else {
         times = json["PARAMS"]["irr_f_times"].get<std::vector<ul>>();
-        doses = json["PARAMS"]["irr_f_doses"].get<std::vector<double>>();
+        doses = json["PARAMS"]["irr_f_doses"].get<std::vector<double_p>>();
     }
 }
 
-Parameters::IrradiationProtocol::IrradiationProtocol(const std::vector<std::pair<ul, double>> &t_d_pairs) {
+Parameters::IrradiationProtocol::IrradiationProtocol(const std::vector<std::pair<ul, double_p>> &t_d_pairs) {
     for (auto d: t_d_pairs) {
         times.push_back(d.first);
         doses.push_back(d.second);
     }
 }
 
-double Parameters::IrradiationProtocol::getIrradiationDose(ul step) const {
+double_p Parameters::IrradiationProtocol::getIrradiationDose(ul step) const {
     auto find = std::lower_bound(times.begin(), times.end(), step);
     if (find == times.end()) return 0.0;
     return doses[find - times.begin()];

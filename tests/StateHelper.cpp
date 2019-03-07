@@ -3,7 +3,8 @@
 #include "StateHelper.h"
 
 double maxError(const State &lhs, const State &rhs) {
-    double maxErr = 0.0;
+    float maxErr = 0.0;
+
     for (ul r = 0; r < lhs.gridSize; ++r) {
         for (ul c = 0; c < lhs.gridSize; ++c) {
 //            maxErr = std::max(maxErr, std::abs((lhs.CHO(r, c) - rhs.CHO(r, c))/rhs.CHO(r, c)));
