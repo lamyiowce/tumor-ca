@@ -43,20 +43,20 @@ void Automaton::replenishSubstrate() {
             }
 }
 
-static double paramDiffusion(single_p val, double_p d, double_p tau, single_p orthoSum, single_p diagSum) {
-    constexpr double_p HS = 2.0 * M_SQRT2f64;
-    constexpr double_p f = HS + 4.;
-    return d*tau*HS/f * (orthoSum + diagSum*M_SQRT1_2f64 - f*val) + val;
+static double paramDiffusion(double_p val, double_p d, double_p tau, double_p orthoSum, double_p diagSum) {
+    constexpr double_p HS = MATLAB_2SQRT2;
+    constexpr double_p f = 4. + HS;
+    return (d*tau*HS)/f * (orthoSum + MATLAB_1_2SQRT2*diagSum - f*val) + val;
 }
 
-std::pair<single_p, single_p> Automaton::sumNeighbours(ul r, ul c, const grid<single_p> &values, ul gridW) {
+std::pair<double_p, double_p> Automaton::sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW) {
     auto gridH = values.size() / gridW;
     long r_start = r == 0 ? 0 : -1;
     long r_end = (r == gridH - 1) ? 0 : 1;
     long c_start = c == 0 ? 0 : -1;
     long c_end = (c == gridW - 1) ? 0 : 1;
 
-    single_p orthogonalResult = 0.0, diagonalResult = 0.0;
+    double_p orthogonalResult = 0.0, diagonalResult = 0.0;
     for (long ri = r_start; ri <= r_end; ++ri) {
         for (long ci = c_start; ci <= c_end; ++ci) {
             if (ri == 0 && ci == 0) continue;
@@ -67,9 +67,9 @@ std::pair<single_p, single_p> Automaton::sumNeighbours(ul r, ul c, const grid<si
     return {orthogonalResult, diagonalResult};
 }
 
-void Automaton::numericalDiffusion(ul r, ul c, const grid<single_p> &choCopy, const grid<single_p> &oxCopy,
-                                   const grid<single_p> &giCopy, grid<single_p> &choResult, grid<single_p> &oxResult,
-                                   grid<single_p> &giResult, ul gridW) {
+void Automaton::numericalDiffusion(ul r, ul c, const grid<double_p> &choCopy, const grid<double_p> &oxCopy,
+                                   const grid<double_p> &giCopy, grid<double_p> &choResult, grid<double_p> &oxResult,
+                                   grid<double_p> &giResult, ul gridW) {
     auto index = r * gridW + c;
     auto paramSums = sumNeighbours(r, c, choCopy, gridW);
     choResult[index] = paramDiffusion(choCopy[index], params.sDCHO, params.tau, paramSums.first, paramSums.second);
@@ -118,9 +118,9 @@ void Automaton::diffusion() {
 
     auto borderedW = subLatticeW + 2;
     auto borderedH = subLatticeH + 2;
-    grid<single_p> choCopy[]{grid<single_p>(borderedH * borderedW), grid<single_p>(borderedH * borderedW)};
-    grid<single_p> oxCopy[]{grid<single_p>(borderedH * borderedW), grid<single_p>(borderedH * borderedW)};
-    grid<single_p> giCopy[]{grid<single_p>(borderedH * borderedW), grid<single_p>(borderedH * borderedW)};
+    grid<double_p> choCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
+    grid<double_p> oxCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
+    grid<double_p> giCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
 
     std::vector<coords_t> borderSites;
     for (ul r = 0; r < borderedH; ++r) {
