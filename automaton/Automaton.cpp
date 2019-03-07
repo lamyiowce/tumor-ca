@@ -7,9 +7,9 @@
 Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                      RandomEngine *randomEngine, ul _step)
         : state(_state), cycles(_cycles), params(_params), step(_step), randomEngine(randomEngine) {
-    std::cout << "sCHOp " << _params.metabolism.aerobicProliferation.CHO
-        << " sOXp " << _params.metabolism.aerobicProliferation.OX
-        << " sGIp " << _params.metabolism.aerobicProliferation.GI << std::endl;
+//    std::cout << "sCHOp " << _params.metabolism.aerobicProliferation.CHO
+//        << " sOXp " << _params.metabolism.aerobicProliferation.OX
+//        << " sGIp " << _params.metabolism.aerobicProliferation.GI << std::endl;
 }
 
 const State &Automaton::getState() const {
@@ -396,7 +396,7 @@ void Automaton::repairCells() {
 }
 
 void Automaton::cellDivision() {
-    std::vector<std::pair<ul, ul>> readyCells;
+    std::vector<std::pair<ul, ul>> readyCells{};
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
             if (isReadyForDivision(r, c)) {

@@ -7,21 +7,21 @@ double maxError(const State &lhs, const State &rhs) {
 
     for (ul r = 0; r < lhs.gridSize; ++r) {
         for (ul c = 0; c < lhs.gridSize; ++c) {
-//            maxErr = std::max(maxErr, std::abs((lhs.CHO(r, c) - rhs.CHO(r, c))/rhs.CHO(r, c)));
+            maxErr = std::max(maxErr, std::abs((lhs.CHO(r, c) - rhs.CHO(r, c))/rhs.CHO(r, c)));
             maxErr = std::max(maxErr, std::abs((lhs.OX(r, c) - rhs.OX(r, c))/rhs.OX(r, c)));
-//            maxErr = std::max(maxErr, std::abs((lhs.GI(r, c) - rhs.GI(r, c))/rhs.GI(r, c)));
-//            maxErr = std::max(maxErr, std::abs((lhs.timeInRepair(r, c) - rhs.timeInRepair(r, c))/rhs.timeInRepair(r, c)));
-//            maxErr = std::max(maxErr, std::abs((lhs.irradiation(r, c) - rhs.irradiation(r, c))/rhs.irradiation(r, c)));
-//            maxErr = std::max(maxErr, std::abs((lhs.proliferationTime(r, c) - rhs.proliferationTime(r, c))/rhs.proliferationTime(r, c)));
+            maxErr = std::max(maxErr, std::abs((lhs.GI(r, c) - rhs.GI(r, c))/rhs.GI(r, c)));
+            maxErr = std::max(maxErr, std::abs((lhs.timeInRepair(r, c) - rhs.timeInRepair(r, c))/rhs.timeInRepair(r, c)));
+            maxErr = std::max(maxErr, std::abs((lhs.irradiation(r, c) - rhs.irradiation(r, c))/rhs.irradiation(r, c)));
+            maxErr = std::max(maxErr, std::abs((lhs.proliferationTime(r, c) - rhs.proliferationTime(r, c))/rhs.proliferationTime(r, c)));
         }
     }
     return maxErr;
 }
 
 double maxErrorCycles(const Cycles &lhs, const Cycles &rhs) {
-    double maxErr = 0.0;
-    for (ul r = 0; r < lhs.gridSize; ++r) {
-        for (ul c = 0; c < lhs.gridSize; ++c) {
+    float maxErr = 0.0;
+    for (ul r = 0; r < lhs._gridSize; ++r) {
+        for (ul c = 0; c < lhs._gridSize; ++c) {
             maxErr = std::max(maxErr, std::abs((lhs.G1time(r, c) - rhs.G1time(r, c))/rhs.G1time(r, c)));
             maxErr = std::max(maxErr, std::abs((lhs.Stime(r, c) - rhs.Stime(r, c))/rhs.Stime(r, c)));
             maxErr = std::max(maxErr, std::abs((lhs.G2time(r, c) - rhs.G2time(r, c))/rhs.G2time(r, c)));

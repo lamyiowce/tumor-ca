@@ -12,7 +12,6 @@ private:
 	std::vector<single_p> _G2time;
 	std::vector<single_p> _Mtime;
 	std::vector<single_p> _Dtime;
-	unsigned long _gridSize;
 
 public:
 	explicit Cycles(unsigned long gridSize);
@@ -30,6 +29,9 @@ public:
     const single_p& G2time(unsigned long r, unsigned long c) const;
     const single_p& Mtime(unsigned long r, unsigned long c) const;
     const single_p& Dtime(unsigned long r, unsigned long c) const;
+
+	unsigned long _gridSize;
+
 };
 
 #endif  // TUMOR_CYCLES_H

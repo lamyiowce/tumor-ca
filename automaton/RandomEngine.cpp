@@ -10,22 +10,22 @@ float MatlabRandomEngine::uniform() {
     return result;
 }
 
-static float normalDistributionValue(float mean, float stddev, float x) {
-    float coeff = (1.f / std::sqrt(2.f * (float)M_PI * stddev*stddev));
-    float exponent = -((x - mean) * (x - mean) / 2 * stddev * stddev);
+static double_p normalDistributionValue(double_p mean, double_p stddev, double_p x) {
+    double_p coeff = (1.f / std::sqrt(2.f * M_PI * stddev*stddev));
+    double_p exponent = -((x - mean) * (x - mean) / 2 * stddev * stddev);
     return coeff * std::exp(exponent);
 }
 
-static std::vector<std::pair<float, float>> normalDistribution(
-        float mean,
-        float stddev,
-        float leftPoint,
-        float domLength,
+static std::vector<std::pair<double_p, double_p>> normalDistribution(
+        double_p mean,
+        double_p stddev,
+        double_p leftPoint,
+        double_p domLength,
         ul pointsNumber) {
-    std::vector<std::pair<float, float>> result;
+    std::vector<std::pair<double_p, double_p>> result{};
     result.reserve(pointsNumber);
-    float step = domLength / pointsNumber;
-    float x = leftPoint;
+    double_p step = domLength / pointsNumber;
+    double_p x = leftPoint;
     for (ul i = 0; i < pointsNumber; ++i) {
         result.emplace_back(x, normalDistributionValue(mean, stddev, x));
         x += step;
@@ -33,12 +33,12 @@ static std::vector<std::pair<float, float>> normalDistribution(
     return result;
 }
 
-float MatlabRandomEngine::normal(float mean, float stddev) {
+double_p MatlabRandomEngine::normal(double_p mean, double_p stddev) {
     if (stddev <= 0) return mean;
     auto dist = normalDistribution(mean, stddev, mean - 6 * stddev, 12 * stddev, 100);
-    std::vector<float> cumulativeSum;
+    std::vector<double_p > cumulativeSum{};
     cumulativeSum.reserve(dist.size());
-    float sum = 0;
+    double_p sum = 0;
     for (auto &point: dist) {
         sum += point.second;
         cumulativeSum.push_back(sum);
@@ -56,7 +56,7 @@ float MatlabRandomEngine::normal(float mean, float stddev) {
 // Very inefficient implementation but gives the same results as original algorithm
 // for traversing a collection in random order
 std::vector<ul> MatlabRandomEngine::randomPermutation(ul n) {
-    std::vector<ul> result;
+    std::vector<ul> result{};
     if (n == 0)
         return result;
     std::vector<bool> chosen(n);
@@ -98,7 +98,7 @@ float StdRandomEngine::uniform() {
     return uniformGen(mt);
 }
 
-float StdRandomEngine::normal(float mean, float stddev) {
+double_p StdRandomEngine::normal(double_p mean, double_p stddev) {
     return normalGen(mt) * stddev + mean;
 }
 
