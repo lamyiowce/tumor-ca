@@ -20,9 +20,6 @@ public:
 
 private:
 
-    /// Performs one step of the simulation.
-    void advance();
-
     /**
      * Progress proliferation clock.
      * @param r first coordinate
@@ -119,6 +116,9 @@ public:
     void replenishSubstrate();
 
     void runNSteps(int nSteps);
+
+    /// Performs one step of the simulation.
+    void advance();
 
     // % DIFFUSION2
     // %   Operates on array N to diffuse elements of

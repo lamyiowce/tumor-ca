@@ -23,6 +23,7 @@ void Automaton::runNSteps(int nSteps) {
 }
 
 void Automaton::advance() {
+    ++step;
     diffusion();
     irradiateTumor();
     setLocalStates();

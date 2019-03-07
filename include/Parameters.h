@@ -50,6 +50,7 @@ public:
     };
 
     class IrradiationProtocol {
+    public:
         std::vector<ul> times;
         std::vector<double_p> doses;
 

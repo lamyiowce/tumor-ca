@@ -16,7 +16,7 @@ TEST_CASE("MetaboliseNutrients - basic test") {
             ca1.metaboliseNutrients();
             double err = maxError(ca1.getState(), ca2.getState());
             REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
-            REQUIRE(err < MAX_RELATIVE_ERROR);
+            REQUIRE(err == 0.0);
         }
     }
 }
