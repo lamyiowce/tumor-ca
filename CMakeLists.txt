@@ -8,7 +8,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
     set(FLAGS "-Wall -Wextra -pedantic -g")
     set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
-    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3")
+    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3 -flto")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(include)
@@ -36,7 +36,7 @@ add_executable(tests
         tests/MetaboliseNutrientsTests.cpp
         tests/SetLocalStatesTests.cpp
         tests/SetGlobalStatesTests.cpp
-        tests/DiffusionTests.cpp)
+        tests/DiffusionTests.cpp tests/OneStepTests.cpp tests/AccumulationTests.cpp)
 
 add_executable(integration-test
         ${SOURCES}

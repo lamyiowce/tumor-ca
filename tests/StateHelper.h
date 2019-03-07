@@ -6,12 +6,14 @@
 constexpr int N_TEST_STEPS = 10;
 constexpr int MAX_TEST_FILEPATH_LENGTH = 512;
 
-constexpr double MAX_RELATIVE_ERROR = 0.00009;
+constexpr double MAX_RELATIVE_ERROR = 0.000000001;
 
 double maxError(const State &lhs, const State &rhs);
 
 bool discreteEquality(const State &lhs, const State &rhs);
 
 double maxErrorCycles(const Cycles &lhs, const Cycles &rhs);
+
+ul countLiving(const State &state);
 
 #endif //TUMOR_STATEHELPER_H

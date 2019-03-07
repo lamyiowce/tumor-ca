@@ -97,11 +97,11 @@ private:
      */
     static float mapToProb(std::pair<long, long> &relativeCoords);
 
-    void numericalDiffusion(ul r, ul c, const grid<float> &choCopy, const grid<float> &oxCopy,
-                                const grid<float> &giCopy, grid<float> &choResult, grid<float> &oxResult,
-                                grid<float> &giResult, ul gridW);
+    void numericalDiffusion(ul r, ul c, const grid<double> &choCopy, const grid<double> &oxCopy,
+                                const grid<double> &giCopy, grid<double> &choResult, grid<double> &oxResult,
+                                grid<double> &giResult, ul gridW);
 
-    std::pair<float, float> sumNeighbours(ul r, ul c, const grid<float> &values, ul gridW);
+    std::pair<double, double> sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW);
 
 public:
     const State &getState() const;

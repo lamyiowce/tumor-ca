@@ -1,5 +1,6 @@
 #include <catch.h>
 #include <Automaton.h>
+#include <iostream>
 #include "StateHelper.h"
 
 TEST_CASE("MetaboliseNutrients - basic test") {
@@ -13,9 +14,10 @@ TEST_CASE("MetaboliseNutrients - basic test") {
             auto ca2 = Automaton::loadFromFile(filepath, nullptr);
 
             ca1.metaboliseNutrients();
-
+            double err = maxError(ca1.getState(), ca2.getState());
+            std::cout << err << std::endl;
             REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
-            REQUIRE(maxError(ca1.getState(), ca2.getState()) < MAX_RELATIVE_ERROR);
+            REQUIRE(err < MAX_RELATIVE_ERROR);
         }
     }
 }
