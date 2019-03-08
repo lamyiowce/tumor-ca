@@ -52,19 +52,29 @@ static double paramDiffusion(double_p val, double_p d, double_p tau, double_p or
 
 std::pair<double_p, double_p> Automaton::sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW) {
     auto gridH = values.size() / gridW;
-    long r_start = r == 0 ? 0 : -1;
-    long r_end = (r == gridH - 1) ? 0 : 1;
-    long c_start = c == 0 ? 0 : -1;
-    long c_end = (c == gridW - 1) ? 0 : 1;
-
+//    long r_start = r == 0 ? 0 : -1;
+//    long r_end = (r == gridH - 1) ? 0 : 1;
+//    long c_start = c == 0 ? 0 : -1;
+//    long c_end = (c == gridW - 1) ? 0 : 1;
+//
+//    double_p orthogonalResult = 0.0, diagonalResult = 0.0;
+//    for (long ri = r_start; ri <= r_end; ++ri) {
+//        for (long ci = c_start; ci <= c_end; ++ci) {
+//            if (ri == 0 && ci == 0) continue;
+//            if (ri == 0 || ci == 0) orthogonalResult += values[(r + ri) * gridW + c + ci];
+//            else diagonalResult += values[(r + ri) * gridW + c + ci];
+//        }
+//    }
     double_p orthogonalResult = 0.0, diagonalResult = 0.0;
-    for (long ri = r_start; ri <= r_end; ++ri) {
-        for (long ci = c_start; ci <= c_end; ++ci) {
-            if (ri == 0 && ci == 0) continue;
-            if (ri == 0 || ci == 0) orthogonalResult += values[(r + ri) * gridW + c + ci];
-            else diagonalResult += values[(r + ri) * gridW + c + ci];
-        }
-    }
+    orthogonalResult += values[(r-1) * gridW + c];
+    orthogonalResult += values[(r+1) * gridW + c];
+    orthogonalResult += values[r * gridW + c-1];
+    orthogonalResult += values[r * gridW + c+1];
+
+    diagonalResult += values[(r-1) * gridW + c-1];
+    diagonalResult += values[(r+1) * gridW + c-1];
+    diagonalResult += values[(r+1) * gridW + c+1];
+    diagonalResult += values[(r-1) * gridW + c+1];
     return {orthogonalResult, diagonalResult};
 }
 
@@ -117,16 +127,16 @@ void Automaton::diffusion() {
             (midR + maxDist >= state.gridSize) ? state.gridSize - subLatticeR : midR + maxDist - subLatticeR + 1;
 
 
-    auto borderedW = subLatticeW + 2;
-    auto borderedH = subLatticeH + 2;
+    auto borderedW = subLatticeW + 4;
+    auto borderedH = subLatticeH + 4;
     grid<double_p> choCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
     grid<double_p> oxCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
     grid<double_p> giCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
 
     std::vector<coords_t> borderSites;
-    for (ul r = 0; r < borderedH; ++r) {
-        for (ul c = 0; c < borderedW; ++c) {
-            if (distance({r+1, c+1}, {double_p(borderedH) / 2., double_p(borderedW) / 2.}) >= maxDist) {
+    for (ul r = 0; r < borderedH-2; ++r) {
+        for (ul c = 0; c < borderedW-2; ++c) {
+            if (distance({r+1, c+1}, {double_p(borderedH-2) / 2., double_p(borderedW-2) / 2.}) >= maxDist) {
                 borderSites.emplace_back(r, c);
             }
         }
@@ -134,9 +144,9 @@ void Automaton::diffusion() {
 
     for (ul r = 0; r < subLatticeH; ++r) {
         for (ul c = 0; c < subLatticeW; ++c) {
-            choCopy[0][(r + 1) * borderedW + (c + 1)] = state.CHO(subLatticeR + r, subLatticeC + c);
-            oxCopy[0][(r + 1) * borderedW + (c + 1)] = state.OX(subLatticeR + r, subLatticeC + c);
-            giCopy[0][(r + 1) * borderedW + (c + 1)] = state.GI(subLatticeR + r, subLatticeC + c);
+            choCopy[0][(r + 2) * borderedW + (c + 2)] = state.CHO(subLatticeR + r, subLatticeC + c);
+            oxCopy[0][(r + 2) * borderedW + (c + 2)] = state.OX(subLatticeR + r, subLatticeC + c);
+            giCopy[0][(r + 2) * borderedW + (c + 2)] = state.GI(subLatticeR + r, subLatticeC + c);
         }
     }
 
@@ -145,13 +155,13 @@ void Automaton::diffusion() {
         for (auto rc: borderSites) {
             auto r = rc.first;
             auto c = rc.second;
-            choCopy[i % 2][r*borderedW + c] = params.sCHOex;
-            oxCopy[i % 2][r*borderedW + c] = params.sOXex;
-            giCopy[i % 2][r*borderedW + c] = params.sGIex;
+            choCopy[i % 2][(r+1)*borderedW + c+1] = params.sCHOex;
+            oxCopy[i % 2][(r+1)*borderedW + c+1] = params.sOXex;
+            giCopy[i % 2][(r+1)*borderedW + c+1] = params.sGIex;
         }
-        for (ul r = 0; r < borderedH; ++r) {
-            for (ul c = 0; c < borderedW; ++c) {
-                numericalDiffusion(r, c, choCopy[i % 2], oxCopy[i % 2], giCopy[i % 2],
+        for (ul r = 0; r < borderedH-2; ++r) {
+            for (ul c = 0; c < borderedW-2; ++c) {
+                numericalDiffusion(r+1, c+1, choCopy[i % 2], oxCopy[i % 2], giCopy[i % 2],
                                    choCopy[(i + 1) % 2], oxCopy[(i + 1) % 2],
                                    giCopy[(i + 1) % 2], borderedW);
             }
@@ -159,9 +169,9 @@ void Automaton::diffusion() {
     }
     for (ul r = 0; r < subLatticeH; ++r) {
         for (ul c = 0; c < subLatticeW; ++c) {
-            state.CHO(subLatticeR + r, subLatticeC + c) = choCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
-            state.OX(subLatticeR + r, subLatticeC + c) = oxCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
-            state.GI(subLatticeR + r, subLatticeC + c) = giCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
+            state.CHO(subLatticeR + r, subLatticeC + c) = choCopy[rounds % 2][(r + 2) * borderedW + (c + 2)];
+            state.OX(subLatticeR + r, subLatticeC + c) = oxCopy[rounds % 2][(r + 2) * borderedW + (c + 2)];
+            state.GI(subLatticeR + r, subLatticeC + c) = giCopy[rounds % 2][(r + 2) * borderedW + (c + 2)];
         }
     }
 }
