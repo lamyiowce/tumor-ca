@@ -6,11 +6,7 @@
 
 Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                      RandomEngine *randomEngine, ul _step)
-        : state(_state), cycles(_cycles), params(_params), step(_step), randomEngine(randomEngine) {
-//    std::cout << "sCHOp " << _params.metabolism.aerobicProliferation.CHO
-//        << " sOXp " << _params.metabolism.aerobicProliferation.OX
-//        << " sGIp " << _params.metabolism.aerobicProliferation.GI << std::endl;
-}
+        : state(_state), cycles(_cycles), params(_params), step(_step), randomEngine(randomEngine) {}
 
 const State &Automaton::getState() const {
     return state;
@@ -51,20 +47,6 @@ static double paramDiffusion(double_p val, double_p d, double_p tau, double_p or
 }
 
 std::pair<double_p, double_p> Automaton::sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW) {
-    auto gridH = values.size() / gridW;
-//    long r_start = r == 0 ? 0 : -1;
-//    long r_end = (r == gridH - 1) ? 0 : 1;
-//    long c_start = c == 0 ? 0 : -1;
-//    long c_end = (c == gridW - 1) ? 0 : 1;
-//
-//    double_p orthogonalResult = 0.0, diagonalResult = 0.0;
-//    for (long ri = r_start; ri <= r_end; ++ri) {
-//        for (long ci = c_start; ci <= c_end; ++ci) {
-//            if (ri == 0 && ci == 0) continue;
-//            if (ri == 0 || ci == 0) orthogonalResult += values[(r + ri) * gridW + c + ci];
-//            else diagonalResult += values[(r + ri) * gridW + c + ci];
-//        }
-//    }
     double_p orthogonalResult = 0.0, diagonalResult = 0.0;
     orthogonalResult += values[(r-1) * gridW + c];
     orthogonalResult += values[(r+1) * gridW + c];

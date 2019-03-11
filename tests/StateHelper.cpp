@@ -13,9 +13,6 @@ double maxError(const State &lhs, const State &rhs) {
             maxErr = std::max(maxErr, std::abs((lhs.timeInRepair(r, c) - rhs.timeInRepair(r, c))/rhs.timeInRepair(r, c)));
             maxErr = std::max(maxErr, std::abs((lhs.irradiation(r, c) - rhs.irradiation(r, c))/rhs.irradiation(r, c)));
             maxErr = std::max(maxErr, std::abs((lhs.proliferationTime(r, c) - rhs.proliferationTime(r, c))/rhs.proliferationTime(r, c)));
-            if (maxErr == 1.0) {
-                1+1;
-            }
         }
     }
     return maxErr;
@@ -43,7 +40,6 @@ bool discreteEquality(const State &lhs, const State &rhs) {
             if (lhs.W(r, c) != rhs.W(r, c) ||
                 lhs.cellCycle(r, c) != rhs.cellCycle(r, c) ||
                 lhs.cellState(r, c) != rhs.cellState(r, c)) {
-//                std::cout << r << " " << c << std::endl;
                 res = false;
             }
         }

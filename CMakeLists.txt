@@ -3,7 +3,7 @@ project(tumor)
 
 set(CMAKE_CXX_STANDARD 11)
 
-# Set default compile flags for GCC  # TODO do wywalenia, na Windowsie tego potrzebowalem
+# Set compile flags for GCC
 if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
     set(FLAGS "-Wall -Wextra -pedantic -g")
