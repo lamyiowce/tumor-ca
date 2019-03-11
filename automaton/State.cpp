@@ -23,7 +23,7 @@ State::State(nlohmann::json json)
         for (ul c = 0; c < gridSize; ++c) {
             this->W(r, c) = json["STATE"]["W"][r][c];
             this->CHO(r, c) = json["STATE"]["CHO"][r][c];
-            this->OX(r, c) = double(json["STATE"]["OX"][r][c]);
+            this->OX(r, c) = json["STATE"]["OX"][r][c];
             this->GI(r, c) = json["STATE"]["GI"][r][c];
             this->proliferationTime(r, c) = json["STATE"]["HRS"][r][c];
             this->timeInRepair(r, c) = json["STATE"]["RepT"][r][c];
