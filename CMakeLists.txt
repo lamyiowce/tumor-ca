@@ -37,8 +37,7 @@ add_executable(tests
         tests/SetLocalStatesTests.cpp
         tests/SetGlobalStatesTests.cpp
         tests/DiffusionTests.cpp
-        tests/OneStepTests.cpp
-        tests/AccumulationTests.cpp)
+        tests/OneStepTests.cpp)
 
 add_executable(integration-test
         ${SOURCES}
