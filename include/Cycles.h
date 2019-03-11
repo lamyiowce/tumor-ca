@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <json.hpp>
-#include "util.h"
+#include <util.h>
 
 class Cycles {
 private:
@@ -24,6 +24,8 @@ public:
 	single_p& G2time(unsigned long r, unsigned long c);
 	single_p& Mtime(unsigned long r, unsigned long c);
 	single_p& Dtime(unsigned long r, unsigned long c);
+
+    friend std::ofstream& operator<<(std::ofstream& stream, const Cycles& cycles);
 };
 
 #endif  // TUMOR_CYCLES_H

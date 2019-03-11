@@ -503,3 +503,10 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
     ul step = j["st"];
     return Automaton(state, cycles, parameters, re, step);
 }
+
+void Automaton::saveStateToFile(const std::string &filename) {
+    std::ofstream ofs(filename);
+    ofs << step << std::endl;
+    ofs << state;
+    ofs << cycles;
+}
