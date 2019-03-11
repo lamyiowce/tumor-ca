@@ -2,6 +2,7 @@
 #define TUMOR_UTIL_H
 
 #include <fstream>
+#include <type_traits>
 
 using ul = unsigned long;
 template <class T>
@@ -17,14 +18,22 @@ std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::os
 
 // Writing vector to stream.
 template<class T>
-std::ofstream& operator<<(std::ofstream& stream, const grid<T>& grid)
+std::ostream& operator<<(std::ostream& stream, const grid<T>& grid)
 {
     if (!grid.empty()) {
-        auto last = grid.end()--;
+        auto last = --grid.end();
         for (auto it = grid.begin(); it != last; ++it) {
-            stream << *it << ',';
+            if constexpr (std::is_same_v<T, uint8_t>) {
+                stream << (int) *it << ',';
+            } else {
+                stream << *it << ',';
+            }
         }
-        stream << *last;
+        if constexpr (std::is_same_v<T, uint8_t>) {
+            stream << (int) *last;
+        } else {
+            stream << *last;
+        }
     }
     stream << "\n";
     return stream;

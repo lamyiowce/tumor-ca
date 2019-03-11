@@ -23,7 +23,7 @@ State::State(nlohmann::json json)
     : State::State(static_cast<ul>(json["PARAMS"]["L"])) {
     for (ul r = 0; r < gridSize; ++r) {
         for (ul c = 0; c < gridSize; ++c) {
-            this->setW(r, c, json["STATE"]["W"][r][c].get<int>());
+            this->W(r, c) = json["STATE"]["W"][r][c].get<int>();
             this->CHO(r, c) = json["STATE"]["CHO"][r][c];
             this->OX(r, c) = json["STATE"]["OX"][r][c];
             this->GI(r, c) = json["STATE"]["GI"][r][c];
@@ -54,14 +54,6 @@ State::State(nlohmann::json json)
     for (ul matlab_idx : json["STATE"]["lMET"]["dead"]) {
         this->_cellState[indexFromMatlab(matlab_idx, gridSize)] = State::CellState::DEAD;
     }
-}
-
-bool State::getW(ul r, ul c) const {
-    return _W[r * gridSize + c];
-}
-
-void State::setW(ul r, ul c, bool v) {
-    _W[r * gridSize + c] = v;
 }
 
 const double &State::CHO(ul r, ul c) const {
@@ -145,4 +137,12 @@ std::ofstream& operator<<(std::ofstream& stream, const State& state)
     stream << state._W << state._CHO << state._OX << state._GI << state._timeInRepair << state._irradiation
            << state._cellState << state._cellCycle << state._proliferationTime << state._cycleChanged;
     return stream;
+}
+
+const uint8_t &State::W(ul r, ul c) const {
+    return _W[r * gridSize + c];
+}
+
+uint8_t &State::W(ul r, ul c) {
+    return _W[r * gridSize + c];
 }

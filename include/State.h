@@ -30,7 +30,7 @@ public:
     ul gridSize;
 
 private:
-    grid<bool> _W; // 1 - cell alive
+    grid<uint8_t> _W; // 1 - cell alive
     grid<double> _CHO; // CHO level
     grid<double> _OX; // oxygen level
     grid<double> _GI; // GI level
@@ -45,9 +45,9 @@ private:
                               // changed during the last setGlobalStates() call
 
 public:
-    bool getW(ul r, ul c) const;
+    const uint8_t &W(ul r, ul c) const;
 
-    void setW(ul r, ul c, bool v);
+    uint8_t &W(ul r, ul c);
 
     const double &CHO(ul r, ul c) const;
 
