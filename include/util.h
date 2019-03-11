@@ -4,7 +4,13 @@
 #include <fstream>
 #include <type_traits>
 
+#define MATLAB_2SQRT2 2.828427124746190
+#define MATLAB_1_2SQRT2 0.707106781186548
+
 using ul = unsigned long;
+using single_p = float;
+using double_p = double;
+
 template <class T>
 using grid = std::vector<T>;
 using bool_wrapper = uint8_t;
@@ -38,5 +44,4 @@ std::ostream& operator<<(std::ostream& stream, const grid<T>& grid)
     stream << "\n";
     return stream;
 }
-
 #endif //TUMOR_UTIL_H

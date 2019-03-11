@@ -1,7 +1,5 @@
 #include <State.h>
 #include <cmath>
-#include <fstream>
-#include <vector>
 
 State::State(ul _gridSize) : gridSize(_gridSize),
                              _W(gridSize * gridSize),
@@ -23,7 +21,7 @@ State::State(nlohmann::json json)
     : State::State(static_cast<ul>(json["PARAMS"]["L"])) {
     for (ul r = 0; r < gridSize; ++r) {
         for (ul c = 0; c < gridSize; ++c) {
-            this->W(r, c) = json["STATE"]["W"][r][c].get<int>();
+            this->W(r, c) = json["STATE"]["W"][r][c];
             this->CHO(r, c) = json["STATE"]["CHO"][r][c];
             this->OX(r, c) = json["STATE"]["OX"][r][c];
             this->GI(r, c) = json["STATE"]["GI"][r][c];
@@ -56,43 +54,51 @@ State::State(nlohmann::json json)
     }
 }
 
-const double &State::CHO(ul r, ul c) const {
+const uint8_t &State::W(ul r, ul c) const {
+    return _W[r * gridSize + c];
+}
+
+uint8_t &State::W(ul r, ul c) {
+    return _W[r * gridSize + c];
+}
+
+const single_p &State::CHO(ul r, ul c) const {
     return _CHO[r * gridSize + c];
 }
 
-double &State::CHO(ul r, ul c) {
+single_p &State::CHO(ul r, ul c) {
     return _CHO[r * gridSize + c];
 }
 
-const double &State::OX(ul r, ul c) const {
+const single_p &State::OX(ul r, ul c) const {
     return _OX[r * gridSize + c];
 }
 
-double &State::OX(ul r, ul c) {
+single_p &State::OX(ul r, ul c) {
     return _OX[r * gridSize + c];
 }
 
-const double &State::GI(ul r, ul c) const {
+const single_p &State::GI(ul r, ul c) const {
     return _GI[r * gridSize + c];
 }
 
-double &State::GI(ul r, ul c) {
+single_p &State::GI(ul r, ul c) {
     return _GI[r * gridSize + c];
 }
 
-const double &State::timeInRepair(ul r, ul c) const {
+const single_p &State::timeInRepair(ul r, ul c) const {
     return _timeInRepair[r * gridSize + c];
 }
 
-double &State::timeInRepair(ul r, ul c) {
+single_p &State::timeInRepair(ul r, ul c) {
     return _timeInRepair[r * gridSize + c];
 }
 
-const double &State::irradiation(ul r, ul c) const {
+const single_p &State::irradiation(ul r, ul c) const {
     return _irradiation[r * gridSize + c];
 }
 
-double &State::irradiation(ul r, ul c) {
+single_p &State::irradiation(ul r, ul c) {
     return _irradiation[r * gridSize + c];
 }
 
@@ -112,11 +118,11 @@ State::CellCycle &State::cellCycle(ul r, ul c) {
     return _cellCycle[r * gridSize + c];
 }
 
-const double &State::proliferationTime(ul r, ul c) const {
+const single_p &State::proliferationTime(ul r, ul c) const {
     return _proliferationTime[r * gridSize + c];
 }
 
-double &State::proliferationTime(ul r, ul c) {
+single_p &State::proliferationTime(ul r, ul c) {
     return _proliferationTime[r * gridSize + c];
 }
 
@@ -128,7 +134,7 @@ void State::setCycleChanged(ul r, ul c, bool value) {
 	_cycleChanged[r * gridSize + c] = value;
 }
 
-double State::radius(ul r, ul c) {
+single_p State::radius(ul r, ul c) {
     return sqrt((r - gridSize / 2.) * (r - gridSize / 2.) + (c - gridSize / 2.) * (c - gridSize / 2.));
 }
 
@@ -137,12 +143,4 @@ std::ofstream& operator<<(std::ofstream& stream, const State& state)
     stream << state._W << state._CHO << state._OX << state._GI << state._timeInRepair << state._irradiation
            << state._cellState << state._cellCycle << state._proliferationTime << state._cycleChanged;
     return stream;
-}
-
-const uint8_t &State::W(ul r, ul c) const {
-    return _W[r * gridSize + c];
-}
-
-uint8_t &State::W(ul r, ul c) {
-    return _W[r * gridSize + c];
 }

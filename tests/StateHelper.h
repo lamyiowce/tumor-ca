@@ -6,7 +6,7 @@
 constexpr int N_TEST_STEPS = 10;
 constexpr int MAX_TEST_FILEPATH_LENGTH = 512;
 
-constexpr double MAX_RELATIVE_ERROR = 0.00009;
+constexpr double MAX_RELATIVE_ERROR = 1e-20;
 
 double maxError(const State &lhs, const State &rhs);
 

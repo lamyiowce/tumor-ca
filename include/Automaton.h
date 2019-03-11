@@ -7,7 +7,7 @@
 #include <RandomEngine.h>
 
 class Automaton {
-private:
+public:
     State state;
 	Cycles cycles;
 
@@ -97,11 +97,11 @@ private:
      */
     static float mapToProb(std::pair<long, long> &relativeCoords);
 
-    void numericalDiffusion(ul r, ul c, const grid<double> &choCopy, const grid<double> &oxCopy,
-                                const grid<double> &giCopy, grid<double> &choResult, grid<double> &oxResult,
-                                grid<double> &giResult, ul gridW);
+    void numericalDiffusion(ul r, ul c, const grid<double_p> &choCopy, const grid<double_p> &oxCopy,
+                                const grid<double_p> &giCopy, grid<double_p> &choResult, grid<double_p> &oxResult,
+                                grid<double_p> &giResult, ul gridW);
 
-    std::pair<double, double> sumNeighbours(ul r, ul c, const grid<double> &values, ul gridW);
+    std::pair<double_p, double_p> sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW);
 
 public:
     const State &getState() const;

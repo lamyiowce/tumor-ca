@@ -35,4 +35,5 @@ add_executable(tests
         tests/CellDivisionTests.cpp
         tests/MetaboliseNutrientsTests.cpp
         tests/SetLocalStatesTests.cpp
+        tests/SetGlobalStatesTests.cpp
         tests/DiffusionTests.cpp)
