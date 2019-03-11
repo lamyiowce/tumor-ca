@@ -13,7 +13,6 @@ using double_p = double;
 
 template <class T>
 using grid = std::vector<T>;
-using bool_wrapper = uint8_t;
 
 // Enum writing to stream.
 template<typename T>
