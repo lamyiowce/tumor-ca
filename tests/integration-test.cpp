@@ -13,8 +13,8 @@ int main() {
             nullptr);
     ca1.runNSteps(4800);
 
-    std::cout << "Living cells:\nsimulation:" << countLiving(ca1.getState()) << " \ncorrect: " << countLiving(ca2.getState()) << std::endl;
+    std::cout << "Living cells:\nsimulation: " << countLiving(ca1.getState()) << " \ncorrect: " << countLiving(ca2.getState()) << std::endl;
     bool de = discreteEquality(ca1.getState(), ca2.getState());
-    std::cout << "Max numerical error:" << maxError(ca1.getState(), ca2.getState()) << std::endl;
+    std::cout << "Max numerical error: " << maxError(ca1.getState(), ca2.getState()) << std::endl;
     return !de || maxError(ca1.getState(), ca2.getState()) > MAX_RELATIVE_ERROR;
 }

@@ -61,7 +61,7 @@ class StdRandomEngine: public RandomEngine {
 public:
     explicit StdRandomEngine(unsigned int seed);
 
-    single_p uniform() override;
+    float uniform() override;
 
     double_p normal(double_p mean, double_p stddev) override;
 

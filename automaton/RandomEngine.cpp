@@ -4,7 +4,7 @@
 
 MatlabRandomEngine::MatlabRandomEngine(unsigned int seed): mt(seed), uniformGen(0.f, 1.f) {}
 
-single_p MatlabRandomEngine::uniform() {
+float MatlabRandomEngine::uniform() {
     auto result = uniformGen(mt);
     uniformGen(mt); // skip one value to replicate matlab behaviour
     return result;
@@ -94,7 +94,7 @@ ul RandomEngine::roulette(const std::vector<float> &probs) {
 
 StdRandomEngine::StdRandomEngine(unsigned int seed): mt(seed), uniformGen(0.0f, 1.0f), normalGen{} {}
 
-single_p StdRandomEngine::uniform() {
+float StdRandomEngine::uniform() {
     return uniformGen(mt);
 }
 

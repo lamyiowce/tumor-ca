@@ -3,7 +3,7 @@
 #include "StateHelper.h"
 
 double maxError(const State &lhs, const State &rhs) {
-    float maxErr = 0.0;
+    single_p maxErr = 0.0;
 
     for (ul r = 0; r < lhs.gridSize; ++r) {
         for (ul c = 0; c < lhs.gridSize; ++c) {
@@ -19,7 +19,7 @@ double maxError(const State &lhs, const State &rhs) {
 }
 
 double maxErrorCycles(const Cycles &lhs, const Cycles &rhs) {
-    float maxErr = 0.0;
+    single_p maxErr = 0.0;
     for (ul r = 0; r < lhs._gridSize; ++r) {
         for (ul c = 0; c < lhs._gridSize; ++c) {
             maxErr = std::max(maxErr, std::abs((lhs.G1time(r, c) - rhs.G1time(r, c))/rhs.G1time(r, c)));

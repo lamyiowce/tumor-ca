@@ -27,8 +27,6 @@ void Automaton::advance() {
     setGlobalStates();
     repairCells();
     cellDivision();
-    updateStats();
-    // TODO: finish check
 }
 
 void Automaton::replenishSubstrate() {
@@ -431,7 +429,7 @@ Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
     if (vn.empty()) {
         return {r, c};
     }
-    std::vector<single_p> probs(vn.size());
+    std::vector<float> probs(vn.size());
     std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
     ul choice = randomEngine->roulette(probs);
     if (choice == probs.size()) {
@@ -440,10 +438,6 @@ Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
         auto relativeCoords = vn[choice];
         return {r + relativeCoords.first, c + relativeCoords.second};
     }
-}
-
-void Automaton::updateStats() {
-    // TODO
 }
 
 void Automaton::KillSite(ul r, ul c) {
@@ -465,9 +459,9 @@ bool Automaton::isReadyForDivision(ul r, ul c) {
            state.cellCycle(r, c) == State::CellCycle::D;
 }
 
-single_p Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
-    constexpr single_p diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
-    constexpr single_p sideProb = 1.41421356f * diagonalProb;
+float Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
+    constexpr float diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
+    constexpr float sideProb = 1.41421356f * diagonalProb;
     if (relativeCoords.first == 0 || relativeCoords.second == 0) return sideProb;
     else return diagonalProb;
 }
