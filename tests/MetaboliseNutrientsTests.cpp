@@ -1,6 +1,5 @@
 #include <catch.h>
 #include <Automaton.h>
-#include <iostream>
 #include "StateHelper.h"
 
 TEST_CASE("MetaboliseNutrients - basic test") {
