@@ -137,3 +137,10 @@ void State::setCycleChanged(ul r, ul c, bool value) {
 single_p State::radius(ul r, ul c) {
     return sqrt((r - gridSize / 2.) * (r - gridSize / 2.) + (c - gridSize / 2.) * (c - gridSize / 2.));
 }
+
+std::ofstream& operator<<(std::ofstream& stream, const State& state)
+{
+    stream << state._W << state._CHO << state._OX << state._GI << state._timeInRepair << state._irradiation
+           << state._cellState << state._cellCycle << state._proliferationTime << state._cycleChanged;
+    return stream;
+}

@@ -496,3 +496,10 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
 Cycles Automaton::getCycles() {
     return cycles;
 }
+
+void Automaton::saveStateToFile(const std::string &filename) {
+    std::ofstream ofs(filename);
+    ofs << step << std::endl;
+    ofs << state;
+    ofs << cycles;
+}

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(tumor)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # Set compile flags for GCC
 if(CMAKE_COMPILER_IS_GNUCXX)

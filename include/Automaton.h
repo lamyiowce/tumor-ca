@@ -146,6 +146,28 @@ public:
     void cellDivision();
 
     static Automaton loadFromFile(const std::string &filename, RandomEngine * re);
+
+    /**
+     * Save automaton state to csv file. Vector values separated by a comma ','. Data format is as follows:
+     * step
+     * W
+     * CHO
+     * OX
+     * GI
+     * timeInRepair
+     * irradiation
+     * cellState
+     * cellCycle
+     * proliferationTime
+     * cycleChanged
+     * G1time
+	 * Stime
+	 * G2time
+	 * Mtime
+	 * Dtime
+     * @param filename
+     */
+    void saveStateToFile(const std::string &filename);
 };
 
 #endif //TUMOR_AUTOMATON_H

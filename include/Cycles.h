@@ -30,6 +30,8 @@ public:
     const single_p& Mtime(unsigned long r, unsigned long c) const;
     const single_p& Dtime(unsigned long r, unsigned long c) const;
 
+    friend std::ofstream& operator<<(std::ofstream& stream, const Cycles& cycles);
+
 	unsigned long _gridSize;
 
 };
