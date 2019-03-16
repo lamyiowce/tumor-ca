@@ -81,7 +81,7 @@ int main() {
 			f.close();
 			t.close();
 			f.open("protocol_list_" + std::to_string(file_count) + ".csv");
-			t.open("protocol_list_" + std::to_string(file_count) + ".csv");
+			t.open("protocol_times_" + std::to_string(file_count) + ".csv");
 		}
 		// Losuj sumę
 		float sum = dist_sum(rng) * 0.25;
@@ -224,6 +224,10 @@ int main() {
 				f << '\n'; 
 				t << '\n'; 
 			}
+			// Nowa linia oddziela osobne bloki protokołów i ich czasów 
+			// (każdy protokół dawek może mieć 2, 3 lub 4 czasy)
+			f << '\n'; 
+			t << '\n'; 
 		}
 	}
     return 0;
