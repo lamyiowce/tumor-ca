@@ -8,36 +8,14 @@
 #include <set>
 #include <stack>
 
-#define MAX_PROTOCOL_LENGTH 20
-
 struct DataFrame {
   float sum;
   std::vector<float> coins;
   std::vector<float> avail_coins;
 };
 
-std::vector<int> factorials;
-
 typedef std::map<float, std::vector<std::vector<float>>> protocol_sum;
 
-void save_protocol_map(protocol_sum protocol_map) {
-	// All of the unpermuted protocols
-	std::ofstream f("protocol_map.csv");
-	std::cout << "Save protocol map.\n";
-	for (float target = 10.0; target > 0.5; target -= 0.25) {
-	  	std::vector<std::vector<float>> sum_vector = protocol_map[target];
-	  	std::cout << ':';
-	  	f << target << ':';
-		for (std::vector<std::vector<float>>::const_iterator i = sum_vector.begin(); 
-			i != sum_vector.end(); ++i) {
-			for (std::vector<float>::const_iterator val = (*i).begin(); val != (*i).end(); ++val) {
-				f << *val << '.';
-			}
-			f << ',';
-		}
-		f << '\n';
-	}
-}
 
 int main() {
   	protocol_sum protocol_map;
@@ -109,7 +87,6 @@ int main() {
 		float sum = dist_sum(rng) * 0.25;
 
 		std::vector<float> temp_protocol;
-		float temp_sum = 0;
 
 		std::cout << "Suma " << sum << "\n";
 		std::cout << "Rozmiar " << protocol_map[sum].size() << "\n";
