@@ -74,7 +74,7 @@ static double_p distance(std::pair<double_p, double_p> p1, std::pair<double_p, d
     return std::sqrt((p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second));
 }
 
-void Automaton::diffusion() {
+std::pair<Automaton::coords_t, ul> Automaton::findTumor() {
     ul minC = state.gridSize;
     ul minR = state.gridSize;
     ul maxC = 0;
@@ -99,20 +99,61 @@ void Automaton::diffusion() {
             }
         }
     }
+    return {{midR, midC}, maxDist};
+}
+
+
+std::pair<Automaton::coords_t, Automaton::coords_t> Automaton::findSubLattice(coords_t mid, ul maxDist) {
+    ul midR, midC;
+    std::tie(midR, midC) = mid;
     ul subLatticeR = (midR <= maxDist) ? 0 : midR - maxDist; // sub-lattice upper row
     ul subLatticeC = (midC <= maxDist) ? 0 : midC - maxDist; // sub-lattice left column
     ul subLatticeW =                                         // sub-lattice width
             (midC + maxDist >= state.gridSize) ? state.gridSize - subLatticeC : midC + maxDist - subLatticeC + 1;
     ul subLatticeH =                                         // sub-lattice height
             (midR + maxDist >= state.gridSize) ? state.gridSize - subLatticeR : midR + maxDist - subLatticeR + 1;
+    return {{subLatticeR, subLatticeC}, {subLatticeH, subLatticeW}};
+}
 
+Automaton::LatticeCopy Automaton::copySubLattice(ul borderedH, ul borderedW, ul subLatticeR, ul subLatticeC) {
+    LatticeCopy copy(borderedH, borderedW);
+    auto subLatticeH = borderedH - 4;
+    auto subLatticeW = borderedW - 4;
+    for (ul r = 0; r < subLatticeH; ++r) {
+        for (ul c = 0; c < subLatticeW; ++c) {
+            copy.CHO[0][(r + 2) * borderedW + (c + 2)] = state.CHO(subLatticeR + r, subLatticeC + c);
+            copy.OX[0][(r + 2) * borderedW + (c + 2)] = state.OX(subLatticeR + r, subLatticeC + c);
+            copy.GI[0][(r + 2) * borderedW + (c + 2)] = state.GI(subLatticeR + r, subLatticeC + c);
+        }
+    }
+    return copy;
+}
 
-    auto borderedW = subLatticeW + 4;
-    auto borderedH = subLatticeH + 4;
-    grid<double_p> choCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
-    grid<double_p> oxCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
-    grid<double_p> giCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
+void Automaton::calculateDiffusion(
+        Automaton::LatticeCopy &copy,
+        std::vector<Automaton::coords_t> borderSites,
+        ul rounds) {
+    auto borderedW = copy.borderedW;
+    auto borderedH = copy.borderedH;
+    for (ul i = 0; i < rounds; ++i) {
+        for (auto rc: borderSites) {
+            auto r = rc.first;
+            auto c = rc.second;
+            copy.CHO[i % 2][(r+1)*borderedW + c+1] = params.sCHOex;
+            copy.OX[i % 2][(r+1)*borderedW + c+1] = params.sOXex;
+            copy.GI[i % 2][(r+1)*borderedW + c+1] = params.sGIex;
+        }
+        for (ul r = 0; r < borderedH-2; ++r) {
+            for (ul c = 0; c < borderedW-2; ++c) {
+                numericalDiffusion(r+1, c+1, copy.CHO[i % 2], copy.OX[i % 2], copy.GI[i % 2],
+                                   copy.CHO[(i + 1) % 2], copy.OX[(i + 1) % 2],
+                                   copy.GI[(i + 1) % 2], borderedW);
+            }
+        }
+    }
+}
 
+std::vector<Automaton::coords_t> Automaton::findBorderSites(ul borderedH, ul borderedW, ul maxDist) {
     std::vector<coords_t> borderSites;
     for (ul r = 0; r < borderedH-2; ++r) {
         for (ul c = 0; c < borderedW-2; ++c) {
@@ -121,37 +162,30 @@ void Automaton::diffusion() {
             }
         }
     }
+    return borderSites;
+}
 
-    for (ul r = 0; r < subLatticeH; ++r) {
-        for (ul c = 0; c < subLatticeW; ++c) {
-            choCopy[0][(r + 2) * borderedW + (c + 2)] = state.CHO(subLatticeR + r, subLatticeC + c);
-            oxCopy[0][(r + 2) * borderedW + (c + 2)] = state.OX(subLatticeR + r, subLatticeC + c);
-            giCopy[0][(r + 2) * borderedW + (c + 2)] = state.GI(subLatticeR + r, subLatticeC + c);
-        }
-    }
+void Automaton::diffusion() {
+    coords_t tumorMid;
+    ul maxLivingDistance;
+    std::tie(tumorMid, maxLivingDistance) = findTumor();
+    auto subLatticeCoords = findSubLattice(tumorMid, maxLivingDistance);
+    ul subLatticeR, subLatticeC, subLatticeW, subLatticeH;
+    std::tie(subLatticeR, subLatticeC) = subLatticeCoords.first;
+    std::tie(subLatticeH, subLatticeW) = subLatticeCoords.second;
 
+    // add two sites wide border
+    auto borderedW = subLatticeW + 4;
+    auto borderedH = subLatticeH + 4;
+    auto copy = copySubLattice(borderedH, borderedW, subLatticeR, subLatticeC);
+    auto borderSites = findBorderSites(borderedH, borderedW, maxLivingDistance);
     ul rounds = ul(std::round(params.stepTime / params.tau));
-    for (ul i = 0; i < rounds; ++i) {
-        for (auto rc: borderSites) {
-            auto r = rc.first;
-            auto c = rc.second;
-            choCopy[i % 2][(r+1)*borderedW + c+1] = params.sCHOex;
-            oxCopy[i % 2][(r+1)*borderedW + c+1] = params.sOXex;
-            giCopy[i % 2][(r+1)*borderedW + c+1] = params.sGIex;
-        }
-        for (ul r = 0; r < borderedH-2; ++r) {
-            for (ul c = 0; c < borderedW-2; ++c) {
-                numericalDiffusion(r+1, c+1, choCopy[i % 2], oxCopy[i % 2], giCopy[i % 2],
-                                   choCopy[(i + 1) % 2], oxCopy[(i + 1) % 2],
-                                   giCopy[(i + 1) % 2], borderedW);
-            }
-        }
-    }
+    calculateDiffusion(copy, borderSites, rounds);
     for (ul r = 0; r < subLatticeH; ++r) {
         for (ul c = 0; c < subLatticeW; ++c) {
-            state.CHO(subLatticeR + r, subLatticeC + c) = choCopy[rounds % 2][(r + 2) * borderedW + (c + 2)];
-            state.OX(subLatticeR + r, subLatticeC + c) = oxCopy[rounds % 2][(r + 2) * borderedW + (c + 2)];
-            state.GI(subLatticeR + r, subLatticeC + c) = giCopy[rounds % 2][(r + 2) * borderedW + (c + 2)];
+            state.CHO(subLatticeR + r, subLatticeC + c) = copy.CHO[rounds % 2][(r + 2) * borderedW + (c + 2)];
+            state.OX(subLatticeR + r, subLatticeC + c) = copy.OX[rounds % 2][(r + 2) * borderedW + (c + 2)];
+            state.GI(subLatticeR + r, subLatticeC + c) = copy.GI[rounds % 2][(r + 2) * borderedW + (c + 2)];
         }
     }
 }
@@ -472,7 +506,7 @@ std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul r, ul c) {
     long c_start = c == 0 ? 0 : -1;
     long c_end = (c == state.gridSize - 1) ? 0 : 1;
 
-    std::vector<std::pair<long, long>> result;
+    std::vector<std::pair<long, long>> result{};
     for (long rx = r_start; rx <= r_end; ++rx) {
         for (long cx = c_start; cx <= c_end; ++cx) {
             if (state.W(r + rx, c + cx) == 0) {
@@ -496,3 +530,4 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
 Cycles Automaton::getCycles() {
     return cycles;
 }
+
