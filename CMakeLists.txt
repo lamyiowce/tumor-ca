@@ -18,7 +18,9 @@ set(SOURCES
 		automaton/Cycles.cpp
         automaton/Parameters.cpp
         automaton/State.cpp
-		automaton/RandomEngine.cpp)
+		automaton/RandomEngine.cpp
+        automaton/IrradiationProtocol.cpp
+        )
 
 add_executable(tumor
         main.cpp
@@ -36,4 +38,4 @@ add_executable(tests
         tests/MetaboliseNutrientsTests.cpp
         tests/SetLocalStatesTests.cpp
         tests/SetGlobalStatesTests.cpp
-        tests/DiffusionTests.cpp)
+        tests/DiffusionTests.cpp tests/IrradiationProtocolLoadFromFileTests.cpp)

@@ -40,7 +40,7 @@ Parameters::Parameters(const nlohmann::json &json)
         json["PARAMS"]["sCHOex"].get<double_p>(),
         json["PARAMS"]["sOXex"].get<double_p>(),
         json["PARAMS"]["sGIex"].get<double_p>(),
-        Parameters::IrradiationProtocol(json),
+        IrradiationProtocol(json),
         json["PARAMS"]["tau"].get<double_p>(),
         json["PARAMS"]["tstep"].get<double_p>(),
         json["PARAMS"]["sGIcrit"].get<double_p>(),
@@ -59,6 +59,11 @@ Parameters::Parameters(const nlohmann::json &json)
         json["PARAMS"]["sDox"].get<double_p>(),
         json["PARAMS"]["sDgi"].get<double_p>()
     ) {}
+
+void Parameters::setIrradiationProtocol(std::vector<ul> _steps, std::vector<double_p> _times) {
+    IrradiationProtocol newProtocol(std::move(_steps), std::move(_times));
+    irradiationSteps = std::move(newProtocol);
+}
 
 Parameters::NutrientsParameters::NutrientsParameters(double_p CHO, double_p OX, double_p GI) : CHO(CHO), OX(OX), GI(GI) {}
 
@@ -91,32 +96,3 @@ Parameters::BirthParams::BirthParams(const Parameters::NormDistParams &G1time,
                                      G2time(G2time),
                                      Mtime(Mtime),
                                      Dtime(Dtime) {}
-
-Parameters::IrradiationProtocol::IrradiationProtocol(const nlohmann::json &json) {
-    bool numbers = false;
-    try {
-        json["PARAMS"]["irr_f_times"].get<std::vector<ul>>();
-    } catch (const nlohmann::detail::type_error &_) {
-        numbers = true;
-    }
-    if (numbers) {
-        times = std::vector<ul>(1, json["PARAMS"]["irr_f_times"].get<ul>());
-        doses = std::vector<double_p>(1, json["PARAMS"]["irr_f_doses"].get<double_p>());
-    } else {
-        times = json["PARAMS"]["irr_f_times"].get<std::vector<ul>>();
-        doses = json["PARAMS"]["irr_f_doses"].get<std::vector<double_p>>();
-    }
-}
-
-Parameters::IrradiationProtocol::IrradiationProtocol(const std::vector<std::pair<ul, double_p>> &t_d_pairs) {
-    for (auto d: t_d_pairs) {
-        times.push_back(d.first);
-        doses.push_back(d.second);
-    }
-}
-
-double_p Parameters::IrradiationProtocol::getIrradiationDose(ul step) const {
-    auto find = std::lower_bound(times.begin(), times.end(), step);
-    if (find == times.end()) return 0.0;
-    return doses[find - times.begin()];
-}

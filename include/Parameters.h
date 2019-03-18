@@ -3,6 +3,7 @@
 #include <vector>
 #include <util.h>
 #include <json.hpp>
+#include "IrradiationProtocol.h"
 
 class Parameters {
 public:
@@ -49,18 +50,6 @@ public:
                     const NormDistParams &Mtime, const NormDistParams &Dtime);
     };
 
-    class IrradiationProtocol {
-        std::vector<ul> times;
-        std::vector<double_p> doses;
-
-    public:
-        explicit IrradiationProtocol(const nlohmann::json &json);
-
-        explicit IrradiationProtocol(const std::vector<std::pair<ul, double_p>> &t_d_pairs);
-
-        double_p getIrradiationDose(ul step) const;
-
-    };
 
     Parameters(double_p sCHOex,
             double_p sOXex,
@@ -84,7 +73,7 @@ public:
     const double_p sCHOex; // no idea yet what that is, used in replenishSubstrates, CHO
     const double_p sOXex; // same as above, oxygen
     const double_p sGIex;
-    const IrradiationProtocol irradiationSteps; /// vector of pairs (step number, irradiation dose)
+    IrradiationProtocol irradiationSteps; // vector of pairs (step number, irradiation dose)
     const double_p tau;
     const double_p stepTime; // step time in seconds
 
@@ -101,6 +90,7 @@ public:
     const double_p sDOX;
     const double_p sDGI;
 
+    void setIrradiationProtocol(std::vector<ul> _steps, std::vector<double_p> _times);
 };
 
 

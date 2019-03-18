@@ -146,6 +146,8 @@ public:
     void updateStats();
 
     static Automaton loadFromFile(const std::string &filename, RandomEngine * re);
+
+    void setIrradiationProtocol(std::vector<ul> _times, std::vector<double_p> _doses);
 };
 
 #endif //TUMOR_AUTOMATON_H

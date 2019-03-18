@@ -503,3 +503,7 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
     ul step = j["st"];
     return Automaton(state, cycles, parameters, re, step);
 }
+
+void Automaton::setIrradiationProtocol(std::vector<ul> _times, std::vector<double_p> _doses) {
+    params.setIrradiationProtocol(std::move(_times), std::move(_doses));
+}
