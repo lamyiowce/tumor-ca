@@ -60,9 +60,8 @@ Parameters::Parameters(const nlohmann::json &json)
         json["PARAMS"]["sDgi"].get<double_p>()
     ) {}
 
-void Parameters::setIrradiationProtocol(std::vector<ul> _steps, std::vector<double_p> _times) {
-    IrradiationProtocol newProtocol(std::move(_steps), std::move(_times));
-    irradiationSteps = std::move(newProtocol);
+void Parameters::setIrradiationProtocol(IrradiationProtocol protocol) {
+    irradiationSteps = std::move(protocol);
 }
 
 Parameters::NutrientsParameters::NutrientsParameters(double_p CHO, double_p OX, double_p GI) : CHO(CHO), OX(OX), GI(GI) {}

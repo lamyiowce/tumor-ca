@@ -17,7 +17,7 @@ TEST_CASE("Irradiation Protocol - basic read from file test") {
     std::string baseTestPath = "../tests/resources/test_protocols/";
     std::string currentTest;
     assert(protocolPaths.size() == shouldBe.size());
-    for (int i = 0; i < protocolPaths.size(); i++) {
+    for (ul i = 0; i < protocolPaths.size(); i++) {
         auto testCase = protocolPaths[i];
         SECTION("Test case " + testCase) {
             currentTest = baseTestPath + testCase;

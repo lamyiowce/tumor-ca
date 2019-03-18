@@ -90,7 +90,7 @@ public:
     const double_p sDOX;
     const double_p sDGI;
 
-    void setIrradiationProtocol(std::vector<ul> _steps, std::vector<double_p> _times);
+    void setIrradiationProtocol(IrradiationProtocol protocol);
 };
 
 

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 # Set default compile flags for GCC  # TODO do wywalenia, na Windowsie tego potrzebowalem
 if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
-    set(FLAGS "-Wall -Wextra -pedantic -g")
+    set(FLAGS "-Wall -Wextra -pedantic -g -fopenmp")
     set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
     set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3")
 endif(CMAKE_COMPILER_IS_GNUCXX)
