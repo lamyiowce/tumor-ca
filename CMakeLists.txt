@@ -3,12 +3,12 @@ project(tumor)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Set default compile flags for GCC  # TODO do wywalenia, na Windowsie tego potrzebowalem
+# Set compile flags for GCC
 if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
     set(FLAGS "-Wall -Wextra -pedantic -g")
     set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
-    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3")
+    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3 -flto")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(include)
@@ -36,4 +36,10 @@ add_executable(tests
         tests/MetaboliseNutrientsTests.cpp
         tests/SetLocalStatesTests.cpp
         tests/SetGlobalStatesTests.cpp
-        tests/DiffusionTests.cpp)
+        tests/DiffusionTests.cpp
+        tests/OneStepTests.cpp)
+
+add_executable(integration-test
+        ${SOURCES}
+        tests/StateHelper.cpp
+        tests/integration-test.cpp)

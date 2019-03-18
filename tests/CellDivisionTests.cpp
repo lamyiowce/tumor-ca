@@ -1,5 +1,6 @@
 #include <catch.h>
 #include <Automaton.h>
+#include <iostream>
 #include "StateHelper.h"
 
 TEST_CASE("RepairCells & CellDivision - basic test") {
@@ -13,9 +14,9 @@ TEST_CASE("RepairCells & CellDivision - basic test") {
             auto ca2 = Automaton::loadFromFile(filepath, nullptr);
             ca1.repairCells();
             ca1.cellDivision();
-
             REQUIRE(discreteEquality(ca1.getState(), ca2.getState()));
-            REQUIRE(maxError(ca1.getState(), ca2.getState()) < MAX_RELATIVE_ERROR);
+            REQUIRE(maxError(ca1.getState(), ca2.getState()) == 0.0);
+            REQUIRE(maxErrorCycles(ca1.getCycles(), ca2.getCycles()) == 0.0);
         }
     }
 }

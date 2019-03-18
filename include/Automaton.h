@@ -20,8 +20,21 @@ public:
 
 private:
 
-    /// Performs one step of the simulation.
-    void advance();
+    struct LatticeCopy {
+        ul borderedH;
+        ul borderedW;
+        std::array<grid<double_p >, 2> CHO;
+        std::array<grid<double_p>, 2> OX;
+        std::array<grid<double_p>, 2> GI;
+
+        LatticeCopy(ul borderedH, ul borderedW)
+        : borderedH(borderedH)
+        , borderedW(borderedW)
+        , CHO{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)}
+        , OX{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)}
+        , GI{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)}
+        {}
+    };
 
     /**
      * Progress proliferation clock.
@@ -106,6 +119,8 @@ private:
 public:
     const State &getState() const;
 
+    Cycles getCycles();
+
     Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                   RandomEngine *randomEngine, ul _step = 1);
 
@@ -118,11 +133,42 @@ public:
 
     void runNSteps(int nSteps);
 
-    // % DIFFUSION2
-    // %   Operates on array N to diffuse elements of
-    // %   N in a Moore Neighbourhood, following Fick's 1st Law
-    // %   of Diffusion (flux prop. to conc. gradient)
+    /// Performs one step of the simulation.
+    void advance();
+
+    /**
+     * Diffuses glucose, oxygen and TODO
+     * in the lattice, following Fick's First Law
+     */
     void diffusion();
+
+    /**
+     * Localize living cells on the lattice
+     * @return (coordinates of the middle of the tumor, maximal distance of the living cell)
+     */
+    std::pair<coords_t, ul> findTumor();
+
+    /**
+     * Calculate coordinates and dimensions of the sublattice containing the tumor
+     * @param mid - coordinates of the middle of the tumor
+     * @param maxDist - maximal distance of the living cell
+     * @return ((sublattice row, sublattice column), (sublattice height, sublattice width))
+     */
+    std::pair<Automaton::coords_t, Automaton::coords_t> findSubLattice(coords_t mid, ul maxDist);
+
+    /**
+     * Construct temporal grids for calculating diffusion.
+     * @param borderedH
+     * @param borderedW
+     * @param subLatticeR
+     * @param subLatticeC
+     * @return
+     */
+    LatticeCopy copySubLattice(ul borderedH, ul borderedW, ul subLatticeR, ul subLatticeC);
+
+    void calculateDiffusion(LatticeCopy &copy, std::vector<coords_t> borderSites, ul rounds);
+
+    std::vector<coords_t> findBorderSites(ul borderedH, ul borderedW, ul maxDist);
 
     /**
      * Apply the correct fraction (dose) at the right time
@@ -142,8 +188,6 @@ public:
     void repairCells();
 
     void cellDivision();
-
-    void updateStats();
 
     static Automaton loadFromFile(const std::string &filename, RandomEngine * re);
 

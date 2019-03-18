@@ -6,9 +6,7 @@
 
 Automaton::Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                      RandomEngine *randomEngine, ul _step)
-        : state(_state), cycles(_cycles), params(_params), step(_step), randomEngine(randomEngine) {
-
-}
+        : state(_state), cycles(_cycles), params(_params), step(_step), randomEngine(randomEngine) {}
 
 const State &Automaton::getState() const {
     return state;
@@ -21,6 +19,7 @@ void Automaton::runNSteps(int nSteps) {
 }
 
 void Automaton::advance() {
+    ++step;
     diffusion();
     irradiateTumor();
     setLocalStates();
@@ -28,8 +27,6 @@ void Automaton::advance() {
     setGlobalStates();
     repairCells();
     cellDivision();
-    updateStats();
-    // TODO: finish check
 }
 
 void Automaton::replenishSubstrate() {
@@ -48,20 +45,16 @@ static double paramDiffusion(double_p val, double_p d, double_p tau, double_p or
 }
 
 std::pair<double_p, double_p> Automaton::sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW) {
-    auto gridH = values.size() / gridW;
-    long r_start = r == 0 ? 0 : -1;
-    long r_end = (r == gridH - 1) ? 0 : 1;
-    long c_start = c == 0 ? 0 : -1;
-    long c_end = (c == gridW - 1) ? 0 : 1;
-
     double_p orthogonalResult = 0.0, diagonalResult = 0.0;
-    for (long ri = r_start; ri <= r_end; ++ri) {
-        for (long ci = c_start; ci <= c_end; ++ci) {
-            if (ri == 0 && ci == 0) continue;
-            if (ri == 0 || ci == 0) orthogonalResult += values[(r + ri) * gridW + c + ci];
-            else diagonalResult += values[(r + ri) * gridW + c + ci];
-        }
-    }
+    orthogonalResult += values[(r-1) * gridW + c];
+    orthogonalResult += values[(r+1) * gridW + c];
+    orthogonalResult += values[r * gridW + c-1];
+    orthogonalResult += values[r * gridW + c+1];
+
+    diagonalResult += values[(r-1) * gridW + c-1];
+    diagonalResult += values[(r+1) * gridW + c-1];
+    diagonalResult += values[(r+1) * gridW + c+1];
+    diagonalResult += values[(r-1) * gridW + c+1];
     return {orthogonalResult, diagonalResult};
 }
 
@@ -81,7 +74,7 @@ static double_p distance(std::pair<double_p, double_p> p1, std::pair<double_p, d
     return std::sqrt((p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second));
 }
 
-void Automaton::diffusion() {
+std::pair<Automaton::coords_t, ul> Automaton::findTumor() {
     ul minC = state.gridSize;
     ul minR = state.gridSize;
     ul maxC = 0;
@@ -106,59 +99,93 @@ void Automaton::diffusion() {
             }
         }
     }
+    return {{midR, midC}, maxDist};
+}
+
+
+std::pair<Automaton::coords_t, Automaton::coords_t> Automaton::findSubLattice(coords_t mid, ul maxDist) {
+    ul midR, midC;
+    std::tie(midR, midC) = mid;
     ul subLatticeR = (midR <= maxDist) ? 0 : midR - maxDist; // sub-lattice upper row
     ul subLatticeC = (midC <= maxDist) ? 0 : midC - maxDist; // sub-lattice left column
     ul subLatticeW =                                         // sub-lattice width
             (midC + maxDist >= state.gridSize) ? state.gridSize - subLatticeC : midC + maxDist - subLatticeC + 1;
     ul subLatticeH =                                         // sub-lattice height
             (midR + maxDist >= state.gridSize) ? state.gridSize - subLatticeR : midR + maxDist - subLatticeR + 1;
+    return {{subLatticeR, subLatticeC}, {subLatticeH, subLatticeW}};
+}
 
-
-    auto borderedW = subLatticeW + 2;
-    auto borderedH = subLatticeH + 2;
-    grid<double_p> choCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
-    grid<double_p> oxCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
-    grid<double_p> giCopy[]{grid<double_p>(borderedH * borderedW), grid<double_p>(borderedH * borderedW)};
-
-    std::vector<coords_t> borderSites;
-    for (ul r = 0; r < borderedH; ++r) {
-        for (ul c = 0; c < borderedW; ++c) {
-            if (distance({r+1, c+1}, {double_p(borderedH) / 2., double_p(borderedW) / 2.}) >= maxDist) {
-                borderSites.emplace_back(r, c);
-            }
-        }
-    }
-
+Automaton::LatticeCopy Automaton::copySubLattice(ul borderedH, ul borderedW, ul subLatticeR, ul subLatticeC) {
+    LatticeCopy copy(borderedH, borderedW);
+    auto subLatticeH = borderedH - 4;
+    auto subLatticeW = borderedW - 4;
     for (ul r = 0; r < subLatticeH; ++r) {
         for (ul c = 0; c < subLatticeW; ++c) {
-            choCopy[0][(r + 1) * borderedW + (c + 1)] = state.CHO(subLatticeR + r, subLatticeC + c);
-            oxCopy[0][(r + 1) * borderedW + (c + 1)] = state.OX(subLatticeR + r, subLatticeC + c);
-            giCopy[0][(r + 1) * borderedW + (c + 1)] = state.GI(subLatticeR + r, subLatticeC + c);
+            copy.CHO[0][(r + 2) * borderedW + (c + 2)] = state.CHO(subLatticeR + r, subLatticeC + c);
+            copy.OX[0][(r + 2) * borderedW + (c + 2)] = state.OX(subLatticeR + r, subLatticeC + c);
+            copy.GI[0][(r + 2) * borderedW + (c + 2)] = state.GI(subLatticeR + r, subLatticeC + c);
         }
     }
+    return copy;
+}
 
-    ul rounds = ul(std::round(params.stepTime / params.tau));
+void Automaton::calculateDiffusion(
+        Automaton::LatticeCopy &copy,
+        std::vector<Automaton::coords_t> borderSites,
+        ul rounds) {
+    auto borderedW = copy.borderedW;
+    auto borderedH = copy.borderedH;
     for (ul i = 0; i < rounds; ++i) {
         for (auto rc: borderSites) {
             auto r = rc.first;
             auto c = rc.second;
-            choCopy[i % 2][r*borderedW + c] = params.sCHOex;
-            oxCopy[i % 2][r*borderedW + c] = params.sOXex;
-            giCopy[i % 2][r*borderedW + c] = params.sGIex;
+            copy.CHO[i % 2][(r+1)*borderedW + c+1] = params.sCHOex;
+            copy.OX[i % 2][(r+1)*borderedW + c+1] = params.sOXex;
+            copy.GI[i % 2][(r+1)*borderedW + c+1] = params.sGIex;
         }
-        for (ul r = 0; r < borderedH; ++r) {
-            for (ul c = 0; c < borderedW; ++c) {
-                numericalDiffusion(r, c, choCopy[i % 2], oxCopy[i % 2], giCopy[i % 2],
-                                   choCopy[(i + 1) % 2], oxCopy[(i + 1) % 2],
-                                   giCopy[(i + 1) % 2], borderedW);
+        for (ul r = 0; r < borderedH-2; ++r) {
+            for (ul c = 0; c < borderedW-2; ++c) {
+                numericalDiffusion(r+1, c+1, copy.CHO[i % 2], copy.OX[i % 2], copy.GI[i % 2],
+                                   copy.CHO[(i + 1) % 2], copy.OX[(i + 1) % 2],
+                                   copy.GI[(i + 1) % 2], borderedW);
             }
         }
     }
+}
+
+std::vector<Automaton::coords_t> Automaton::findBorderSites(ul borderedH, ul borderedW, ul maxDist) {
+    std::vector<coords_t> borderSites;
+    for (ul r = 0; r < borderedH-2; ++r) {
+        for (ul c = 0; c < borderedW-2; ++c) {
+            if (distance({r+1, c+1}, {double_p(borderedH-2) / 2., double_p(borderedW-2) / 2.}) >= maxDist) {
+                borderSites.emplace_back(r, c);
+            }
+        }
+    }
+    return borderSites;
+}
+
+void Automaton::diffusion() {
+    coords_t tumorMid;
+    ul maxLivingDistance;
+    std::tie(tumorMid, maxLivingDistance) = findTumor();
+    auto subLatticeCoords = findSubLattice(tumorMid, maxLivingDistance);
+    ul subLatticeR, subLatticeC, subLatticeW, subLatticeH;
+    std::tie(subLatticeR, subLatticeC) = subLatticeCoords.first;
+    std::tie(subLatticeH, subLatticeW) = subLatticeCoords.second;
+
+    // add two sites wide border
+    auto borderedW = subLatticeW + 4;
+    auto borderedH = subLatticeH + 4;
+    auto copy = copySubLattice(borderedH, borderedW, subLatticeR, subLatticeC);
+    auto borderSites = findBorderSites(borderedH, borderedW, maxLivingDistance);
+    ul rounds = ul(std::round(params.stepTime / params.tau));
+    calculateDiffusion(copy, borderSites, rounds);
     for (ul r = 0; r < subLatticeH; ++r) {
         for (ul c = 0; c < subLatticeW; ++c) {
-            state.CHO(subLatticeR + r, subLatticeC + c) = choCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
-            state.OX(subLatticeR + r, subLatticeC + c) = oxCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
-            state.GI(subLatticeR + r, subLatticeC + c) = giCopy[rounds % 2][(r + 1) * borderedW + (c + 1)];
+            state.CHO(subLatticeR + r, subLatticeC + c) = copy.CHO[rounds % 2][(r + 2) * borderedW + (c + 2)];
+            state.OX(subLatticeR + r, subLatticeC + c) = copy.OX[rounds % 2][(r + 2) * borderedW + (c + 2)];
+            state.GI(subLatticeR + r, subLatticeC + c) = copy.GI[rounds % 2][(r + 2) * borderedW + (c + 2)];
         }
     }
 }
@@ -214,9 +241,6 @@ void Automaton::setLocalStates() {
                             state.cellState(r, c) = State::CellState::AEROBIC_PROLIFERATION;
                             continue;
                         } else {  // [matlab] ix_q_a
-                            // TODO moze zamiast sprawdzania tylu rzeczy wgl od razu to ustawic
-                            // kiedy jest cycle zmieniany, w jakiejs osobnej fladze w state?
-                            // (jeszcze pozniej pojawia sie ten warunek)
                             if (state.cellCycle(r, c) == State::CellCycle::S
                                 || state.cellCycle(r, c) == State::CellCycle::M
                                 || state.cellCycle(r, c) == State::CellCycle::D) {
@@ -394,7 +418,7 @@ void Automaton::repairCells() {
 }
 
 void Automaton::cellDivision() {
-    std::vector<std::pair<ul, ul>> readyCells;
+    std::vector<std::pair<ul, ul>> readyCells{};
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
             if (isReadyForDivision(r, c)) {
@@ -417,7 +441,7 @@ void Automaton::birthCell(const Automaton::coords_t &parent, const Automaton::co
     auto c_c = child.second;
     cycles.G1time(c_r, c_c) = randomEngine->normal(params.birthParams.G1time.mean, params.birthParams.G1time.stddev);
     cycles.Stime(c_r, c_c) = randomEngine->normal(params.birthParams.Stime.mean, params.birthParams.Stime.stddev);
-    cycles.G1time(c_r, c_c) = randomEngine->normal(params.birthParams.G2time.mean, params.birthParams.G2time.stddev);
+    cycles.G2time(c_r, c_c) = randomEngine->normal(params.birthParams.G2time.mean, params.birthParams.G2time.stddev);
     cycles.Mtime(c_r, c_c) = randomEngine->normal(params.birthParams.Mtime.mean, params.birthParams.Mtime.stddev);
     cycles.Dtime(c_r, c_c) = randomEngine->normal(params.birthParams.Dtime.mean, params.birthParams.Dtime.stddev);
 
@@ -436,7 +460,7 @@ Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
     if (vn.empty()) {
         return {r, c};
     }
-    std::vector<single_p> probs(vn.size());
+    std::vector<float> probs(vn.size());
     std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
     ul choice = randomEngine->roulette(probs);
     if (choice == probs.size()) {
@@ -447,15 +471,10 @@ Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
     }
 }
 
-void Automaton::updateStats() {
-    // TODO
-}
-
 void Automaton::KillSite(ul r, ul c) {
     state.cellState(r, c) = State::CellState::DEAD;
 
     state.W(r, c) = 0;
-    // state.Dage(r, c)  = 0;  // TODO unused?
     state.proliferationTime(r, c) = 0;
     state.irradiation(r, c) = 0;
     state.timeInRepair(r, c) = 0;
@@ -470,9 +489,9 @@ bool Automaton::isReadyForDivision(ul r, ul c) {
            state.cellCycle(r, c) == State::CellCycle::D;
 }
 
-single_p Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
-    constexpr single_p diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
-    constexpr single_p sideProb = 1.41421356f * diagonalProb;
+float Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
+    constexpr float diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
+    constexpr float sideProb = 1.41421356f * diagonalProb;
     if (relativeCoords.first == 0 || relativeCoords.second == 0) return sideProb;
     else return diagonalProb;
 }
@@ -483,7 +502,7 @@ std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul r, ul c) {
     long c_start = c == 0 ? 0 : -1;
     long c_end = (c == state.gridSize - 1) ? 0 : 1;
 
-    std::vector<std::pair<long, long>> result;
+    std::vector<std::pair<long, long>> result{};
     for (long rx = r_start; rx <= r_end; ++rx) {
         for (long cx = c_start; cx <= c_end; ++cx) {
             if (state.W(r + rx, c + cx) == 0) {
@@ -502,6 +521,10 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
     Parameters parameters(j);
     ul step = j["st"];
     return Automaton(state, cycles, parameters, re, step);
+}
+
+Cycles Automaton::getCycles() {
+    return cycles;
 }
 
 void Automaton::saveStateToFile(const std::string &filename) {
