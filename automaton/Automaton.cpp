@@ -241,9 +241,6 @@ void Automaton::setLocalStates() {
                             state.cellState(r, c) = State::CellState::AEROBIC_PROLIFERATION;
                             continue;
                         } else {  // [matlab] ix_q_a
-                            // TODO moze zamiast sprawdzania tylu rzeczy wgl od razu to ustawic
-                            // kiedy jest cycle zmieniany, w jakiejs osobnej fladze w state?
-                            // (jeszcze pozniej pojawia sie ten warunek)
                             if (state.cellCycle(r, c) == State::CellCycle::S
                                 || state.cellCycle(r, c) == State::CellCycle::M
                                 || state.cellCycle(r, c) == State::CellCycle::D) {
@@ -478,7 +475,6 @@ void Automaton::KillSite(ul r, ul c) {
     state.cellState(r, c) = State::CellState::DEAD;
 
     state.W(r, c) = 0;
-    // state.Dage(r, c)  = 0;  // TODO unused?
     state.proliferationTime(r, c) = 0;
     state.irradiation(r, c) = 0;
     state.timeInRepair(r, c) = 0;
