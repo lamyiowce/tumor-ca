@@ -40,3 +40,28 @@ single_p& Cycles::Mtime(unsigned long r, unsigned long c) {
 single_p& Cycles::Dtime(unsigned long r, unsigned long c) {
 	return _Dtime[r * _gridSize + c];
 }
+
+const single_p &Cycles::G1time(unsigned long r, unsigned long c) const {
+    return _G1time[r * _gridSize + c];
+}
+
+const single_p& Cycles::Stime(unsigned long r, unsigned long c) const {
+	return _Stime[r * _gridSize + c];
+}
+
+const single_p& Cycles::G2time(unsigned long r, unsigned long c) const {
+	return _G2time[r * _gridSize + c];
+}
+
+const single_p& Cycles::Mtime(unsigned long r, unsigned long c) const {
+	return _Mtime[r * _gridSize + c];
+}
+
+const single_p& Cycles::Dtime(unsigned long r, unsigned long c) const {
+	return _Dtime[r * _gridSize + c];
+}
+
+std::ofstream& operator<<(std::ofstream& stream, const Cycles& cycles) {
+    stream << cycles._G1time << cycles._Stime << cycles._G2time << cycles._Mtime << cycles._Dtime;
+    return stream;
+}

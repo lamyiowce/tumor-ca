@@ -4,9 +4,7 @@
 #include <vector>
 #include <util.h>
 #include <json.hpp>
-
-template <class T>
-using grid = std::vector<T>;
+#include <fstream>
 
 class State {
 public:
@@ -89,6 +87,7 @@ public:
 
     single_p radius(ul r, ul c);
 
+	friend std::ofstream& operator<<(std::ofstream& stream, const State& state);
 };
 
 

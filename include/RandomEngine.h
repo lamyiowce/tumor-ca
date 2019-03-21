@@ -19,7 +19,7 @@ public:
      * @param mean - mean value
      * @param stddev - standard deviation
      */
-    virtual float normal(float mean, float stddev) = 0;
+    virtual double_p normal(double_p mean, double_p stddev) = 0;
 
     /**
      * Returns random permutation of numbers form 0 to (n - 1)
@@ -46,7 +46,7 @@ public:
 
     float uniform() override;
 
-    float normal(float mean, float stddev) override;
+    double_p normal(double_p mean, double_p stddev) override;
 
     std::vector<ul> randomPermutation(ul n) override;
 
@@ -63,7 +63,7 @@ public:
 
     float uniform() override;
 
-    float normal(float mean, float stddev) override;
+    double_p normal(double_p mean, double_p stddev) override;
 
     std::vector<ul> randomPermutation(ul n) override;
 };

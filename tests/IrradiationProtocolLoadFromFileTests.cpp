@@ -1,6 +1,5 @@
 #include <catch.h>
 #include <IrradiationProtocol.h>
-#include "StateHelper.h"
 
 TEST_CASE("Irradiation Protocol - basic read from file test") {
     std::vector<std::string> protocolPaths = {"protocols_single", "protocols_simple"};
