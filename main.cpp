@@ -6,9 +6,9 @@
 #include <atomic>
 #include <sys/stat.h>
 #include <iomanip>
-#include <filesystem>
+#include <experimental/filesystem>
 
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 
 int main(int argc, char* argv[]) {
     StdRandomEngine sre(10009);
@@ -40,14 +40,16 @@ int main(int argc, char* argv[]) {
     const fs::path protocolDir = experimentDir / "protocols";
     const fs::path outDir = experimentDir / "out";
 
-    for (const std::string& dir : {resultsDir, experimentDir, protocolDir, outDir}) {
-        try {
-            fs::remove_all(dir);
-            fs::create_directory(dir);
-        } catch (const fs::filesystem_error& e) {
-            std::cerr << "Could not create directory: " << dir << std::endl;
-            std::cerr << e.what();
-        }
+    try {
+        fs::create_directories(resultsDir);
+        if (fs::exists(experimentDir))
+            fs::remove_all(experimentDir);
+        else
+            fs::create_directories(experimentDir);
+        fs::create_directories(protocolDir);
+        fs::create_directories(outDir);
+    } catch (const fs::filesystem_error& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
     }
 
     std::cout << std::endl;
@@ -69,8 +71,8 @@ int main(int argc, char* argv[]) {
     std::cout << "PROGRESS: " << std::setw(digits) << done << "/" << protocols.size() << std::flush;
     #pragma omp parallel for schedule(guided)
     for (ul i = 0; i < protocols.size(); i++){
-        auto outFilePath = outDir / (std::to_string(i) + ".csv");
-        auto protocolFilePath = protocolDir / (std::to_string(i) + ".csv");
+        auto outFilePath = outDir / (experimentId + "_" + std::to_string(i) + ".csv");
+        auto protocolFilePath = protocolDir / (experimentId + "_" + std::to_string(i) + ".csv");
         protocols[i].saveToFile(protocolFilePath);
         auto myCa = ca;
         myCa.setIrradiationProtocol(std::move(protocols[i]));
