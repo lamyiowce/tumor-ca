@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Set compile flags for GCC
 if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
-    set(FLAGS "-Wall -Wextra -pedantic -g -fopenmp")
-    set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
-    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3 -flto")
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -fopenmp")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g ")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(include)
@@ -50,3 +50,5 @@ add_executable(integration-test
         tests/StateHelper.cpp
         tests/integration-test.cpp
         )
+
+target_link_libraries(tumor stdc++fs)

@@ -75,3 +75,9 @@ bool IrradiationProtocol::sameAs(const IrradiationProtocol &other) {
     }
     return true;
 }
+
+void IrradiationProtocol::saveToFile(const std::string &filepath) {
+    std::ofstream ofs(filepath);
+    ofs << times;
+    ofs << doses;
+}

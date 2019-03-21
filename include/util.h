@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <type_traits>
+#include <vector>
 
 #define MATLAB_2SQRT2 2.828427124746190
 #define MATLAB_1_2SQRT2 0.707106781186548

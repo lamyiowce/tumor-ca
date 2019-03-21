@@ -18,6 +18,8 @@ public:
 
     static std::vector<IrradiationProtocol> loadFromFile(const std::string& filepath);
     
+    void saveToFile(const std::string& filepath);
+    
     bool sameAs(const IrradiationProtocol& other);
 };
 

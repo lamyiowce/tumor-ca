@@ -6,6 +6,9 @@
 #include <atomic>
 #include <sys/stat.h>
 #include <iomanip>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 int main(int argc, char* argv[]) {
     StdRandomEngine sre(10009);
@@ -14,9 +17,9 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    const std::string automatonPath = argv[1];
-    const std::string protocolPath = argv[2];
-    const std::string resultsDir = argv[3];
+    const fs::path automatonPath = fs::path(argv[1]);
+    const fs::path protocolPath = fs::path(argv[2]);
+    const fs::path resultsDir = fs::path(argv[3]);
     const std::string experimentId = argv[4];
     int nSteps;
     try {
@@ -28,17 +31,22 @@ int main(int argc, char* argv[]) {
 
     auto ca = Automaton::loadFromFile(automatonPath, &sre);
     auto protocols = IrradiationProtocol::loadFromFile(protocolPath);
+    if (protocols.empty()) {
+        std::cerr << "Error loading protocols or protocol file is empty." << std::endl;
+        return 1;
+    }
 
-    const std::string experimentDir = resultsDir + "/" + experimentId;
-    const std::string protocolDir = experimentDir + "/protocols";
-    const std::string outDir = experimentDir + "/out";
+    const fs::path experimentDir = resultsDir / experimentId;
+    const fs::path protocolDir = experimentDir / "protocols";
+    const fs::path outDir = experimentDir / "out";
 
-    mode_t mode = 0752;
     for (const std::string& dir : {resultsDir, experimentDir, protocolDir, outDir}) {
-        auto status = mkdir(dir.data(), mode);
-        if (status < 0 && errno != EEXIST) {
-            std::cerr << strerror(errno) << ": Could not create directory: " << dir << std::endl;
-            return 1;
+        try {
+            fs::remove_all(dir);
+            fs::create_directory(dir);
+        } catch (const fs::filesystem_error& e) {
+            std::cerr << "Could not create directory: " << dir << std::endl;
+            std::cerr << e.what();
         }
     }
 
@@ -61,20 +69,16 @@ int main(int argc, char* argv[]) {
     std::cout << "PROGRESS: " << std::setw(digits) << done << "/" << protocols.size() << std::flush;
     #pragma omp parallel for schedule(guided)
     for (ul i = 0; i < protocols.size(); i++){
+        auto outFilePath = outDir / (std::to_string(i) + ".csv");
+        auto protocolFilePath = protocolDir / (std::to_string(i) + ".csv");
+        protocols[i].saveToFile(protocolFilePath);
         auto myCa = ca;
         myCa.setIrradiationProtocol(std::move(protocols[i]));
         myCa.runNSteps(nSteps);
-        auto outFilePath = outDir + "/" + std::to_string(i) + ".csv";
-        auto protocolFilePath = protocolDir + "/" + std::to_string(i) + ".csv";
-        std::ofstream caFile(outFilePath);
-        std::ofstream protocolFile(protocolFilePath);
-        caFile << "CA HERE" << std::endl;
-        protocolFile << "PROTOCOL HERE" << std::endl;
+        myCa.saveStateToFile(outFilePath);
 
         #pragma omp critical
             std::cout << '\r' << "PROGRESS: " << std::setw(digits) << ++done << "/" << protocols.size() << std::flush;
-
-        // TODO: Actually saving the result.
     }
     return 0;
 }
