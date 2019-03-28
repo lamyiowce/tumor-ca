@@ -44,14 +44,14 @@ std::vector<IrradiationProtocol> IrradiationProtocol::loadFromFile(const std::st
         std::vector<ul> stepVector;
         std::vector<double_p> doseVector;
 
-        std::istringstream issSteps(line);
-        while(issSteps >> step) {
-            stepVector.push_back(step);
+        std::istringstream issDoses(line);
+        while(issDoses >> dose) {
+            doseVector.push_back(dose);
         }
         if (std::getline(protocolFile, line)) {
-            std::istringstream issDoses(line);
-            while(issDoses >> dose) {
-                doseVector.push_back(dose);
+            std::istringstream issSteps(line);
+            while(issSteps >> step) {
+                stepVector.push_back(step);
             }
             protocols.emplace_back(std::move(stepVector), std::move(doseVector));
         } else {
