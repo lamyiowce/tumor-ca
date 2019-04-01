@@ -124,7 +124,7 @@ public:
     Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                   RandomEngine *randomEngine, ul _step = 1);
 
-
+    Automaton(const Automaton& other) = default;
     /**
      * Sets external CHO and Oxygen concentrations to their substrate levels.
      * Sets oxygen and CHO level of dead cells to ones specified in params.
@@ -190,6 +190,8 @@ public:
     void cellDivision();
 
     static Automaton loadFromFile(const std::string &filename, RandomEngine * re);
+
+    void setIrradiationProtocol(IrradiationProtocol protocol);
 
     /**
      * Save automaton state to csv file. Vector values separated by a comma ','. Data format is as follows:

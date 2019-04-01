@@ -533,3 +533,7 @@ void Automaton::saveStateToFile(const std::string &filename) {
     ofs << state;
     ofs << cycles;
 }
+
+void Automaton::setIrradiationProtocol(IrradiationProtocol protocol) {
+    params.setIrradiationProtocol(std::move(protocol));
+}

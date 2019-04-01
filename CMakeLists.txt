@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Set compile flags for GCC
 if(CMAKE_COMPILER_IS_GNUCXX)
 	message(STATUS "GCC detected, adding compile flags")
-    set(FLAGS "-Wall -Wextra -pedantic -g")
-    set(CMAKE_CXX_FLAGS_DEBUG "${FLAGS}")
-    set(CMAKE_CXX_FLAGS_RELEASE "${FLAGS} -O3 -flto")
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -fopenmp")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g ")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(include)
@@ -18,11 +18,14 @@ set(SOURCES
 		automaton/Cycles.cpp
         automaton/Parameters.cpp
         automaton/State.cpp
-		automaton/RandomEngine.cpp)
+		automaton/RandomEngine.cpp
+        automaton/IrradiationProtocol.cpp
+        )
 
 add_executable(tumor
         main.cpp
-        ${SOURCES})
+        ${SOURCES}
+        )
 
 add_executable(tests
         ${SOURCES}
@@ -37,9 +40,15 @@ add_executable(tests
         tests/SetLocalStatesTests.cpp
         tests/SetGlobalStatesTests.cpp
         tests/DiffusionTests.cpp
-        tests/OneStepTests.cpp)
+        tests/OneStepTests.cpp
+        tests/DiffusionTests.cpp
+        tests/IrradiationProtocolLoadFromFileTests.cpp
+        )
 
 add_executable(integration-test
         ${SOURCES}
         tests/StateHelper.cpp
-        tests/integration-test.cpp)
+        tests/integration-test.cpp
+        )
+
+target_link_libraries(tumor stdc++fs)
