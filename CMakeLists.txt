@@ -51,4 +51,8 @@ add_executable(integration-test
         tests/integration-test.cpp
         )
 
+add_executable(benchmark
+        ${SOURCES}
+        benchmark.cpp)
+
 target_link_libraries(tumor stdc++fs)
