@@ -117,28 +117,30 @@ int main() {
 			std::cout << i << "...\n";
 
 			// Losuj 2 czasy
-			// 72000 kroków symulacji co 6 sekund
+			// _doses_slots_ kroków symulacji co 6 sekund
 			// zaczynamy w pierwszym kroku nr 1
-			// między dawkami 30min = 300 kroków
-			// czyli:
-			// 1.1 weź długość dawek. dawkki mogą zacząć się najpóźniej 
-			//     w 72000 - długość * 300 kroku = 72000 - koniec
-			// 1.2 losuj czas dawki
-			// 1.3 sprawdź, czy nie interferuje z wylosowanymi do tej pory
-			//     (odległość między nimi = minimum 300)
-			// 1.4 losuj aż nie będzie odpowiedniej długości
+			// między dawkami 30 min = _doses_interval_ kroków
+			// 1.1 losuj aż nie będzie odpowiedniej długości
 
 			std::vector<int> random_time_1;
 			std::vector<int> random_time_2;
 
 			int time_length = 0;
 
+			// 72000 = 5 dni co 6 sekund, interwał 300, dzień 14400, 8h to 4800
+			// 720 = 5 dni co 10 minut, interwał 3, dzień 144, 6h to 36
+			// 240 = 5 dni co 30 minut, interwał 1, dzień 48, 6h to 12
+			int doses_slots = 720;
+			int doses_min_interval = 3;
+			int doses_day_interval = 144;
+			int doses_6h_interval = 36;
+
 			while (time_length < temp_protocol_length) {
-				std::uniform_int_distribution<int> dist_time(1, 72000);
+				std::uniform_int_distribution<int> dist_time(1, doses_slots);
 				int temp_time = dist_time(rng);
 				bool good_time = true;
 				for (int t = 0; t < random_time_1.size(); ++t) {
-					if ((std::abs(random_time_1[t] - temp_time)) < 300) {
+					if ((std::abs(random_time_1[t] - temp_time)) < doses_min_interval) {
 						good_time = false;
 					}
 				}
@@ -151,11 +153,11 @@ int main() {
 			time_length = 0;
 
 			while (time_length < temp_protocol_length) {
-				std::uniform_int_distribution<int> dist_time(1, 72000);
+				std::uniform_int_distribution<int> dist_time(1, doses_slots);
 				int temp_time = dist_time(rng);
 				bool good_time = true;
 				for (int t = 0; t < random_time_2.size(); ++t) {
-					if ((std::abs(random_time_2[t] - temp_time)) < 300) {
+					if ((std::abs(random_time_2[t] - temp_time)) < doses_min_interval) {
 						good_time = false;
 					}
 				}
@@ -198,7 +200,7 @@ int main() {
 			t << '\n'; 
 			if (temp_protocol_length <= 5) { 
 				// Protocol chosen for the benchmarking:
-				// every 24h = every 14400 steps, for 5 days
+				// every 24h = every _doses_day_interval_ steps, for 5 days
 				for (std::vector<float>::const_iterator val = temp_protocol.begin(); 
 				val != temp_protocol.end(); ++val) {
 					t << *val << ' ';
@@ -207,8 +209,8 @@ int main() {
 				int benchmark_protocol1 = 1;
 				int position = 0;
 				for (int benchmark_protocol1 = 1; 
-					(benchmark_protocol1 < 72000) && (position < temp_protocol_length); 
-					benchmark_protocol1 += 14400) {
+					(benchmark_protocol1 < doses_slots) && (position < temp_protocol_length); 
+					benchmark_protocol1 += doses_day_interval) {
 						t << benchmark_protocol1 << ' ';
 						f << benchmark_protocol1 << ' ';
 						position++;
@@ -219,7 +221,7 @@ int main() {
 
 			if (temp_protocol_length <= 8) {
 				// Protocol chosen for the benchmarking:
-				// every 6h + every 18h = every 14400 steps, for 4 days,
+				// every 6h + every 18h = every _doses_day_interval steps, for 4 days,
 				// hence 8 times
 				// => time % 24 = 6 or time % 24 = 18
 				for (std::vector<float>::const_iterator val = temp_protocol.begin(); 
@@ -230,13 +232,13 @@ int main() {
 				int benchmark_protocol2 = 1;
 				int position = 0;
 				for (int benchmark_protocol2 = 1; 
-					(benchmark_protocol2 < 72000) && (position < temp_protocol_length); 
-					benchmark_protocol2 += 3600) {
-						if (benchmark_protocol2 % 14400 == 1) {
+					(benchmark_protocol2 < doses_slots) && (position < temp_protocol_length); 
+					benchmark_protocol2 += doses_6h_interval) {
+						if (benchmark_protocol2 % doses_day_interval == 1) {
 							t << benchmark_protocol2 << ' ';
 							f << benchmark_protocol2 << ' ';
 							position++;
-						} else if (benchmark_protocol2 % 14400 == 10801) {
+						} else if (benchmark_protocol2 % doses_day_interval == (3 * doses_6h_interval + 1)) {
 							t << benchmark_protocol2 << ' ';
 							f << benchmark_protocol2 << ' ';
 							position++;
