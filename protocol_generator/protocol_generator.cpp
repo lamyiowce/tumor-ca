@@ -130,10 +130,11 @@ int main() {
 			// 72000 = 5 dni co 6 sekund, interwał 300, dzień 14400, 8h to 4800
 			// 720 = 5 dni co 10 minut, interwał 3, dzień 144, 6h to 36
 			// 240 = 5 dni co 30 minut, interwał 1, dzień 48, 6h to 12
-			int doses_slots = 720;
-			int doses_min_interval = 3;
-			int doses_day_interval = 144;
-			int doses_6h_interval = 36;
+			int doses_slots = 240;
+			int doses_multiply = 72000/doses_slots;
+			int doses_min_interval = 1;
+			int doses_day_interval = 48;
+			int doses_6h_interval = 12;
 
 			while (time_length < temp_protocol_length) {
 				std::uniform_int_distribution<int> dist_time(1, doses_slots);
@@ -145,7 +146,7 @@ int main() {
 					}
 				}
 				if (good_time) {
-					random_time_1.push_back(temp_time);
+					random_time_1.push_back(doses_multiply*temp_time);
 					time_length++;
 				}
 			}
@@ -162,7 +163,7 @@ int main() {
 					}
 				}
 				if (good_time) {
-					random_time_2.push_back(temp_time);
+					random_time_2.push_back(doses_multiply*temp_time);
 					time_length++;
 				}
 			}
@@ -211,8 +212,8 @@ int main() {
 				for (int benchmark_protocol1 = 1; 
 					(benchmark_protocol1 < doses_slots) && (position < temp_protocol_length); 
 					benchmark_protocol1 += doses_day_interval) {
-						t << benchmark_protocol1 << ' ';
-						f << benchmark_protocol1 << ' ';
+						t << doses_multiply * benchmark_protocol1 << ' ';
+						f << doses_multiply * benchmark_protocol1 << ' ';
 						position++;
 				}
 				f << '\n'; 
