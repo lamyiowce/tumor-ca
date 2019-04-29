@@ -33,12 +33,12 @@ int main() {
 			s.pop(); 
 			if (top.sum < 0) continue;
 			if (top.sum == 0) {
-				std::cout << target << ":" << ways << ": ";
+			//	std::cout << target << ":" << ways << ": ";
 				for (int i = 0; i < top.coins.size(); i++) {
-					std::cout << top.coins[i] << " ";
+				//	std::cout << top.coins[i] << " ";
 				}
 				chosen_protocols.push_back(top.coins);
-				std::cout << "\n";
+			//	std::cout << "\n";
 				++ways;
 				continue;
 			}
@@ -51,10 +51,10 @@ int main() {
 			d.avail_coins.erase(std::begin(d.avail_coins));
 			s.push(d);
 		}
-		std::cout << target << ":" << ways << std::endl;
+		//std::cout << target << ":" << ways << std::endl;
 		protocol_map[target] = chosen_protocols;
 	}
-	std::cout << ways << std::endl;
+	//std::cout << ways << std::endl;
 	std::cout << "Size " << protocol_map.size() << "\n";
   	std::cout << "Count " << protocol_map.count(2.0) << "\n";
 
@@ -101,7 +101,7 @@ int main() {
 
 		int temp_protocol_length = temp_protocol.size();
 
-		std::cout << "Dlugosc " << temp_protocol_length << "\n";
+		//std::cout << "Dlugosc " << temp_protocol_length << "\n";
 
 		std::sort(temp_protocol.begin(), temp_protocol.begin() + temp_protocol_length);
 
@@ -141,7 +141,7 @@ int main() {
 				int temp_time = dist_time(rng);
 				bool good_time = true;
 				for (int t = 0; t < random_time_1.size(); ++t) {
-					if ((std::abs(random_time_1[t] - temp_time)) < doses_min_interval) {
+					if ((std::abs(random_time_1[t] - doses_multiply*temp_time)) < doses_multiply*doses_min_interval) {
 						good_time = false;
 					}
 				}
@@ -158,7 +158,7 @@ int main() {
 				int temp_time = dist_time(rng);
 				bool good_time = true;
 				for (int t = 0; t < random_time_2.size(); ++t) {
-					if ((std::abs(random_time_2[t] - temp_time)) < doses_min_interval) {
+					if ((std::abs(random_time_2[t] - doses_multiply*temp_time)) < doses_multiply*doses_min_interval) {
 						good_time = false;
 					}
 				}
@@ -236,12 +236,12 @@ int main() {
 					(benchmark_protocol2 < doses_slots) && (position < temp_protocol_length); 
 					benchmark_protocol2 += doses_6h_interval) {
 						if (benchmark_protocol2 % doses_day_interval == 1) {
-							t << benchmark_protocol2 << ' ';
-							f << benchmark_protocol2 << ' ';
+							t << doses_multiply * benchmark_protocol2 << ' ';
+							f << doses_multiply * benchmark_protocol2 << ' ';
 							position++;
 						} else if (benchmark_protocol2 % doses_day_interval == (3 * doses_6h_interval + 1)) {
-							t << benchmark_protocol2 << ' ';
-							f << benchmark_protocol2 << ' ';
+							t << doses_multiply * benchmark_protocol2 << ' ';
+							f << doses_multiply * benchmark_protocol2 << ' ';
 							position++;
 						}
 				}
