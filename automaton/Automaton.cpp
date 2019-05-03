@@ -409,12 +409,9 @@ void Automaton::repairCells() {
                         }
                     }
                 }
-
             }
-
         }
     }
-    // TODO
 }
 
 void Automaton::cellDivision() {
@@ -523,7 +520,7 @@ Automaton Automaton::loadFromFile(const std::string &filename, RandomEngine *re)
     return Automaton(state, cycles, parameters, re, step);
 }
 
-Cycles Automaton::getCycles() {
+Cycles Automaton::getCycles() const{
     return cycles;
 }
 

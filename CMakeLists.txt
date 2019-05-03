@@ -43,12 +43,7 @@ add_executable(tests
         tests/OneStepTests.cpp
         tests/DiffusionTests.cpp
         tests/IrradiationProtocolLoadFromFileTests.cpp
-        )
-
-add_executable(integration-test
-        ${SOURCES}
-        tests/StateHelper.cpp
-        tests/integration-test.cpp
+        tests/IntegrationTest.cpp
         )
 
 target_link_libraries(tumor stdc++fs)
