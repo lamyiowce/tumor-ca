@@ -207,6 +207,8 @@ void Automaton::irradiateTumor() {
 }
 
 void Automaton::setLocalStates() {
+    std::vector<std::pair<ul, ul>> sitesToKill{};
+
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
             if (state.W(r, c)) {
@@ -220,7 +222,7 @@ void Automaton::setLocalStates() {
                                                         + cycles.Stime(r, c) + cycles.G2time(r, c)
                                                         + cycles.Mtime(r, c) + cycles.Dtime(r, c))) {
 
-                    KillSite(r, c);
+                    sitesToKill.emplace_back(r, c);
                     continue;
                 }
 
@@ -245,7 +247,7 @@ void Automaton::setLocalStates() {
                                 || state.cellCycle(r, c) == State::CellCycle::M
                                 || state.cellCycle(r, c) == State::CellCycle::D) {
 
-                                KillSite(r, c);
+                                sitesToKill.emplace_back(r, c);
                             } else {
                                 state.cellState(r, c) = State::CellState::AEROBIC_QUIESCENCE;
                             }
@@ -263,7 +265,7 @@ void Automaton::setLocalStates() {
                         || state.cellCycle(r, c) == State::CellCycle::M
                         || state.cellCycle(r, c) == State::CellCycle::D) {
 
-                        KillSite(r, c);
+                        sitesToKill.emplace_back(r, c);
                     } else {
                         state.cellState(r, c) = State::CellState::AEROBIC_QUIESCENCE;
                     }
@@ -274,19 +276,23 @@ void Automaton::setLocalStates() {
                             || state.cellCycle(r, c) == State::CellCycle::M
                             || state.cellCycle(r, c) == State::CellCycle::D) {
 
-                            KillSite(r, c);
+                            sitesToKill.emplace_back(r, c);
                         } else {
                             state.cellState(r, c) = State::CellState::ANAREOBIC_QUIESCENCE;
                         }
                         continue;
                     } else {  // ix_dead_b
-                        KillSite(r, c);
+                        sitesToKill.emplace_back(r, c);
                         continue;
                     }
                 }
 
             }
         }
+    }
+
+    for (auto siteCoords : sitesToKill) {
+        KillSite(siteCoords.first, siteCoords.second);
     }
 }
 
