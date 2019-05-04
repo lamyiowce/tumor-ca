@@ -41,7 +41,7 @@ private:
                                 // holds the same information as STATE.lMET
     grid<CellCycle> _cellCycle; // ; STATE.gMET
     grid<single_p> _proliferationTime; // proliferation timer, same as STATE.HRS
-	grid<bool> _cycleChanged; // STATE.ch; whether the site's cell cycle has
+	grid<uint8_t> _cycleChanged; // STATE.ch; whether the site's cell cycle has
                               // changed during the last setGlobalStates() call
 
 public:
@@ -81,9 +81,9 @@ public:
 
     single_p &proliferationTime(ul r, ul c);
 
-	bool cycleChanged(ul x, ul u);
+	const uint8_t &cycleChanged(ul x, ul u) const;
 
-	void setCycleChanged(ul r, ul c, bool value);
+	uint8_t &cycleChanged(ul r, ul c);
 
     single_p radius(ul r, ul c);
 

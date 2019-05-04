@@ -30,6 +30,7 @@ State::State(nlohmann::json json)
             this->irradiation(r, c) = json["STATE"]["R"][r][c];
             this->cellCycle(r, c)
                 = static_cast<State::CellCycle >(json["STATE"]["gMET"][r][c]);
+            this->cycleChanged(r, c) = json["STATE"]["ch"][r][c];
         }
     }
 
@@ -126,12 +127,12 @@ single_p &State::proliferationTime(ul r, ul c) {
     return _proliferationTime[r * gridSize + c];
 }
 
-bool State::cycleChanged(ul r, ul c) {
+const uint8_t &State::cycleChanged(ul r, ul c) const {
 	return _cycleChanged[r * gridSize + c];
 }
 
-void State::setCycleChanged(ul r, ul c, bool value) {
-	_cycleChanged[r * gridSize + c] = value;
+uint8_t &State::cycleChanged(ul r, ul c) {
+	return _cycleChanged[r * gridSize + c];
 }
 
 single_p State::radius(ul r, ul c) {

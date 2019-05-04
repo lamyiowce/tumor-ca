@@ -41,7 +41,8 @@ int discreteDiffCount(const State &lhs, const State &rhs) {
         for (ul c = 0; c < lhs.gridSize; ++c) {
             if (lhs.W(r, c) != rhs.W(r, c) ||
                 lhs.cellCycle(r, c) != rhs.cellCycle(r, c) ||
-                lhs.cellState(r, c) != rhs.cellState(r, c)) {
+                lhs.cellState(r, c) != rhs.cellState(r, c) ||
+                lhs.cycleChanged(r, c) != rhs.cycleChanged(r, c)) {
                 ++count;
             }
         }
