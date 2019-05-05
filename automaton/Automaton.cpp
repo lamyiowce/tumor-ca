@@ -356,8 +356,8 @@ void Automaton::metaboliseNutrients() {
 void Automaton::setGlobalStates() {
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
+            state.cycleChanged(r, c) = false;
             if (state.W(r, c)) {
-                state.cycleChanged(r, c) = false;
                 if (state.proliferationTime(r, c) <= cycles.G1time(r, c)) {
                     if (state.cellCycle(r, c) != State::CellCycle::G1) {
                         state.cellCycle(r, c) = State::CellCycle::G1;
