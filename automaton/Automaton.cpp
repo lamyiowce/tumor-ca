@@ -211,6 +211,8 @@ void Automaton::setLocalStates() {
 
     for (ul r = 0; r < state.gridSize; ++r) {
         for (ul c = 0; c < state.gridSize; ++c) {
+            // Matlab model compatibility: the state is not defined for all cells.
+            state.cellState(r, c) = State::CellState::EMPTY;
             if (state.W(r, c)) {
                 // Check if site should die:
                 // -- too acidic, or
@@ -292,6 +294,7 @@ void Automaton::setLocalStates() {
     }
 
     for (auto siteCoords : sitesToKill) {
+        state.cellState(siteCoords.first, siteCoords.second) = State::CellState::DEAD;
         KillSite(siteCoords.first, siteCoords.second);
     }
 }
@@ -411,8 +414,6 @@ void Automaton::repairCells() {
 }
 
 void Automaton::KillSite(ul r, ul c) {
-    state.cellState(r, c) = State::CellState::DEAD;
-
     state.W(r, c) = 0;
     state.proliferationTime(r, c) = 0;
     state.irradiation(r, c) = 0;

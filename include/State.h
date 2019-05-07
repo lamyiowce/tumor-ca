@@ -9,6 +9,7 @@
 class State {
 public:
     enum class CellState {
+    	EMPTY,	// no state defined for a cell
         DEAD,
         AEROBIC_PROLIFERATION,
         ANAREOBIC_PROLIFERATION,
