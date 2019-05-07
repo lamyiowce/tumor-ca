@@ -5,10 +5,12 @@
 
 constexpr int N_TEST_STEPS = 350;
 constexpr int MAX_TEST_FILEPATH_LENGTH = 512;
-constexpr int FULL_N_STEPS = 4800;
+constexpr int FULL_N_STEPS = 144000;
 constexpr double MAX_RELATIVE_ERROR = 0;
 
 void requireEqual(const Automaton &result, const Automaton &target);
+
+void checkEqual(const Automaton &result, const Automaton &target);
 
 void requireEqualWithEps(const Automaton &result, const Automaton &target, double eps);
 

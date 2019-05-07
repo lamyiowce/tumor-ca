@@ -72,10 +72,14 @@ void requireEqualWithEps(const Automaton &result, const Automaton &target,
     REQUIRE(discreteEquality(result.getState(), target.getState()));
     REQUIRE(maxError(result.getState(), target.getState()) <= eps);
     REQUIRE(maxErrorCycles(result.getCycles(), target.getCycles()) <= eps);
-
 }
 
 void requireEqual(const Automaton& result, const Automaton& target) {
     requireEqualWithEps(result, target, MAX_RELATIVE_ERROR);
 }
 
+void checkEqual(const Automaton &result, const Automaton &target) {
+    CHECK(discreteEquality(result.getState(), target.getState()));
+    CHECK(maxError(result.getState(), target.getState()) <= MAX_RELATIVE_ERROR);
+    CHECK(maxErrorCycles(result.getCycles(), target.getCycles()) <= MAX_RELATIVE_ERROR);
+}

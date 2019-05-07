@@ -4,22 +4,7 @@
 #include <catch.h>
 #include "StateHelper.h"
 
-TEST_CASE("4800 step test") {
-    MatlabRandomEngine mre(1);
-    auto ca1 = Automaton::loadFromFile(
-        "../tests/resources/matlab_results/integration/out-vnw-tr1-st0-0a-initial-integration.json",
-        &mre);
-    auto ca2 = Automaton::loadFromFile(
-        "../tests/resources/matlab_results/integration/out-vnw-tr1-st4800-0a-result-integration.json",
-        nullptr);
-    ca1.runNSteps(4800);
-
-    std::cout << "Living cells:\nsimulation: " << countLiving(ca1.getState()) << " \ncorrect: " << countLiving(ca2.getState()) << std::endl;
-    std::cout << "Max numerical error: " << maxError(ca1.getState(), ca2.getState()) << std::endl;
-    requireEqual(ca1, ca2);
-}
-
-TEST_CASE("144000 step test with intermediate comparisons") {
+TEST_CASE("long test") {
     MatlabRandomEngine mre(1);
     auto ca1 = Automaton::loadFromFile(
         "../tests/resources/matlab_results/integration-big/out-vnw-tr1-st0.json",
@@ -42,6 +27,7 @@ TEST_CASE("144000 step test with intermediate comparisons") {
             ca1.advance();
             i++;
         }
+//        if (i >= FULL_N_STEPS)
         auto ca2 = Automaton::loadFromFile(
             "../tests/resources/matlab_results/integration-big/out-vnw-tr1-st" + std::to_string(i) + ".json",
             nullptr);
@@ -55,15 +41,12 @@ TEST_CASE("144000 step test with intermediate comparisons") {
         totalDiffCount = std::max(totalDiffCount, diffCount);
 
         errFile << i << ',' << maxErr << ',' << maxErrCycles << ',' << diffCount << std::endl;
+
+        checkEqual(ca1, ca2);
     }
 
     std::cout << "Max error: " << totalMaxErr << std::endl;
     std::cout << "Max error in cycles: " << totalMaxErrCycles << std::endl;
     std::cout << "Max discrete differ count: " << totalDiffCount << std::endl;
-
-    auto ca2 = Automaton::loadFromFile(
-        "../tests/resources/matlab_results/integration-big/out-vnw-tr1-st" + std::to_string(FULL_N_STEPS) + ".json",
-        nullptr);
-    requireEqual(ca1, ca2);
 }
 
