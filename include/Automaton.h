@@ -119,7 +119,7 @@ private:
 public:
     const State &getState() const;
 
-    Cycles getCycles();
+    Cycles getCycles() const;
 
     Automaton(const State &_state, const Cycles &_cycles, const Parameters &_params,
                   RandomEngine *randomEngine, ul _step = 1);
