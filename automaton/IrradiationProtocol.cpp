@@ -27,9 +27,11 @@ IrradiationProtocol::IrradiationProtocol(std::vector<ul> &&_times, std::vector<d
 }
 
 double_p IrradiationProtocol::getIrradiationDose(ul step) const {
-    auto find = std::lower_bound(times.begin(), times.end(), step);
-    if (find == times.end()) return 0.0;
-    return doses[find - times.begin()];
+    ul find = 0;
+    while (find < times.size() && times[find] != step)
+        find++;
+    if (find == times.size()) return 0.0;
+    return doses[find];
 }
 
 std::vector<IrradiationProtocol> IrradiationProtocol::loadFromFile(const std::string &filepath) {
