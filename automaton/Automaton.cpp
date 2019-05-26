@@ -393,8 +393,8 @@ void Automaton::setGlobalStates() {
 }
 
 void Automaton::repairCells() {
-    for (ul r = 0; r < state.gridSize; ++r) {
-        for (ul c = 0; c < state.gridSize; ++c) {
+    for (ul c = 0; c < state.gridSize; ++c) {
+        for (ul r = 0; r < state.gridSize; ++r) {
             if ((state.cycleChanged(r, c) && (state.irradiation(r, c) > 0))
                 || (state.timeInRepair(r, c) > 0)) { // ix_Rep
                 state.timeInRepair(r, c) += params.stepTime / 3600;
@@ -497,8 +497,8 @@ std::vector<std::pair<long, long>> Automaton::vacantNeighbors(ul r, ul c) {
     long c_end = (c == state.gridSize - 1) ? 0 : 1;
 
     std::vector<std::pair<long, long>> result{};
-    for (long rx = r_start; rx <= r_end; ++rx) {
-        for (long cx = c_start; cx <= c_end; ++cx) {
+    for (long cx = r_start; cx <= c_end; ++cx) {
+        for (long rx = c_start; rx <= r_end; ++rx) {
             if (state.W(r + rx, c + cx) == 0) {
                 result.emplace_back(rx, cx);
             }
