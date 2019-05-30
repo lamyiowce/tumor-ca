@@ -531,3 +531,7 @@ void Automaton::saveStateToFile(const std::string &filename) {
 void Automaton::setIrradiationProtocol(IrradiationProtocol protocol) {
     params.setIrradiationProtocol(std::move(protocol));
 }
+
+void Automaton::setRandomEngine(RandomEngine *re) {
+    this->randomEngine = re;
+}

@@ -11,7 +11,6 @@
 namespace fs = std::experimental::filesystem;
 
 int main(int argc, char* argv[]) {
-    StdRandomEngine sre(10009);
     if (argc != 6) {
         std::cerr << "Usage: " << argv[0] << " <automaton file> <protocol file> <results dir> <experiment id> <nsteps>" << std::endl;
         return 0;
@@ -29,7 +28,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    auto ca = Automaton::loadFromFile(automatonPath, &sre);
+    auto ca = Automaton::loadFromFile(automatonPath, nullptr);
     auto protocols = IrradiationProtocol::loadFromFile(protocolPath);
     if (protocols.empty()) {
         std::cerr << "Error loading protocols or protocol file is empty." << std::endl;
@@ -68,6 +67,7 @@ int main(int argc, char* argv[]) {
     do digits++; while (x/=10);
 
     int done = 0;
+    std::random_device rd;
     std::cout << "PROGRESS: " << std::setw(digits) << done << "/" << protocols.size() << std::flush;
     #pragma omp parallel for schedule(guided)
     for (ul i = 0; i < protocols.size(); i++){
@@ -75,6 +75,11 @@ int main(int argc, char* argv[]) {
         auto protocolFilePath = protocolDir / (experimentId + "_" + std::to_string(i) + ".csv");
         protocols[i].saveToFile(protocolFilePath);
         auto myCa = ca;
+        ul seed;
+        #pragma omp critical
+            seed = rd();
+        StdRandomEngine myRandEngine(seed);
+        myCa.setRandomEngine(&myRandEngine);
         myCa.setIrradiationProtocol(std::move(protocols[i]));
         myCa.runNSteps(nSteps);
         myCa.saveStateToFile(outFilePath);
