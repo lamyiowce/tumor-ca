@@ -46,4 +46,9 @@ add_executable(tests
         tests/IntegrationTest.cpp
         )
 
+add_executable(run-simple
+        simple-run.cpp
+        ${SOURCES}
+        )
+
 target_link_libraries(tumor stdc++fs)
