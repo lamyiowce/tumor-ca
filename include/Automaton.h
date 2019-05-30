@@ -193,6 +193,8 @@ public:
 
     void setIrradiationProtocol(IrradiationProtocol protocol);
 
+    void setRandomEngine(RandomEngine* re);
+
     /**
      * Save automaton state to csv file. Vector values separated by a comma ','. Data format is as follows:
      * step
