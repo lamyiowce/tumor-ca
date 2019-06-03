@@ -197,10 +197,13 @@ void Automaton::irradiateTumor() {
         for (ul c = 0; c < state.gridSize; ++c) {
             if (state.W(r, c)) {
                 const auto r0 = state.irradiation(r, c);
+                // TODO tau change: comment / refactor
+                params.tau = 0.8;
                 const auto timeInRepair = state.timeInRepair(r, c);
                 const auto effectiveIrradiation = r0 / (1 + timeInRepair / params.tau);
                 state.irradiation(r, c) = effectiveIrradiation + dose;
                 state.timeInRepair(r, c) = 0;
+                params.tau = 0.25;
             }
         }
     }

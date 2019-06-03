@@ -74,7 +74,7 @@ public:
     const double_p sOXex; // same as above, oxygen
     const double_p sGIex;
     IrradiationProtocol irradiationSteps; // vector of pairs (step number, irradiation dose)
-    const double_p tau;
+    double_p tau;
     const double_p stepTime; // step time in seconds
 
 	// Critical pH values -- as concentration of hydrogen ions ("GI" == "growth inhibitor")
