@@ -33,7 +33,7 @@ public:
      * If sum of probs is lower than 1.0, probs.size() is returned with (1.0 - sum(probs)) probability
      * @param probs - probabilities
      */
-    virtual ul roulette(const std::vector<float> &probs);
+    virtual ul roulette(const std::vector<double> &probs);
 };
 
 class MatlabRandomEngine: public RandomEngine {

@@ -82,11 +82,15 @@ std::vector<ul> MatlabRandomEngine::randomPermutation(ul n) {
     return result;
 }
 
-ul RandomEngine::roulette(const std::vector<float> &probs) {
-    std::vector<float> sums(probs.size());
+ul RandomEngine::roulette(const std::vector<double> &probs) {
+    std::vector<double> sums(probs.size());
     std::partial_sum(probs.begin(), probs.end(), sums.begin());
     float random = uniform();
     for (ul i = 0; i < probs.size(); ++i) {
+        // TODO Comment
+        if (i == 7) {
+            return 8;
+        }
         if (random < sums[i]) return i;
     }
     return probs.size();

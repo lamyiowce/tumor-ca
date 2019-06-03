@@ -108,7 +108,7 @@ private:
      * @param y
      * @return
      */
-    static float mapToProb(std::pair<long, long> &relativeCoords);
+    static double mapToProb(std::pair<long, long> &relativeCoords);
 
     void numericalDiffusion(ul r, ul c, const grid<double_p> &choCopy, const grid<double_p> &oxCopy,
                                 const grid<double_p> &giCopy, grid<double_p> &choResult, grid<double_p> &oxResult,

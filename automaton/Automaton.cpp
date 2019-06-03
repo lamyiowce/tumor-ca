@@ -469,7 +469,7 @@ Automaton::coords_t Automaton::randomNeighbour(ul r, ul c) {
     if (vn.empty()) {
         return {r, c};
     }
-    std::vector<float> probs(vn.size());
+    std::vector<double> probs(vn.size());
     std::transform(vn.begin(), vn.end(), probs.begin(), mapToProb);
     ul choice = randomEngine->roulette(probs);
     if (choice == probs.size()) {
@@ -486,9 +486,9 @@ bool Automaton::isReadyForDivision(ul r, ul c) {
            state.cellCycle(r, c) == State::CellCycle::D;
 }
 
-float Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
-    constexpr float diagonalProb = 1.f / (4.f + 4.f * 1.41421356f);
-    constexpr float sideProb = 1.41421356f * diagonalProb;
+double Automaton::mapToProb(std::pair<long, long> &relativeCoords) {
+    constexpr double diagonalProb = 1 / (4 + 4 * 1.414213562373095);
+    constexpr double sideProb = 1.414213562373095 * diagonalProb;
     if (relativeCoords.first == 0 || relativeCoords.second == 0) return sideProb;
     else return diagonalProb;
 }

@@ -33,7 +33,7 @@ TEST_CASE("Random permutation gives the same order as original algorithm.") {
 
 TEST_CASE("Random roulette replicates results from matlab.") {
     MatlabRandomEngine mre(7);
-    std::vector<float> probs{0.2f, 0.1f, 0.2f, 0.4f, 0.05f, 0.05f};
+    std::vector<double> probs{0.2, 0.1, 0.2, 0.4, 0.05, 0.05};
     REQUIRE(mre.roulette(probs) == 0);
     REQUIRE(mre.roulette(probs) == 3);
     REQUIRE(mre.roulette(probs) == 2);
@@ -43,7 +43,7 @@ TEST_CASE("Random roulette replicates results from matlab.") {
 
 TEST_CASE("Mixed calls replicate results from matlab.") {
     MatlabRandomEngine mre(167);
-    std::vector<float> probs{0.2f, 0.1f, 0.4f, 0.05f, 0.25f};
+    std::vector<double> probs{0.2, 0.1, 0.4, 0.05, 0.25};
     REQUIRE(mre.uniform() == Approx(0.898379048));
     REQUIRE(mre.normal(0, 1) == Approx(-0.96));
     REQUIRE(mre.normal(0, 1) == Approx(-0.36));
