@@ -425,8 +425,8 @@ void Automaton::KillSite(ul r, ul c) {
 
 void Automaton::cellDivision() {
     std::vector<std::pair<ul, ul>> readyCells{};
-    for (ul r = 0; r < state.gridSize; ++r) {
-        for (ul c = 0; c < state.gridSize; ++c) {
+    for (ul c = 0; c < state.gridSize; ++c) {
+        for (ul r = 0; r < state.gridSize; ++r) {
             if (isReadyForDivision(r, c)) {
                 readyCells.emplace_back(r, c);
             }
