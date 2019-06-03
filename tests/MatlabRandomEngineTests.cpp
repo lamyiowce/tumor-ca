@@ -22,6 +22,8 @@ TEST_CASE("Normal distributed random replicates results from matlab.") {
     REQUIRE(mre.normal(0, 1) == Approx(0.6f));
 }
 
+// TODO refactor (generate new data from Matlab?) all tests that use
+//      randomPermutation() - they don't work anymore
 TEST_CASE("Random permutation gives the same order as original algorithm.") {
     MatlabRandomEngine mre(7);
     REQUIRE(mre.randomPermutation(10) == std::vector<ul>{7, 3, 0, 5, 9, 2, 8, 4, 6, 1});

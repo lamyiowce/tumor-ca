@@ -435,13 +435,16 @@ void Automaton::cellDivision() {
             }
         }
     }
-    auto permutation = randomEngine->randomPermutation(readyCells.size());
-    for (auto n : permutation) {
+    auto allReadyCellsSize = readyCells.size();
+    for (ul i = 0; i < allReadyCellsSize; ++i) {
+        auto permutation = randomEngine->randomPermutation(readyCells.size());
+        ul n = permutation[0];
         auto cell = readyCells[n];
         auto child = randomNeighbour(cell.first, cell.second);
         if (child != cell) {
             birthCell(cell, child);
         }
+        readyCells.erase(readyCells.begin() + n);
     }
 }
 

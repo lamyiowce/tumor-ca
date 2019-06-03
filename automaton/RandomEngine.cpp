@@ -56,29 +56,18 @@ double_p MatlabRandomEngine::normal(double_p mean, double_p stddev) {
 // Very inefficient implementation but gives the same results as original algorithm
 // for traversing a collection in random order
 std::vector<ul> MatlabRandomEngine::randomPermutation(ul n) {
-    std::vector<ul> result{};
     if (n == 0)
-        return result;
-    std::vector<bool> chosen(n);
-    for (ul elemsChosen = 0; elemsChosen < n - 1; ++elemsChosen) {
-        float minScore = 2.0;
-        ul minIndex = 0;
-        for (ul i = 0; i < n; ++i) { // every time we choose element with the lowest score
-            if (!chosen[i]) {
-                float score = uniform();
-                if (score < minScore) {
-                    minScore = score;
-                    minIndex = i;
-                }
-            }
-        }
-        result.push_back(minIndex);
-        chosen[minIndex] = true;
-    }
-    // add last element without drawing a score
+        return {};
+    else if (n == 1)
+        return {0};
+    std::vector<ul> result(n);
+    std::vector<std::pair<float, int>> perm;
     for (ul i = 0; i < n; ++i) {
-        if (!chosen[i]) result.push_back(i);
+        perm.emplace_back(uniform(), i);
     }
+    std::sort(perm.begin(), perm.end());
+    std::transform(perm.begin(), perm.end(), result.begin(),
+                   [](auto p){ return p.second;});
     return result;
 }
 
