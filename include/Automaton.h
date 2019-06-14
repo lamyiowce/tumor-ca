@@ -114,7 +114,7 @@ private:
                                 const grid<double_p> &giCopy, grid<double_p> &choResult, grid<double_p> &oxResult,
                                 grid<double_p> &giResult, ul gridW);
 
-    std::pair<double_p, double_p> sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW);
+    std::pair<double_p, double_p> sumNeighbors(ul r, ul c, const grid<double_p> &values, ul gridW);
 
 public:
     const State &getState() const;

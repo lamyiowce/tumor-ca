@@ -44,7 +44,7 @@ static double paramDiffusion(double_p val, double_p d, double_p tau, double_p or
     return (d*tau*HS)/f * (orthoSum + MATLAB_1_2SQRT2*diagSum - f*val) + val;
 }
 
-std::pair<double_p, double_p> Automaton::sumNeighbours(ul r, ul c, const grid<double_p> &values, ul gridW) {
+std::pair<double_p, double_p> Automaton::sumNeighbors(ul r, ul c, const grid<double_p> &values, ul gridW) {
     double_p orthogonalResult = 0.0, diagonalResult = 0.0;
     orthogonalResult += values[(r-1) * gridW + c];
     orthogonalResult += values[(r+1) * gridW + c];
@@ -62,11 +62,11 @@ void Automaton::numericalDiffusion(ul r, ul c, const grid<double_p> &choCopy, co
                                    const grid<double_p> &giCopy, grid<double_p> &choResult, grid<double_p> &oxResult,
                                    grid<double_p> &giResult, ul gridW) {
     auto index = r * gridW + c;
-    auto paramSums = sumNeighbours(r, c, choCopy, gridW);
+    auto paramSums = sumNeighbors(r, c, choCopy, gridW);
     choResult[index] = paramDiffusion(choCopy[index], params.sDCHO, params.tau, paramSums.first, paramSums.second);
-    paramSums = sumNeighbours(r, c, oxCopy, gridW);
+    paramSums = sumNeighbors(r, c, oxCopy, gridW);
     oxResult[index] = paramDiffusion(oxCopy[index], params.sDOX, params.tau, paramSums.first, paramSums.second);
-    paramSums = sumNeighbours(r, c, giCopy, gridW);
+    paramSums = sumNeighbors(r, c, giCopy, gridW);
     giResult[index] = paramDiffusion(giCopy[index], params.sDGI, params.tau, paramSums.first, paramSums.second);
 }
 
