@@ -52,4 +52,8 @@ add_executable(run-simple
         ${SOURCES}
         )
 
+add_executable(protocol_generator
+        src/protocol_generator.cpp
+        )
+
 target_link_libraries(tumor stdc++fs)
