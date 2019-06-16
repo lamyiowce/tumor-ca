@@ -16,7 +16,7 @@ TEST_CASE("long test") {
             ca1.runNSteps(0);
 
             int i = 0;
-            int checkInterval = 10;
+            int checkInterval = 1000;
             std::ofstream errFile(dataDir + "_error_log.csv");
             errFile << "step,max_error,max_error_cycles,discrete_diff_count" << std::endl;
 
