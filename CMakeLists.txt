@@ -2,53 +2,58 @@ cmake_minimum_required(VERSION 3.5)
 project(tumor)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -fopenmp")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
 
-# Set compile flags for GCC
-if(CMAKE_COMPILER_IS_GNUCXX)
-	message(STATUS "GCC detected, adding compile flags")
-    set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -fopenmp")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g ")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
-endif(CMAKE_COMPILER_IS_GNUCXX)
 
-include_directories(include)
+include_directories(src/automaton)
+include_directories(third_party)
 
 set(SOURCES
-        automaton/Automaton.cpp
-		automaton/Cycles.cpp
-        automaton/Parameters.cpp
-        automaton/State.cpp
-		automaton/RandomEngine.cpp
-        automaton/IrradiationProtocol.cpp
+        src/automaton/Automaton.cpp
+		src/automaton/Cycles.cpp
+		src/automaton/Parameters.cpp
+		src/automaton/State.cpp
+		src/automaton/RandomEngine.cpp
+		src/automaton/IrradiationProtocol.cpp
         )
 
+set(TEST_SOURCES
+		src/tests/tests_main.cpp
+		src/tests/MatlabRandomEngineTests.cpp
+		src/tests/ReplenishSubstrateTests.cpp
+		src/tests/StateHelper.cpp
+		src/tests/StateHelper.h
+		src/tests/IrradiateTumorTests.cpp
+		src/tests/CellDivisionTests.cpp
+		src/tests/MetaboliseNutrientsTests.cpp
+		src/tests/SetLocalStatesTests.cpp
+		src/tests/SetGlobalStatesTests.cpp
+		src/tests/DiffusionTests.cpp
+		src/tests/OneStepTests.cpp
+		src/tests/DiffusionTests.cpp
+		src/tests/IrradiationProtocolLoadFromFileTests.cpp
+		src/tests/IntegrationTest.cpp
+		)
+
 add_executable(tumor
-        main.cpp
+        src/main.cpp
         ${SOURCES}
         )
 
 add_executable(tests
+		${TEST_SOURCES}
         ${SOURCES}
-        tests/tests_main.cpp
-        tests/MatlabRandomEngineTests.cpp
-        tests/ReplenishSubstrateTests.cpp
-        tests/StateHelper.cpp
-        tests/StateHelper.h
-        tests/IrradiateTumorTests.cpp
-        tests/CellDivisionTests.cpp
-        tests/MetaboliseNutrientsTests.cpp
-        tests/SetLocalStatesTests.cpp
-        tests/SetGlobalStatesTests.cpp
-        tests/DiffusionTests.cpp
-        tests/OneStepTests.cpp
-        tests/DiffusionTests.cpp
-        tests/IrradiationProtocolLoadFromFileTests.cpp
-        tests/IntegrationTest.cpp
         )
 
 add_executable(run-simple
-        simple-run.cpp
+        src/simple-run.cpp
         ${SOURCES}
+        )
+
+add_executable(protocol_generator
+        src/protocol_generator.cpp
         )
 
 target_link_libraries(tumor stdc++fs)

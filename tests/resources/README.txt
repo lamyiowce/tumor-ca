@@ -1,1 +1,0 @@
-Data generated to be used in tests. File 'matlab_results/A/out-vnw-tr1-stA-B-C.json' is a dump of workspace in Ath step after use of function C which is Bth in order of function. So to test, we need to apply our function to data dumped in 'matlab_results/1/out-vnw-tr1-st1-(B-1)-something.json'.
