@@ -18,7 +18,6 @@ public:
 public:
     using coords_t = std::pair<ul, ul>;
 
-private:
 
     struct LatticeCopy {
         ul borderedH;
