@@ -1,0 +1,8 @@
+# For machines supporting CUDA, download tensorflow with GPU support:
+# tensorflow-gpu==1.13.1
+tensorflow==1.13.1
+keras
+pandas
+numpy
+scikit-learn
+pyspark
