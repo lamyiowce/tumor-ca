@@ -22,3 +22,38 @@ varying irradiation schedules. The results were used as training data for machin
 regression algorithms to predict the total number of cencerous cells. We trained neural net-
 works with dense, convolutional and recurrent architectures. The best result achieved was
 with LSTM layers and gave mean squared error of 0.65 on normalized data.
+
+## Usage
+Build tumor-simulation executable. In project's main folder run:
+```
+mkdir build
+cd build
+cmake ..
+make tumor
+```
+Usage:
+```
+./tumor <automaton_file> <protocol_file> <results_dir> <experiment_id> <nsteps>
+```
+Where:
+- `<automaton_file>` is a file that holds initial tumor representation (one such
+file is available at `resources/tumors/`);
+- `<protocol_file>` is a file with radiation protocols to use, where one protocol
+is represented by two lines: the first one is a list of space-separated radiation
+doses (in Gy), and the second one is a list of simulation step numbers at which the radiation doses should
+be applied (examples at `resources/protocols/`);
+- `<nsteps>` – number of steps of the simulation to run, one step corresponds to 6 seconds of
+simulated process; `<nsteps> = 144000` runs a 10-day simulation
+
+Example:
+```
+./tumor ../resources/tumors/out-vnw-tr1-st0-0a-initial.json ../resources/protocols/example/6.csv ./results/example/ 1 100
+```
+Simulation results will be stored in
+`results/example/1/out/1_<protocol_number>.csv`.
+To extract just the number of alive cells from each result, run the following:
+```
+python3 ../misc/aliveCellCount.py results/example/1/out/
+```
+Alive cell count will be stored in
+`results/example/1/out/aliveCount/1_<protocol_number>.csv`.
