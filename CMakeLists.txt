@@ -56,4 +56,7 @@ add_executable(protocol_generator
         src/protocol_generator.cpp
         )
 
+add_executable(verification verification.cpp ${SOURCES})
+
 target_link_libraries(tumor stdc++fs)
+target_link_libraries(verification stdc++fs)
