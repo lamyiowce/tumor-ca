@@ -6,7 +6,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-const int N = 1;
+const int N = 49;
 
 int countLiving(const State &state) {
   int result = 0;
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
     auto start = std::chrono::steady_clock::now();
     test_ca.runNSteps(10 * 24 * 600);
     auto end = std::chrono::steady_clock::now();
-    std::cout << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << std::endl;
+    std::cout << "time: "  << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << std::endl;
     auto &state = test_ca.getState();
     result_file << countLiving(state) << ", " << std::flush;
     std::cout << "Done: " << i + 1 << " " << std::endl;
