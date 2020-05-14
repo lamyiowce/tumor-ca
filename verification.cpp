@@ -6,7 +6,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-const int N = 49;
+const int N = 50;
 
 int countLiving(const State &state) {
   int result = 0;
@@ -24,8 +24,7 @@ int main(int argc, char **argv) {
               << " output_dir input_dir set_id protocol_id" << std::endl;
     return 1;
   }
-  const std::string state_file_name = "state.json";
-  auto ca = Automaton::loadFromFile(state_file_name, nullptr);
+  
   auto output_dir = fs::path(argv[1]);
   auto input_dir = fs::path(argv[2]);
   std::string set_id = argv[3];
@@ -36,7 +35,6 @@ int main(int argc, char **argv) {
     std::cerr << "Invalid protocol file: " << protocol_file_name << std::endl;
     return 1;
   }
-  ca.setIrradiationProtocol(protocols[0]);
   auto out_file_name = output_dir / set_id / protocol_id;
   std::ofstream result_file(out_file_name);
   if (!result_file.good()) {
@@ -45,17 +43,22 @@ int main(int argc, char **argv) {
   }
 
   std::random_device rd{};
-  for (int i = 0; i < N; ++i) {
-    auto test_ca = ca;
-    StdRandomEngine sre(rd());
-    test_ca.setRandomEngine(&sre);
-    auto start = std::chrono::steady_clock::now();
-    test_ca.runNSteps(10 * 24 * 600);
-    auto end = std::chrono::steady_clock::now();
-    std::cout << "time: "  << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << std::endl;
-    auto &state = test_ca.getState();
-    result_file << countLiving(state) << ", " << std::flush;
-    std::cout << "Done: " << i + 1 << " " << std::endl;
+  for (int t = 1; t < 11; ++t) {
+    const std::string state_file_name = "tumor-lib/tumor-" + std::to_string(t) + ".json";
+    auto ca = Automaton::loadFromFile(state_file_name, nullptr);
+    ca.setIrradiationProtocol(protocols[0]);
+    for (int i = 0; i < N/10; ++i) {
+      auto test_ca = ca;
+      StdRandomEngine sre(rd());
+      test_ca.setRandomEngine(&sre);
+      auto start = std::chrono::steady_clock::now();
+      test_ca.runNSteps(10 * 24 * 600);
+      auto end = std::chrono::steady_clock::now();
+      std::cout << "time: "  << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << std::endl;
+      auto &state = test_ca.getState();
+      result_file << countLiving(state) << ", " << std::flush;
+      std::cout << "Done: " << i + 1 << " " << std::endl;
+    }
   }
 
   return 0;

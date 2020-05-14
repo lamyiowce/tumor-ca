@@ -13,7 +13,6 @@ const State &Automaton::getState() const {
 }
 
 void Automaton::runNSteps(int nSteps) {
-    if (step == 1) replenishSubstrate();
     for (int i = 0; i < nSteps; i++)
         advance();
 }

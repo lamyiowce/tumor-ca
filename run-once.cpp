@@ -16,7 +16,7 @@ const int N = 17;
 int main() {
   const std::string state_file_name = "state.json";
   auto ca = Automaton::loadFromFile(state_file_name, nullptr);
-  auto protocol = IrradiationProtocol::loadFromFile("ins/3/2")[0];
+  auto protocol = IrradiationProtocol::loadFromFile("ins/3/1")[0];
   ca.setIrradiationProtocol(protocol);
 
   std::random_device rd{};
@@ -24,8 +24,8 @@ int main() {
     auto test_ca = ca;
     StdRandomEngine sre(rd());
     test_ca.setRandomEngine(&sre);
-    for (int ss = 0; ss < 20; ++ss) {
-      test_ca.runNSteps(1 * 12 * 600);
+    for (int ss = 0; ss < 60; ++ss) {
+      test_ca.runNSteps(1 * 4 * 600);
       auto &state = test_ca.getState();
       std::cout << countLiving(state) << " " << std::flush;
     }

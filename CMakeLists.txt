@@ -60,5 +60,8 @@ add_executable(verification verification.cpp ${SOURCES})
 
 add_executable(run-once run-once.cpp ${SOURCES})
 
+add_executable(timelapse timelapse.cpp ${SOURCES})
+
 target_link_libraries(tumor stdc++fs)
 target_link_libraries(verification stdc++fs)
+target_link_libraries(timelapse stdc++fs)
